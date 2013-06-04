@@ -25,7 +25,7 @@ class ExampleSpec extends SpecHelper {
      */
     get("/hello") {
       request =>
-        render.plain("hello world").toFuture
+        render.withPlain("hello world").toFuture
     }
 
     /**
@@ -36,7 +36,7 @@ class ExampleSpec extends SpecHelper {
     get("/user/:username") {
       request =>
         val username = request.routeParams.getOrElse("username", "default_user")
-        render.plain("hello " + username).toFuture
+        render.withPlain("hello " + username).toFuture
     }
 
     /**
@@ -46,7 +46,7 @@ class ExampleSpec extends SpecHelper {
      */
     get("/headers") {
       request =>
-        render.plain("look at headers").header("Foo", "Bar").toFuture
+        render.withPlain("look at headers").withHeader("Foo", "Bar").toFuture
     }
 
     /**
@@ -56,7 +56,7 @@ class ExampleSpec extends SpecHelper {
      */
     get("/data.json") {
       request =>
-        render.json(Map("foo" -> "bar")).toFuture
+        render.withJson(Map("foo" -> "bar")).toFuture
     }
 
     /**
@@ -67,8 +67,8 @@ class ExampleSpec extends SpecHelper {
     get("/search") {
       request =>
         request.params.get("q") match {
-          case Some(q) => render.plain("no results for " + q).toFuture
-          case None => render.plain("query param q needed").status(500).toFuture
+          case Some(q) => render.withPlain("no results for " + q).toFuture
+          case None => render.withPlain("query param q needed").withStatus(500).toFuture
         }
     }
 
@@ -84,7 +84,7 @@ class ExampleSpec extends SpecHelper {
             println("content type is " + avatar.contentType)
             avatar.writeToFile("/tmp/avatar") //writes uploaded avatar to /tmp/avatar
         }
-        render.plain("ok").toFuture
+        render.withPlain("ok").toFuture
     }
 
     /**
@@ -100,7 +100,7 @@ class ExampleSpec extends SpecHelper {
     get("/template") {
       request =>
         val anView = new AnView
-        render.view(anView).toFuture
+        render.withView(anView).toFuture
     }
 
 
@@ -112,7 +112,7 @@ class ExampleSpec extends SpecHelper {
     get("/error") {
       request =>
         1234 / 0
-        render.plain("we never make it here").toFuture
+        render.withPlain("we never make it here").toFuture
     }
 
 
@@ -130,8 +130,8 @@ class ExampleSpec extends SpecHelper {
     get("/blog/index.:format") {
       request =>
         respondTo(request) {
-          case ContentType.TextHtml => render.html("<h1>Hello</h1>").toFuture
-          case ContentType.AppJson => render.json(Map("value" -> "hello")).toFuture
+          case ContentType.TextHtml => render.withHtml("<h1>Hello</h1>").toFuture
+          case ContentType.AppJson => render.withJson(Map("value" -> "hello")).toFuture
         }
     }
 
@@ -146,9 +146,9 @@ class ExampleSpec extends SpecHelper {
     get("/another/page") {
       request =>
         respondTo(request) {
-          case ContentType.TextHtml => render.plain("an html response").toFuture
-          case ContentType.AppJson => render.plain("an json response").toFuture
-          case ContentType.All => render.plain("default fallback response").toFuture
+          case ContentType.TextHtml => render.withPlain("an html response").toFuture
+          case ContentType.AppJson => render.withPlain("an json response").toFuture
+          case ContentType.All => render.withPlain("default fallback response").toFuture
         }
     }
 
@@ -170,7 +170,7 @@ class ExampleSpec extends SpecHelper {
         Stats.time("slow_thing time") {
           Thread.sleep(100)
         }
-        render.plain("slow").toFuture
+        render.withPlain("slow").toFuture
     }
 
   }
@@ -178,20 +178,20 @@ class ExampleSpec extends SpecHelper {
   val app = new ExampleApp
 
   override val globalSetting = Some(new GlobalSetting {
-    def notFound(request: Request): Future[Response] = {
-      new Response().status(404).plain("not found yo").toFuture
+    def notFound(request: RequestAdaptor): Future[ResponseBuilder] = {
+      ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
     }
 
-    def error(request: Request): Future[Response] = {
+    def error(request: RequestAdaptor): Future[ResponseBuilder] = {
       request.error match {
         case Some(e: ArithmeticException) =>
-          new Response().status(500).plain("whoops, divide by zero!").toFuture
+          ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
         case Some(e: UnauthorizedException) =>
-          new Response().status(401).plain("Not Authorized!").toFuture
+          ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFuture
         case Some(ex) =>
-          new Response().status(415).plain("Unsupported Media Type!").toFuture
+          ResponseBuilder().withStatus(415).withPlain("Unsupported Media Type!").toFuture
         case _ =>
-          new Response().status(500).plain("Something went wrong!").toFuture
+          ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFuture
       }
     }
   })

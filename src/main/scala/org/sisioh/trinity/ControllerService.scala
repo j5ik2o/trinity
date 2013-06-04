@@ -12,46 +12,46 @@ class ControllerService(controllers: Controllers, globalSettingOpt: Option[Globa
   extends Service[FinagleRequest, FinagleResponse] with LoggingEx {
 
   protected def notFoundHandler = {
-    request: Request =>
+    request: RequestAdaptor =>
       globalSettingOpt.map {
         globalSetting =>
           globalSetting.notFound(request)
       }.getOrElse {
-        render.status(404).plain("Not Found").toFuture
+        render.withStatus(404).withPlain("Not Found").toFuture
       }
   }
 
   protected def errorHandler = {
-    request: Request =>
+    request: RequestAdaptor =>
       globalSettingOpt.map {
         _.error(request)
       }.getOrElse {
         request.error match {
           case Some(ex) =>
-            render.status(415).plain("No handler for this media type found").toFuture
+            render.withStatus(415).withPlain("No handler for this media type found").toFuture
           case _ =>
-            render.status(500).plain("Something went wrong!").toFuture
+            render.withStatus(500).withPlain("Something went wrong!").toFuture
         }
       }
   }
 
-  def render = new Response
+  def render = new ResponseBuilder
 
   def attemptRequest(rawRequest: FinagleRequest) = {
-    val adaptedRequest = RequestAdapter(rawRequest)
+    val adaptedRequest = RequestAdaptor(rawRequest)
     controllers.dispatch(rawRequest).getOrElse {
       ResponseAdapter(notFoundHandler(adaptedRequest))
     }
   }
 
-  private def handleError(adaptedRequest: Request, t: Throwable) = {
+  private def handleError(adaptedRequest: RequestAdaptor, t: Throwable) = {
     error("Internal Server Error", t)
     val newRequest = adaptedRequest.copy(error = Some(t))
     ResponseAdapter(errorHandler(newRequest))
   }
 
   def apply(rawRequest: FinagleRequest): Future[FinagleResponse] = {
-    val adaptedRequest = RequestAdapter(rawRequest)
+    val adaptedRequest = RequestAdaptor(rawRequest)
     Try {
       attemptRequest(rawRequest).rescue {
         case t: Throwable =>

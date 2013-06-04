@@ -4,7 +4,7 @@ package org.sisioh.trinity
 class TestApp extends Controller {
 
   get("/hey") {
-    request => render.plain("hello").ok.toFuture
+    request => render.withPlain("hello").withOk.toFuture
   }
 
   class TestView extends MustacheView {
@@ -16,7 +16,7 @@ class TestApp extends Controller {
 
   get("/test") {
     request =>
-      render.view(new TestView).toFuture
+      render.withView(new TestView).toFuture
   }
 
   get("/scalate") {
@@ -25,7 +25,7 @@ class TestApp extends Controller {
         "name" -> "Scalate",
         "languages" -> List("Java", "Scala", "Clojure", "Groovy")
       )
-      render.view(new ScalateView("scalate_test.ssp", bindings)).toFuture
+      render.withView(new ScalateView("scalate_test.ssp", bindings)).toFuture
   }
 
 
@@ -41,7 +41,7 @@ class TestApp extends Controller {
           println("content type is " + avatar.contentType)
           avatar.writeToFile("/tmp/avatar") //writes uploaded avatar to /tmp/avatar
       }
-      render.plain("ok").toFuture
+      render.withPlain("ok").toFuture
   }
 
 
