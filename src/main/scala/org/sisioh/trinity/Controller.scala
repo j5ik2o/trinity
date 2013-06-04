@@ -60,7 +60,7 @@ class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends Loggi
   }
 
   def extractParams(request: RequestAdaptor, xs: Tuple2[_, _]) = {
-    request.routeParams += (xs._1.toString -> xs._2.asInstanceOf[ListBuffer[String]].head.toString)
+    request.copy(routeParams = request.routeParams + (xs._1.toString -> xs._2.asInstanceOf[ListBuffer[String]].head.toString))
   }
 
   def findRouteAndMatch(request: RequestAdaptor, method: HttpMethod) = {
