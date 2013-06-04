@@ -10,5 +10,5 @@ MVC framework by Finagle based
 - NotFoundハンドラとErorハンドラはPlay2にならってGlobalSettingに記述できるようにした
 
 - やること
--- 冗長なコードをリファクタリング
--- var撲滅!!!
+    - 冗長なコードをリファクタリング
+    - var撲滅!!!
