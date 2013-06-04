@@ -36,7 +36,7 @@ object TrinityBuild extends Build {
         "org.json4s" %% "json4s-jackson" % "3.2.2",
         "org.sisioh" %% "scala-dddbase-core" % "0.1.2",
         "org.clapper" %% "grizzled-slf4j" % "1.0.1",
-        "org.sisioh" %% "scala-toolbox" % "0.0.4",
+        "org.sisioh" %% "scala-toolbox" % "0.0.5-1",
         "org.scala-lang" % "scala-reflect" % "2.10.1",
         "org.slf4j" % "slf4j-api" % "1.6.6",
         "org.slf4j" % "log4j-over-slf4j" % "1.6.6",
@@ -51,6 +51,12 @@ object TrinityBuild extends Build {
           ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
           ),
         "com.twitter" %% "finagle-http" % "6.4.0" excludeAll(
+          ExclusionRule(organization = "log4j", name = "log4j"),
+          ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
+          ExclusionRule(organization = "org.slf4j", name = "slf4j-jdk14"),
+          ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
+          ),
+        "com.twitter" %% "ostrich" % "9.1.1" excludeAll(
           ExclusionRule(organization = "log4j", name = "log4j"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-jdk14"),
