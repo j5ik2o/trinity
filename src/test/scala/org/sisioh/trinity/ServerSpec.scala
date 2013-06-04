@@ -55,8 +55,9 @@ class ServerSpec extends SpecHelper {
 
   "app" should {
     "register" in {
-      TrinityServer.register(app)
-      TrinityServer.start()
+      val s = TrinityServer()
+      s.registerController(app)
+      s.start()
 
       Thread.sleep(5 * 60000)
     }
