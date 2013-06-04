@@ -9,30 +9,30 @@ import org.sisioh.scala.toolbox.LoggingEx
 
 class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends LoggingEx {
 
-  val routes = new RouteVector[(HttpMethod, PathPattern, Request => Future[Response])]
+  val routes = new RouteVector[(HttpMethod, PathPattern, RequestAdaptor => Future[ResponseBuilder])]
 
 
-  def get(path: String)(callback: Request => Future[Response]) {
+  def get(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.GET, path)(callback)
   }
 
-  def delete(path: String)(callback: Request => Future[Response]) {
+  def delete(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.DELETE, path)(callback)
   }
 
-  def post(path: String)(callback: Request => Future[Response]) {
+  def post(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.POST, path)(callback)
   }
 
-  def put(path: String)(callback: Request => Future[Response]) {
+  def put(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.PUT, path)(callback)
   }
 
-  def head(path: String)(callback: Request => Future[Response]) {
+  def head(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.HEAD, path)(callback)
   }
 
-  def patch(path: String)(callback: Request => Future[Response]) {
+  def patch(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.PATCH, path)(callback)
   }
 
@@ -50,7 +50,7 @@ class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends Loggi
 
   def dispatchRouteOrCallback(request: FinagleRequest, method: HttpMethod,
                               orCallback: FinagleRequest => Option[Future[FinagleResponse]]): Option[Future[FinagleResponse]] = {
-    val req = RequestAdapter(request)
+    val req = RequestAdaptor(request)
     findRouteAndMatch(req, method) match {
       case Some((method, pattern, callback)) =>
         Some(ResponseAdapter(callback(req)))
@@ -59,11 +59,11 @@ class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends Loggi
     }
   }
 
-  def extractParams(request: Request, xs: Tuple2[_, _]) = {
+  def extractParams(request: RequestAdaptor, xs: Tuple2[_, _]) = {
     request.routeParams += (xs._1.toString -> xs._2.asInstanceOf[ListBuffer[String]].head.toString)
   }
 
-  def findRouteAndMatch(request: Request, method: HttpMethod) = {
+  def findRouteAndMatch(request: RequestAdaptor, method: HttpMethod) = {
     var thematch: Option[Map[_, _]] = None
 
     routes.vector.find(route => route match {
@@ -80,13 +80,13 @@ class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends Loggi
 
   val stats = statsReceiver.scope("Controller")
 
-  def render = new Response
+  def render = new ResponseBuilder
 
   def redirect(location: String, message: String = "moved") = {
-    render.plain(message).status(301).header("Location", location)
+    render.withPlain(message).withStatus(301).withHeader("Location", location)
   }
 
-  def respondTo(r: Request)(callback: PartialFunction[ContentType, Future[Response]]): Future[Response] = {
+  def respondTo(r: RequestAdaptor)(callback: PartialFunction[ContentType, Future[ResponseBuilder]]): Future[ResponseBuilder] = {
     if (!r.routeParams.get("format").isEmpty) {
       val format = r.routeParams("format")
       val mime = FileService.getContentType("." + format)
@@ -109,7 +109,7 @@ class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends Loggi
     }
   }
 
-  def addRoute(method: HttpMethod, path: String)(callback: Request => Future[Response]) {
+  def addRoute(method: HttpMethod, path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     val regex = SinatraPathPatternParser(path)
     routes.add((method, regex, (r) => {
       stats.timeFuture("%s/Root/%s".format(method.toString, path.stripPrefix("/"))) {

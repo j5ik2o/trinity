@@ -7,7 +7,22 @@ import com.google.common.base.Splitter
 import scala.collection.JavaConversions._
 import org.jboss.netty.handler.codec.http.HttpMethod
 
-case class Request(rawRequest: FinagleRequest, error: Option[Throwable] = None)
+import com.twitter.finagle.http.{Request => FinagleRequest}
+import org.jboss.netty.handler.codec.http.{HttpMethod, Cookie, CookieDecoder}
+import scala.collection.JavaConverters._
+import org.sisioh.scala.toolbox.LoggingEx
+
+/**
+ * Adapts a FinagleRquest to a FinatraRequest
+ */
+object RequestAdaptor extends LoggingEx {
+
+  def apply(rawRequest: FinagleRequest): RequestAdaptor =
+    new RequestAdaptor(rawRequest)
+
+}
+
+case class RequestAdaptor(rawRequest: FinagleRequest, error: Option[Throwable] = None)
   extends RequestProxy {
 
   val routeParams: Map[String, String] = Map.empty

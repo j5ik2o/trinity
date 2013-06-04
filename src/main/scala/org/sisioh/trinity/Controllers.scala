@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
 class Controllers {
   private val controllers = ListBuffer[Controller]()
 
-  def render = new Response
+  def render = new ResponseBuilder
 
   def dispatch(request: FinagleRequest): Option[Future[FinagleResponse]] = {
     controllers.find {
