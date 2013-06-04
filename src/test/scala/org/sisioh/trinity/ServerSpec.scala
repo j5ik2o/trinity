@@ -7,7 +7,7 @@ class TestApp extends Controller {
     request => render.plain("hello").ok.toFuture
   }
 
-  class TestView extends View {
+  class TestView extends MustacheView {
     def template: String = "test_view.mustache"
 
     val test_val = "aaaa"
@@ -17,6 +17,15 @@ class TestApp extends Controller {
   get("/test") {
     request =>
       render.view(new TestView).toFuture
+  }
+
+  get("/scalate") {
+    request =>
+      val bindings = Map(
+        "name" -> "Scalate",
+        "languages" -> List("Java", "Scala", "Clojure", "Groovy")
+      )
+      render.view(new ScalateView("scalate_test.ssp", bindings)).toFuture
   }
 
 

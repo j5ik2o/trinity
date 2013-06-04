@@ -3,7 +3,7 @@ package org.sisioh.trinity
 import org.jboss.netty.util.CharsetUtil.UTF_8
 import org.specs2.mutable.Specification
 
-class MockView(val title: String) extends View {
+class MockView(val title: String) extends MustacheView {
   val template = "mock.mustache"
 }
 

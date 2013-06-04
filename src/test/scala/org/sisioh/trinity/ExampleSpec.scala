@@ -92,7 +92,7 @@ class ExampleSpec extends SpecHelper {
      *
      * curl http://localhost:7070/posts
      */
-    class AnView extends View {
+    class AnView extends MustacheView {
       val template = "an_view.mustache"
       val some_val = "random value here"
     }

@@ -69,7 +69,8 @@ object TrinityBuild extends Build {
           ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
           ),
         "commons-io" % "commons-io" % "1.3.2",
-        "com.github.spullara.mustache.java" % "compiler" % "0.8.8"
+        "com.github.spullara.mustache.java" % "compiler" % "0.8.8",
+        "org.fusesource.scalate" %% "scalate-core" % "1.6.1"
       ),
       publish
     )

@@ -15,7 +15,7 @@ case class Request(rawRequest: FinagleRequest, error: Option[Throwable] = None)
 
   val multiParams: Map[String, MultipartItem] = if (method == HttpMethod.POST) {
     getContent.markReaderIndex
-    val m = MultipartParsing(request)
+    val m = MultipartItem.fromRequest(request)
     getContent.resetReaderIndex()
     m
   } else Map.empty
