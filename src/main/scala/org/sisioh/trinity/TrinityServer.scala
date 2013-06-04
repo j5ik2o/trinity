@@ -29,23 +29,13 @@ import org.sisioh.scala.toolbox.LoggingEx
 
 object TrinityServer {
 
-  var fs: TrinityServer = new TrinityServer
-
-  def register(app: Controller) {
-    fs.register(app)
-  }
-
-  def start() {
-    fs.start()
-  }
-
-  def addFilter(filter: SimpleFilter[FinagleRequest, FinagleResponse]) {
-    fs.addFilter(filter)
-  }
+  def apply(globalSetting: Option[GlobalSetting] = None) =
+    new TrinityServer(globalSetting)
 
 }
 
-class TrinityServer extends LoggingEx with OstrichService {
+class TrinityServer(globalSetting: Option[GlobalSetting] = None)
+  extends LoggingEx with OstrichService {
 
   val controllers = new Controllers
   var filters: Seq[SimpleFilter[FinagleRequest, FinagleResponse]] = Seq.empty
@@ -59,7 +49,7 @@ class TrinityServer extends LoggingEx with OstrichService {
     }
   }
 
-  def register(app: Controller) {
+  def registerController(app: Controller) {
     controllers.add(app)
   }
 
@@ -113,7 +103,7 @@ class TrinityServer extends LoggingEx with OstrichService {
 
     initLogger()
 
-    val appService = new ControllerService(controllers)
+    val appService = new ControllerService(controllers, globalSetting)
     val fileService = new FileService
 
     addFilter(fileService)
