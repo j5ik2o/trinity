@@ -1,15 +1,11 @@
 package org.sisioh.trinity
 
-import scala.collection.mutable.Map
 import com.twitter.finagle.http.{Request => FinagleRequest, RequestProxy}
 import util.Sorting
 import com.google.common.base.Splitter
 import scala.collection.JavaConversions._
-import org.jboss.netty.handler.codec.http.HttpMethod
-
 import com.twitter.finagle.http.{Request => FinagleRequest}
-import org.jboss.netty.handler.codec.http.{HttpMethod, Cookie, CookieDecoder}
-import scala.collection.JavaConverters._
+import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.scala.toolbox.LoggingEx
 
 /**
@@ -22,10 +18,10 @@ object RequestAdaptor extends LoggingEx {
 
 }
 
-case class RequestAdaptor(rawRequest: FinagleRequest, error: Option[Throwable] = None)
+case class RequestAdaptor(rawRequest: FinagleRequest, routeParams: Map[String, String] = Map.empty, error: Option[Throwable] = None)
   extends RequestProxy {
 
-  val routeParams: Map[String, String] = Map.empty
+//  var routeParams: Map[String, String] = Map.empty
   val request = rawRequest
 
   val multiParams: Map[String, MultipartItem] = if (method == HttpMethod.POST) {
@@ -33,7 +29,7 @@ case class RequestAdaptor(rawRequest: FinagleRequest, error: Option[Throwable] =
     val m = MultipartItem.fromRequest(request)
     getContent.resetReaderIndex()
     m
-  } else Map.empty
+  } else Map.empty[String, MultipartItem]
 
   def accepts: Seq[ContentType] = {
     val accept = this.getHeader("Accept")
