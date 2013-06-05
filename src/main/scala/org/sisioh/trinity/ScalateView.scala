@@ -9,6 +9,6 @@ case class ScalateView(path: String, context: Map[String, Any]) extends View {
   engine.workingDirectory = new File("./tmp")
 
   def render: String =
-    engine.layout(Config.get("template_path") + path, context)
+    engine.layout(ConfigProvider.get("template_path") + path, context)
 
 }

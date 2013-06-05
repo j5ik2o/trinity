@@ -9,30 +9,29 @@ import org.sisioh.scala.toolbox.LoggingEx
 
 class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends LoggingEx {
 
-  val routes = new RouteVector[(HttpMethod, PathPattern, RequestAdaptor => Future[ResponseBuilder])]
+  protected val routes = new RouteVector[Route]
 
-
-  def get(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
+  protected def get(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.GET, path)(callback)
   }
 
-  def delete(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
+  protected def delete(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.DELETE, path)(callback)
   }
 
-  def post(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
+  protected def post(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.POST, path)(callback)
   }
 
-  def put(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
+  protected def put(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.PUT, path)(callback)
   }
 
-  def head(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
+  protected def head(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.HEAD, path)(callback)
   }
 
-  def patch(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
+  protected def patch(path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     addRoute(HttpMethod.PATCH, path)(callback)
   }
 
@@ -43,50 +42,49 @@ class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends Loggi
       if (request.method == HttpMethod.HEAD) {
         dispatchRouteOrCallback(request, HttpMethod.GET, (request) => None)
       } else {
-        return None
+        None
       }
     })
   }
 
-  def dispatchRouteOrCallback(request: FinagleRequest, method: HttpMethod,
-                              orCallback: FinagleRequest => Option[Future[FinagleResponse]]): Option[Future[FinagleResponse]] = {
-    val req = RequestAdaptor(request)
-    findRouteAndMatch(req, method) match {
-      case Some((method, pattern, callback)) =>
-        Some(ResponseAdapter(callback(req)))
-      case None =>
-        orCallback(request)
+  private def dispatchRouteOrCallback
+  (request: FinagleRequest,
+   method: HttpMethod,
+   orCallback: FinagleRequest => Option[Future[FinagleResponse]])
+  : Option[Future[FinagleResponse]] = {
+    val requestAdaptor = RequestAdaptor(request)
+    findRouteAndMatch(requestAdaptor, method).map {
+      case Route(method, pattern, callback) =>
+        val routeParamsOpt = pattern(request.path.split('?').head)
+        val newReq = routeParamsOpt.map {
+          routeParams =>
+            requestAdaptor.copy(routeParams = requestAdaptor.routeParams ++ routeParams)
+        }.getOrElse(requestAdaptor)
+        Some(ResponseAdapter(callback(newReq)))
+    }.getOrElse {
+      orCallback(request)
     }
   }
 
-  def extractParams(request: RequestAdaptor, xs: Tuple2[_, _]) = {
-    request.copy(routeParams = request.routeParams + (xs._1.toString -> xs._2.asInstanceOf[ListBuffer[String]].head.toString))
+  case class Route(method: HttpMethod, pathPattern: PathPattern, action: (RequestAdaptor) => Future[ResponseBuilder])
+
+  private def findRouteAndMatch(request: RequestAdaptor, method: HttpMethod): Option[Route] = {
+    routes.vector.find {
+      case Route(m, p, _) =>
+        val routeParamsOpt = p(request.path.split('?').head)
+        if (routeParamsOpt.isDefined && m == method) true else false
+    }
   }
 
-  def findRouteAndMatch(request: RequestAdaptor, method: HttpMethod) = {
-    var thematch: Option[Map[_, _]] = None
+  private val stats = statsReceiver.scope("Controller")
 
-    routes.vector.find(route => route match {
-      case (_method, pattern, callback) =>
-        thematch = pattern(request.path.split('?').head)
-        if (thematch.orNull != null && _method == method) {
-          thematch.orNull.foreach(xs => extractParams(request, xs))
-          true
-        } else {
-          false
-        }
-    })
-  }
+  protected def render = new ResponseBuilder
 
-  val stats = statsReceiver.scope("Controller")
-
-  def render = new ResponseBuilder
-
-  def redirect(location: String, message: String = "moved") = {
+  protected def redirect(location: String, message: String = "moved"): ResponseBuilder = {
     render.withPlain(message).withStatus(301).withHeader("Location", location)
   }
 
-  def respondTo(r: RequestAdaptor)(callback: PartialFunction[ContentType, Future[ResponseBuilder]]): Future[ResponseBuilder] = {
+  protected def respondTo(r: RequestAdaptor)(callback: PartialFunction[ContentType, Future[ResponseBuilder]]): Future[ResponseBuilder] = {
     if (!r.routeParams.get("format").isEmpty) {
       val format = r.routeParams("format")
       val mime = FileService.getContentType("." + format)
@@ -94,24 +92,24 @@ class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends Loggi
       if (callback.isDefinedAt(contentType)) {
         callback(contentType)
       } else {
-        throw new Exception
+        throw new CallbackNotFoundException
       }
     } else {
       r.accepts.find {
         mimeType =>
           callback.isDefinedAt(mimeType)
-      } match {
-        case Some(contentType) =>
+      }.map {
+        contentType =>
           callback(contentType)
-        case None =>
-          throw new Exception
+      }.getOrElse {
+        throw new CallbackNotFoundException
       }
     }
   }
 
-  def addRoute(method: HttpMethod, path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
+  protected def addRoute(method: HttpMethod, path: String)(callback: RequestAdaptor => Future[ResponseBuilder]) {
     val regex = SinatraPathPatternParser(path)
-    routes.add((method, regex, (r) => {
+    routes.add(Route(method, regex, (r) => {
       stats.timeFuture("%s/Root/%s".format(method.toString, path.stripPrefix("/"))) {
         callback(r)
       }

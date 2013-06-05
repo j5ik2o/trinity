@@ -13,7 +13,7 @@ object TrinityBuild extends Build {
   }
 
   lazy val root = Project(
-    id = "finatra",
+    id = "trinity",
     base = file("."),
     settings = Project.defaultSettings ++ Seq(
       name := "trinity",
@@ -44,6 +44,7 @@ object TrinityBuild extends Build {
         "ch.qos.logback" % "logback-core" % "1.0.7" exclude("org.slf4j", "slf4j-api"),
         "ch.qos.logback" % "logback-classic" % "1.0.7",
         "commons-daemon" % "commons-daemon" % "1.0.15",
+        "com.github.kxbmap" %% "configs" % "0.1.0",
         "com.twitter" %% "finagle-core" % "6.4.0" excludeAll(
           ExclusionRule(organization = "log4j", name = "log4j"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
