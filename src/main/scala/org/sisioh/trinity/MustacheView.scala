@@ -14,7 +14,7 @@ private[trinity] class FinatraMustacheFactory(baseTemplatePath: String) extends 
   }
 
   override def getReader(resourceName: String): Reader = {
-    if (!"development".equals(Config.get("env"))) {
+    if (!"development".equals(ConfigProvider.get("env"))) {
       super.getReader(resourceName)
     }
     // In development mode, we look to the local file
@@ -48,8 +48,8 @@ private[trinity] class FinatraMustacheFactory(baseTemplatePath: String) extends 
 }
 
 object MustacheView {
-  lazy val mustacheFactory = new FinatraMustacheFactory(Config.get("local_docroot"))
-  var baseTemplatePath = Config.get("template_path")
+  lazy val mustacheFactory = new FinatraMustacheFactory(ConfigProvider.get("local_docroot"))
+  var baseTemplatePath = ConfigProvider.get("template_path")
 
   def templatePath = baseTemplatePath
 
@@ -73,7 +73,7 @@ abstract class MustacheView extends View {
     // In development mode, we flush all of our template
     // caches on each render. Otherwise, partials will
     // remain unchanged in the browser while being edited.
-    if ("development".equals(Config.get("env"))) {
+    if ("development".equals(ConfigProvider.get("env"))) {
       factory.invalidateMustacheCaches()
     }
 

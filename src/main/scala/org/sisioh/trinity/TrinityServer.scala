@@ -37,8 +37,8 @@ object TrinityServer {
 class TrinityServer(globalSetting: Option[GlobalSetting] = None)
   extends LoggingEx with OstrichService {
 
-  val controllers = new Controllers
-  var filters: Seq[SimpleFilter[FinagleRequest, FinagleResponse]] = Seq.empty
+  private val controllers = new Controllers
+  private var filters: Seq[SimpleFilter[FinagleRequest, FinagleResponse]] = Seq.empty
 
   val pid = ManagementFactory.getRuntimeMXBean().getName().split('@').head
 
@@ -53,28 +53,13 @@ class TrinityServer(globalSetting: Option[GlobalSetting] = None)
     controllers.add(app)
   }
 
-  def addFilter(filter: SimpleFilter[FinagleRequest, FinagleResponse]) {
+  def registerFilter(filter: SimpleFilter[FinagleRequest, FinagleResponse]) {
     filters = filters ++ Seq(filter)
   }
 
-  def initLogger() {
-
-    val handler = FileHandler(
-      filename = "log/finatra.log",
-      rollPolicy = Policy.Never,
-      append = false,
-      level = Some(Level.INFO))
-
-    val log: Logger = LoggerFactory(
-      node = "com.twitter",
-      level = Some(Level.DEBUG),
-      handlers = List(handler)).apply()
-
-  }
-
-  def initAdminService(runtimeEnv: RuntimeEnvironment) {
+  private def initAdminService(runtimeEnv: RuntimeEnvironment) {
     AdminServiceFactory(
-      httpPort = Config.getInt("stats_port"),
+      httpPort = ConfigProvider.getInt("stats_port"),
       statsNodes = StatsFactory(
         reporters = JsonStatsLoggerFactory(serviceName = Some("finatra")) ::
           TimeSeriesCollectorFactory() :: Nil
@@ -83,13 +68,13 @@ class TrinityServer(globalSetting: Option[GlobalSetting] = None)
   }
 
 
-  def shutdown() {
+  def shutdown {
     logger.info("shutting down")
     println("finatra process shutting down")
     System.exit(0)
   }
 
-  def start() {
+  def start {
     start(NullTracer, new RuntimeEnvironment(this))
   }
 
@@ -97,22 +82,20 @@ class TrinityServer(globalSetting: Option[GlobalSetting] = None)
 
     ServiceTracker.register(this)
 
-    if (Config.getBool("stats_enabled")) {
+    if (ConfigProvider.getBool("stats_enabled")) {
       initAdminService(runtimeEnv)
     }
-
-    initLogger()
 
     val appService = new ControllerService(controllers, globalSetting)
     val fileService = new FileService
 
-    addFilter(fileService)
+    registerFilter(fileService)
 
-    val port = Config.getInt("port")
+    val port = ConfigProvider.getInt("port")
 
     val service: Service[FinagleRequest, FinagleResponse] = allFilters(appService)
 
-    val http = Http().maxRequestSize(Config.getInt("max_request_megabytes").megabyte)
+    val http = Http().maxRequestSize(ConfigProvider.getInt("max_request_megabytes").megabyte)
 
     val codec = new RichHttp[FinagleRequest](http)
 
@@ -120,14 +103,14 @@ class TrinityServer(globalSetting: Option[GlobalSetting] = None)
       .codec(codec)
       .bindTo(new InetSocketAddress(port))
       .tracer(tracer)
-      .name(Config.get("name"))
+      .name(ConfigProvider.get("name"))
       .build(service)
 
     logger.info("process %s started on %s", pid, port)
 
-    println("finatra process " + pid + " started on port: " + port.toString)
-    println("config args:")
-    Config.printConfig()
+    println("trinity process " + pid + " started on port: " + port.toString)
+    //println("config args:")
+    //ConfigProvider.printConfig()
 
   }
 }

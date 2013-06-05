@@ -33,13 +33,13 @@ object ResponseBuilder {
 
 }
 
-case class ResponseBuilder(status: Int = 200,
-                    headers: Map[String, String] = Map.empty,
-                    cookies: Seq[Cookie] = Seq.empty,
-                    body: Option[ChannelBuffer] = None) extends LoggingEx {
+case class ResponseBuilder
+(status: Int = 200,
+ headers: Map[String, String] = Map.empty,
+ cookies: Seq[Cookie] = Seq.empty,
+ body: Option[ChannelBuffer] = None) extends LoggingEx {
 
   private lazy val cookieEncoder = new CookieEncoder(true)
-
 
   def withCookie(tuple: (String, String)): ResponseBuilder = {
     copy(cookies = cookies :+ new DefaultCookie(tuple._1, tuple._2))
@@ -125,7 +125,7 @@ case class ResponseBuilder(status: Int = 200,
     buf.toString
   }
 
-  def appendCollection[A, B](buf: StringBuilder, x: Map[A, B]) {
+  private def appendCollection[A, B](buf: StringBuilder, x: Map[A, B]) {
     x foreach {
       xs =>
         buf.append(xs._1)

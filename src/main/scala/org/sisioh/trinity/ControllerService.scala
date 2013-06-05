@@ -37,16 +37,16 @@ class ControllerService(controllers: Controllers, globalSettingOpt: Option[Globa
 
   def render = new ResponseBuilder
 
-  def attemptRequest(rawRequest: FinagleRequest) = {
+  protected def attemptRequest(rawRequest: FinagleRequest) = {
     val adaptedRequest = RequestAdaptor(rawRequest)
     controllers.dispatch(rawRequest).getOrElse {
       ResponseAdapter(notFoundHandler(adaptedRequest))
     }
   }
 
-  private def handleError(adaptedRequest: RequestAdaptor, t: Throwable) = {
-    error("Internal Server Error", t)
-    val newRequest = adaptedRequest.copy(error = Some(t))
+  protected def handleError(adaptedRequest: RequestAdaptor, throwable: Throwable) = {
+    error("Internal Server Error", throwable)
+    val newRequest = adaptedRequest.copy(error = Some(throwable))
     ResponseAdapter(errorHandler(newRequest))
   }
 

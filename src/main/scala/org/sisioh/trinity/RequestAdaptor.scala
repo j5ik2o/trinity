@@ -18,18 +18,21 @@ object RequestAdaptor extends LoggingEx {
 
 }
 
-case class RequestAdaptor(rawRequest: FinagleRequest, routeParams: Map[String, String] = Map.empty, error: Option[Throwable] = None)
+case class RequestAdaptor
+(rawRequest: FinagleRequest,
+ routeParams: Map[String, String] = Map.empty,
+ error: Option[Throwable] = None)
   extends RequestProxy {
 
-//  var routeParams: Map[String, String] = Map.empty
   val request = rawRequest
 
-  val multiParams: Map[String, MultipartItem] = if (method == HttpMethod.POST) {
-    getContent.markReaderIndex
-    val m = MultipartItem.fromRequest(request)
-    getContent.resetReaderIndex()
-    m
-  } else Map.empty[String, MultipartItem]
+  val multiParams: Map[String, MultipartItem] =
+    if (method == HttpMethod.POST) {
+      getContent.markReaderIndex
+      val m = MultipartItem.fromRequest(request)
+      getContent.resetReaderIndex()
+      m
+    } else Map.empty[String, MultipartItem]
 
   def accepts: Seq[ContentType] = {
     val accept = this.getHeader("Accept")
