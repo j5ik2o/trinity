@@ -4,10 +4,9 @@ import com.twitter.finagle.stats.{StatsReceiver, NullStatsReceiver}
 import com.twitter.util.Future
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
 import org.jboss.netty.handler.codec.http._
-import collection.mutable.ListBuffer
 import org.sisioh.scala.toolbox.LoggingEx
 
-class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends LoggingEx {
+abstract class Controller(config: Config, statsReceiver: StatsReceiver = NullStatsReceiver) extends LoggingEx {
 
   protected val routes = new RouteVector[Route]
 
@@ -87,7 +86,7 @@ class Controller(statsReceiver: StatsReceiver = NullStatsReceiver) extends Loggi
   protected def respondTo(r: RequestAdaptor)(callback: PartialFunction[ContentType, Future[ResponseBuilder]]): Future[ResponseBuilder] = {
     if (!r.routeParams.get("format").isEmpty) {
       val format = r.routeParams("format")
-      val mime = FileService.getContentType("." + format)
+      val mime = ContentType.getContentType("." + format)
       val contentType = ContentType.valueOf(mime).getOrElse(ContentType.All)
       if (callback.isDefinedAt(contentType)) {
         callback(contentType)

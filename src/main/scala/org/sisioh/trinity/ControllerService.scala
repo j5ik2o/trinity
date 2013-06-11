@@ -54,8 +54,8 @@ class ControllerService(controllers: Controllers, globalSettingOpt: Option[Globa
     val adaptedRequest = RequestAdaptor(rawRequest)
     Try {
       attemptRequest(rawRequest).rescue {
-        case t: Throwable =>
-          handleError(adaptedRequest, t)
+        case throwable: Throwable =>
+          handleError(adaptedRequest, throwable)
       }
     }.rescue {
       case e: Exception =>

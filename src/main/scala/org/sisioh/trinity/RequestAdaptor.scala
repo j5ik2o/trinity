@@ -8,21 +8,11 @@ import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.scala.toolbox.LoggingEx
 
-/**
- * Adapts a FinagleRquest to a FinatraRequest
- */
-object RequestAdaptor extends LoggingEx {
-
-  def apply(rawRequest: FinagleRequest): RequestAdaptor =
-    new RequestAdaptor(rawRequest)
-
-}
-
 case class RequestAdaptor
 (rawRequest: FinagleRequest,
  routeParams: Map[String, String] = Map.empty,
  error: Option[Throwable] = None)
-  extends RequestProxy {
+  extends RequestProxy with LoggingEx {
 
   val request = rawRequest
 
@@ -35,19 +25,17 @@ case class RequestAdaptor
     } else Map.empty[String, MultipartItem]
 
   def accepts: Seq[ContentType] = {
-    val accept = this.getHeader("Accept")
-    if (accept != null) {
-      val acceptParts = Splitter.on(',').split(accept).toArray
-      Sorting.quickSort(acceptParts)(AcceptOrdering)
-      val seq = acceptParts.map {
-        xs =>
-          val part = Splitter.on(";q=").split(xs).toArray.head
-          ContentType.valueOf(part).getOrElse(ContentType.All)
-      }.toSeq
-      seq
-    } else {
-      Seq.empty[ContentType]
-    }
+    val acceptOpt = Option(getHeader("Accept"))
+    acceptOpt.map {
+      accept =>
+        val acceptParts = Splitter.on(',').split(accept).toArray
+        Sorting.quickSort(acceptParts)(AcceptOrdering)
+        acceptParts.map {
+          xs =>
+            val part = Splitter.on(";q=").split(xs).toArray.head
+            ContentType.valueOf(part).getOrElse(ContentType.All)
+        }.toSeq
+    }.getOrElse(Seq.empty[ContentType])
   }
 
 }

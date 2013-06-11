@@ -33,20 +33,21 @@ abstract class SpecHelper extends Specification {
 
     val request = FinagleRequest(path, params.toList: _*)
     request.httpRequest.setMethod(method)
+
     headers.foreach {
       header =>
         request.httpRequest.setHeader(header._1, header._2)
     }
 
     val collection = new Controllers
-    collection.add(app)
+    collection.add(controller)
 
-    val appService = new ControllerService(collection, globalSetting)
+    val service = new ControllerService(collection, globalSetting)
 
-    lastResponse = appService(request)
+    lastResponse = service(request)
   }
 
-  def app: Controller
+  def controller: Controller
 
   def globalSetting: Option[GlobalSetting] = None
 
