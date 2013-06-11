@@ -67,7 +67,7 @@ abstract class Controller(config: Config, statsReceiver: StatsReceiver = NullSta
 
   case class Route(method: HttpMethod, pathPattern: PathPattern, action: (RequestAdaptor) => Future[ResponseBuilder])
 
-  private def findRouteAndMatch(request: RequestAdaptor, method: HttpMethod): Option[Route] = {
+  def findRouteAndMatch(request: RequestAdaptor, method: HttpMethod): Option[Route] = {
     routes.vector.find {
       case Route(m, p, _) =>
         val routeParamsOpt = p(request.path.split('?').head)
