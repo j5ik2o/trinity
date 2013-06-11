@@ -3,14 +3,9 @@ package org.sisioh.trinity
 import org.jboss.netty.util.CharsetUtil.UTF_8
 import org.specs2.mutable.Specification
 
-class MockView(val title: String) extends MustacheView {
-  val template = "mock.mustache"
-}
 
 class ResponseSpec extends Specification {
   def resp = new ResponseBuilder
-
-  def view = new MockView("howdy view")
 
   ".ok" should {
     "return a 200 response" in {
@@ -71,13 +66,13 @@ class ResponseSpec extends Specification {
     }
   }
 
-  ".view()" should {
-    "return a 200 view response" in {
-      val response = resp.withView(view)
-      val body = response.build.getContent.toString(UTF_8)
-
-      response.status must_==(200)
-      body must contain("howdy view")
-    }
-  }
+//  ".view()" should {
+//    "return a 200 view response" in {
+//      val response = resp.withView(view)
+//      val body = response.build.getContent.toString(UTF_8)
+//
+//      response.status must_==(200)
+//      body must contain("howdy view")
+//    }
+//  }
 }

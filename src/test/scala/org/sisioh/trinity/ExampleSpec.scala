@@ -16,7 +16,7 @@ class ExampleSpec extends SpecHelper {
 
   /* ###BEGIN_APP### */
 
-  class ExampleApp extends Controller {
+  class ExampleController(config: Config) extends Controller(config) {
 
     /**
      * Basic Example
@@ -87,19 +87,9 @@ class ExampleSpec extends SpecHelper {
         render.withPlain("ok").toFuture
     }
 
-    /**
-     * Rendering views
-     *
-     * curl http://localhost:7070/posts
-     */
-    class AnView extends MustacheView {
-      val template = "an_view.mustache"
-      val some_val = "random value here"
-    }
-
     get("/template") {
       request =>
-        val anView = new AnView
+        val anView = ScalateView(config, "test_view.mustache", Map("test_val" -> "aaaa"))
         render.withView(anView).toFuture
     }
 
@@ -175,7 +165,7 @@ class ExampleSpec extends SpecHelper {
 
   }
 
-  val app = new ExampleApp
+  val controller = new ExampleController(Config())
 
   override val globalSetting = Some(new GlobalSetting {
     def notFound(request: RequestAdaptor): Future[ResponseBuilder] = {

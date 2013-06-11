@@ -1,23 +1,23 @@
 package org.sisioh.trinity
 
 
-class TestApp extends Controller {
+class TestController(config: Config) extends Controller(config) {
 
   get("/hey") {
     request => render.withPlain("hello").withOk.toFuture
   }
 
-  class TestView extends MustacheView {
-    def template: String = "test_view.mustache"
+  //  class TestView extends MustacheView {
+  //    def template: String = "test_view.mustache"
+  //
+  //    val test_val = "aaaa"
+  //  }
 
-    val test_val = "aaaa"
-  }
 
-
-  get("/test") {
-    request =>
-      render.withView(new TestView).toFuture
-  }
+  //  get("/test") {
+  //    request =>
+  //      render.withView(new TestView).toFuture
+  //  }
 
   get("/scalate") {
     request =>
@@ -25,7 +25,7 @@ class TestApp extends Controller {
         "name" -> "Scalate",
         "languages" -> List("Java", "Scala", "Clojure", "Groovy")
       )
-      render.withView(new ScalateView("scalate_test.ssp", bindings)).toFuture
+      render.withView(ScalateView(config, "scalate_test.ssp", bindings)).toFuture
   }
 
 
@@ -49,14 +49,14 @@ class TestApp extends Controller {
 
 class ServerSpec extends SpecHelper {
 
-  def app = {
-    new TestApp
-  }
+  val config = Config()
+
+  def controller = new TestController(config)
 
   "app" should {
     "register" in {
-      val s = TrinityServer()
-      s.registerController(app)
+      val s = TrinityServer(config)
+      s.registerController(controller)
       s.start()
 
       Thread.sleep(5 * 60000)

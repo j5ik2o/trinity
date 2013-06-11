@@ -2,7 +2,7 @@ package org.sisioh.trinity
 
 import org.jboss.netty.handler.codec.http._
 
-class CookieApp extends Controller {
+class CookieTestController(config: Config) extends Controller(config) {
 
   get("/sendCookie") {
     request => render.withPlain("get:path").withCookie("Foo", "Bar").toFuture
@@ -18,8 +18,8 @@ class CookieApp extends Controller {
 
 class CookieSpec extends SpecHelper {
 
-  def app = {
-    new CookieApp
+  def controller = {
+    new CookieTestController(Config(""))
   }
 
   "basic k/v cookie" should {
