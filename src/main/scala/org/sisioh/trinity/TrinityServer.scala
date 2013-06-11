@@ -1,6 +1,6 @@
 package org.sisioh.trinity
 
-import com.twitter.finagle.builder.ServerBuilder
+import com.twitter.finagle.builder.{Server, ServerBuilder}
 
 
 import com.twitter.finagle.http._
@@ -19,6 +19,7 @@ import com.twitter.ostrich.admin.TimeSeriesCollectorFactory
 import com.twitter.ostrich.admin.ServiceTracker
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.infrastructure.DurationUtil
+import com.twitter.util.Await
 
 object TrinityServer {
 
@@ -30,6 +31,7 @@ object TrinityServer {
 class TrinityServer(val config: Config, globalSetting: Option[GlobalSetting] = None)
   extends LoggingEx with OstrichService {
 
+  private var server: Server = _
   private val controllers = new Controllers
   private var filters: Seq[SimpleFilter[FinagleRequest, FinagleResponse]] = Seq.empty
 
@@ -62,6 +64,7 @@ class TrinityServer(val config: Config, globalSetting: Option[GlobalSetting] = N
 
 
   def shutdown {
+    Await.ready(server.close())
     info("shutting down")
     System.exit(0)
   }
@@ -118,7 +121,8 @@ class TrinityServer(val config: Config, globalSetting: Option[GlobalSetting] = N
         serverBuilder.hostConnectionMaxIdleTime(v.toTwitter)
     }
 
-    serverBuilder
+
+    server = serverBuilder
       .build(service)
 
     logger.info("process %s started on %s", pid, port)

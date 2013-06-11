@@ -38,7 +38,7 @@ object Config {
 
   private val instances: Map[String, Config] = Map()
 
-  def apply(configFilePath: String = "trinity.conf"): Config = {
+  def apply(configFilePath: String = "./trinity.conf"): Config = {
     instances.getOrElse(configFilePath, new Eval().apply[Config](new File(configFilePath)))
   }
 
