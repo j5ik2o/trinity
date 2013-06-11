@@ -10,7 +10,7 @@ class Controllers {
   def dispatch(request: FinagleRequest): Option[Future[FinagleResponse]] = {
     val requestAdaptor = RequestAdaptor(request)
     controllers.find {
-      _.findRouteAndMatch(requestAdaptor, request.method).isDefined
+      _.findRoute(requestAdaptor, request.method).isDefined
     }.flatMap {
       _.dispatch(request)
     }

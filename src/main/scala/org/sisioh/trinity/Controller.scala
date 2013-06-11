@@ -52,7 +52,7 @@ abstract class Controller(config: Config, statsReceiver: StatsReceiver = NullSta
    orCallback: FinagleRequest => Option[Future[FinagleResponse]])
   : Option[Future[FinagleResponse]] = {
     val requestAdaptor = RequestAdaptor(request)
-    findRouteAndMatch(requestAdaptor, method).map {
+    findRoute(requestAdaptor, method).map {
       case Route(method, pattern, callback) =>
         val routeParamsOpt = pattern(request.path.split('?').head)
         val newReq = routeParamsOpt.map {
@@ -67,7 +67,7 @@ abstract class Controller(config: Config, statsReceiver: StatsReceiver = NullSta
 
   case class Route(method: HttpMethod, pathPattern: PathPattern, action: (RequestAdaptor) => Future[ResponseBuilder])
 
-  def findRouteAndMatch(request: RequestAdaptor, method: HttpMethod): Option[Route] = {
+  def findRoute(request: RequestAdaptor, method: HttpMethod): Option[Route] = {
     routes.vector.find {
       case Route(m, p, _) =>
         val routeParamsOpt = p(request.path.split('?').head)

@@ -5,6 +5,7 @@ import org.sisioh.scala.toolbox.Loan._
 import scala.collection.JavaConversions._
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.multipart.{MixedFileUpload, HttpPostRequestDecoder}
+import scala.concurrent._
 
 case class MultipartItem(mixedFileUpload: MixedFileUpload) {
 
@@ -13,8 +14,10 @@ case class MultipartItem(mixedFileUpload: MixedFileUpload) {
   val contentType = mixedFileUpload.getContentType
   val fileName = mixedFileUpload.getFilename
 
-  def writeToFile(path: String) = using(new FileOutputStream(path)) {
-    _.write(data)
+  def writeToFile(path: String) = future {
+    using(new FileOutputStream(path)) {
+      _.write(data)
+    }.get
   }
 
 }
