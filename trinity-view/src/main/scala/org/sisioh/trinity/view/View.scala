@@ -1,6 +1,8 @@
 package org.sisioh.trinity.view
 
-trait View {
+import org.sisioh.trinity.BodyRender
+
+trait View extends BodyRender {
 
   def render: String
 

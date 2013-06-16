@@ -58,6 +58,7 @@ class ExampleSpec extends SpecHelper {
      */
     get("/data.json") {
       request =>
+        import org.json4s.JsonDSL._
         render.withJson(Map("foo" -> "bar")).toFuture
     }
 
@@ -91,8 +92,8 @@ class ExampleSpec extends SpecHelper {
 
     get("/template") {
       request =>
-        val anView = ScalateView(config, "test_view.mustache", Map("test_val" -> "aaaa"))
-        render.withView(anView).toFuture
+        val view = ScalateView(config, "test_view.mustache", Map("test_val" -> "aaaa"))
+        render.withBody(view).toFuture
     }
 
 
@@ -121,6 +122,7 @@ class ExampleSpec extends SpecHelper {
      */
     get("/blog/index.:format") {
       request =>
+        import org.json4s.JsonDSL._
         respondTo(request) {
           case ContentType.TextHtml => render.withHtml("<h1>Hello</h1>").toFuture
           case ContentType.AppJson => render.withJson(Map("value" -> "hello")).toFuture

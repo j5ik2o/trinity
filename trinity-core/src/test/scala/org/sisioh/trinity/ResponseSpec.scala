@@ -57,6 +57,8 @@ class ResponseSpec extends Specification {
 
   ".json()" should {
     "return a 200 json response" in {
+      import org.json4s.JsonDSL._
+      import org.json4s.jackson.JsonMethods._
       val response = resp.withJson(Map("foo" -> "bar"))
       val body = response.build.getContent.toString(UTF_8)
 
