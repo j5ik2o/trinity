@@ -10,7 +10,6 @@ import org.sisioh.scala.toolbox.LoggingEx
 import org.json4s.jackson.Json
 import org.json4s.DefaultFormats
 import org.jboss.netty.buffer.ChannelBuffer
-import org.jboss.netty.handler.codec.http
 
 
 import com.twitter.util.Future
@@ -86,8 +85,8 @@ case class ResponseBuilder
   def withNotFound = withStatus(404)
 
 
-  def withView(v: View): ResponseBuilder =
-    withBody(v.render)
+//  def withView(v: View): ResponseBuilder =
+//    withBody(v.render)
 
 
   def build: FinagleResponse = {

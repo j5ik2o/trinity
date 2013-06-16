@@ -61,7 +61,7 @@ class FileResolver(config: Config) {
 
   private def hasLocalFile(path: String): Boolean = {
     val file = new File(config.localDocumentRoot, path)
-    if (file.toString.contains("..")) false
+    if (file.toString.contains("trinity-core/src/test")) false
     else if (!file.exists || file.isDirectory) false
     else if (!file.canRead) false
     else true

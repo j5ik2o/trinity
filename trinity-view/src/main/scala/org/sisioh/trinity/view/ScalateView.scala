@@ -1,7 +1,7 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.view
 
+import org.sisioh.trinity.Config
 import org.fusesource.scalate.TemplateEngine
-import java.io.File
 
 case class ScalateView(config: Config, path: String, context: Map[String, Any]) extends View {
 

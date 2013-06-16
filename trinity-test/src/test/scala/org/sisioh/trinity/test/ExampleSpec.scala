@@ -1,7 +1,9 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.test
 
 import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
+import org.sisioh.trinity._
+import org.sisioh.trinity.view.ScalateView
 
 class ExampleSpec extends SpecHelper {
 

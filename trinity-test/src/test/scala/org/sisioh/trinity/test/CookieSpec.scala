@@ -1,6 +1,7 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.test
 
 import org.jboss.netty.handler.codec.http._
+import org.sisioh.trinity.{Controller, Config}
 
 class CookieTestController(config: Config) extends Controller(config) {
 
