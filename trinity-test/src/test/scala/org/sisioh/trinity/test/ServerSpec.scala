@@ -28,7 +28,7 @@ class TestController(config: Config) extends Controller(config) {
         "name" -> "Scalate",
         "languages" -> List("Java", "Scala", "Clojure", "Groovy")
       )
-      render.withView(ScalateView(config, "scalate_test.ssp", bindings)).toFuture
+      render.withBody(ScalateView(config, "scalate_test.ssp", bindings)).toFuture
   }
 
 
