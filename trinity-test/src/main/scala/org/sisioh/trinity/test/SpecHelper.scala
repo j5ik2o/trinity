@@ -1,32 +1,36 @@
 package org.sisioh.trinity.test
 
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
-import com.twitter.util.Future
+import com.twitter.util.{Await, Future}
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.util.CharsetUtil.UTF_8
-import org.sisioh.trinity.{GlobalSetting, Controller, ControllerService, Controllers}
-import scala.collection.Map
+import org.sisioh.trinity.{Controller, ControllerService, Controllers}
 import org.specs2.mutable.Specification
+import scala.collection.Map
+import org.sisioh.trinity.domain.{Config, RouteRepositoryOnMemory, GlobalSetting}
+import org.sisioh.trinity.application.TrinityApplication
 
 class MockResponse(val originalResponse: FinagleResponse) {
 
-  def status = originalResponse.getStatus
+  def status = originalResponse.getStatus()
 
-  def code = originalResponse.getStatus.getCode
+  def code = originalResponse.getStatus().getCode
 
-  def body = originalResponse.getContent.toString(UTF_8)
+  def body = originalResponse.getContent().toString(UTF_8)
 
   def getHeader(name: String) = originalResponse.getHeader(name)
 
-  def getHeaders = originalResponse.getHeaders
+  def getHeaders = originalResponse.getHeaders()
 
 }
+
+class MockApplication(val config: Config = Config(), val routeRepository: RouteRepositoryOnMemory = new RouteRepositoryOnMemory) extends TrinityApplication
 
 abstract class SpecHelper extends Specification {
 
   sequential
 
-  def response = new MockResponse(lastResponse.get)
+  def response = new MockResponse(Await.result(lastResponse))
 
   var lastResponse: Future[FinagleResponse] = null
 

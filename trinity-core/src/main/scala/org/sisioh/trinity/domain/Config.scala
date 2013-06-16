@@ -1,12 +1,10 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.domain
 
-import java.io.File
 import com.twitter.util.Eval
+import java.io.File
 import scala.concurrent.duration.Duration
 
-object Environment extends Enumeration {
-  val Product, Development = Value
-}
+
 
 trait Config {
 
@@ -30,6 +28,23 @@ trait Config {
   val hostConnectionMaxIdleTime: Option[Duration]
   val hostConnectionMaxLifeTime: Option[Duration]
   val requestTimeout: Option[Int]
+
+  override def toString = Seq(
+    environment,
+    applicationName,
+    applicationPort,
+    statsEnabled,
+    statsPort,
+    templateWorkDir,
+    templatePath,
+    localDocumentRoot,
+    maxRequestSize,
+    maxResponseSize,
+    maxConcurrentRequests,
+    hostConnectionMaxIdleTime,
+    hostConnectionMaxLifeTime,
+    requestTimeout
+  ).mkString("Config(", ",", ")")
 }
 
 object Config {

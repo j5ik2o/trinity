@@ -1,4 +1,4 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.domain
 
 trait BodyRender {
 

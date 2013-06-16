@@ -7,6 +7,7 @@ import scala.collection.JavaConversions._
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.scala.toolbox.LoggingEx
+import org.sisioh.trinity.domain.{MultiPartItem, ContentType}
 
 case class RequestAdaptor
 (rawRequest: FinagleRequest,
@@ -16,13 +17,13 @@ case class RequestAdaptor
 
   val request = rawRequest
 
-  val multiParams: Map[String, MultipartItem] =
+  val multiParams: Map[String, MultiPartItem] =
     if (method == HttpMethod.POST) {
       getContent.markReaderIndex
-      val m = MultipartItem.fromRequest(request)
+      val m = MultiPartItem.fromRequest(request)
       getContent.resetReaderIndex()
       m
-    } else Map.empty[String, MultipartItem]
+    } else Map.empty[String, MultiPartItem]
 
   def accepts: Seq[ContentType] = {
     val acceptOpt = Option(getHeader("Accept"))

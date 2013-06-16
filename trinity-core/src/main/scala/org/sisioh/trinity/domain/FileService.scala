@@ -1,13 +1,12 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.domain
 
-import com.twitter.finagle.{Service, SimpleFilter}
-import org.jboss.netty.handler.codec.http.HttpResponseStatus._
-import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
-import com.twitter.util.Future
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
-
-import org.apache.commons.io.IOUtils
+import com.twitter.finagle.{Service, SimpleFilter}
+import com.twitter.util.Future
 import java.io.{FileInputStream, File, InputStream}
+import org.apache.commons.io.IOUtils
+import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
+import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.sisioh.scala.toolbox.LoggingEx
 
 object FileResolver {
@@ -16,7 +15,6 @@ object FileResolver {
     new FileResolver(config)
 
 }
-
 
 class FileResolver(config: Config) {
 

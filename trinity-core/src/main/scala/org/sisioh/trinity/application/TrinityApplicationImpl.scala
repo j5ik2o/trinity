@@ -1,41 +1,52 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.application
 
+import com.twitter.conversions.storage._
 import com.twitter.finagle.builder.{Server, ServerBuilder}
-
-
 import com.twitter.finagle.http._
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
+import com.twitter.finagle.tracing.{Tracer, NullTracer}
 import com.twitter.finagle.{Service, SimpleFilter}
+import com.twitter.ostrich.admin.AdminServiceFactory
+import com.twitter.ostrich.admin.JsonStatsLoggerFactory
+import com.twitter.ostrich.admin.RuntimeEnvironment
+import com.twitter.ostrich.admin.ServiceTracker
+import com.twitter.ostrich.admin.StatsFactory
+import com.twitter.ostrich.admin.TimeSeriesCollectorFactory
+import com.twitter.ostrich.admin.{Service => OstrichService}
+import com.twitter.util.Await
 import java.lang.management.ManagementFactory
 import java.net.InetSocketAddress
-import com.twitter.finagle.tracing.{Tracer, NullTracer}
-import com.twitter.conversions.storage._
-import com.twitter.ostrich.admin.{Service => OstrichService}
-import com.twitter.ostrich.admin.RuntimeEnvironment
-import com.twitter.ostrich.admin.AdminServiceFactory
-import com.twitter.ostrich.admin.StatsFactory
-import com.twitter.ostrich.admin.JsonStatsLoggerFactory
-import com.twitter.ostrich.admin.TimeSeriesCollectorFactory
-import com.twitter.ostrich.admin.ServiceTracker
 import org.sisioh.scala.toolbox.LoggingEx
+import org.sisioh.trinity.domain._
 import org.sisioh.trinity.infrastructure.DurationUtil
-import com.twitter.util.Await
+import org.sisioh.trinity.{ControllerService, Controller, Controllers}
+import com.twitter.ostrich.admin.TimeSeriesCollectorFactory
+import com.twitter.ostrich.admin.AdminServiceFactory
+import com.twitter.ostrich.admin.JsonStatsLoggerFactory
+import scala.Some
+import com.twitter.finagle.http.RichHttp
+import com.twitter.ostrich.admin.StatsFactory
 
-object TrinityServer {
 
-  def apply(config: Config, globalSetting: Option[GlobalSetting] = None) =
-    new TrinityServer(config, globalSetting)
-
-}
-
-class TrinityServer(val config: Config, globalSetting: Option[GlobalSetting] = None)
-  extends LoggingEx with OstrichService {
+class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSetting] = None)
+  extends TrinityApplication with LoggingEx with OstrichService {
 
   private var server: Server = _
+
+  val routeRepository = new RouteRepositoryOnMemory
+
   private val controllers = new Controllers
   private var filters: Seq[SimpleFilter[FinagleRequest, FinagleResponse]] = Seq.empty
 
-  val pid = ManagementFactory.getRuntimeMXBean().getName().split('@').head
+  val pid = ManagementFactory.getRuntimeMXBean.getName.split('@').head
+
+
+  def addRoute(route: Route):Unit = {
+    routeRepository.store(route)
+  }
+
+  def getRoute(routeId: RouteId) = routeRepository.resolve(routeId)
+
 
   def allFilters(baseService: Service[FinagleRequest, FinagleResponse]) = {
     filters.foldRight(baseService) {
@@ -44,8 +55,13 @@ class TrinityServer(val config: Config, globalSetting: Option[GlobalSetting] = N
     }
   }
 
-  def registerController(app: Controller) {
-    controllers.add(app)
+  /**
+   * コントローラを追加する。
+   *
+   * @param controller [[org.sisioh.trinity.Controller]]
+   */
+  def registerController(controller: Controller) {
+    controllers.add(controller)
   }
 
   def registerFilter(filter: SimpleFilter[FinagleRequest, FinagleResponse]) {
@@ -63,13 +79,13 @@ class TrinityServer(val config: Config, globalSetting: Option[GlobalSetting] = N
   }
 
 
-  def shutdown {
+  def shutdown() {
     Await.ready(server.close())
     info("shutting down")
     System.exit(0)
   }
 
-  def start {
+  def start() {
     start(NullTracer, new RuntimeEnvironment(this))
   }
 
@@ -81,14 +97,14 @@ class TrinityServer(val config: Config, globalSetting: Option[GlobalSetting] = N
       initAdminService(runtimeEnv)
     }
 
-    val appService = new ControllerService(controllers, globalSetting)
+    val controllerService = new ControllerService(controllers, globalSetting)
     val fileService = new FileService(config)
 
     registerFilter(fileService)
 
     val port = config.applicationPort.get
 
-    val service: Service[FinagleRequest, FinagleResponse] = allFilters(appService)
+    val service: Service[FinagleRequest, FinagleResponse] = allFilters(controllerService)
 
     val http = {
       val result = Http()
@@ -129,7 +145,7 @@ class TrinityServer(val config: Config, globalSetting: Option[GlobalSetting] = N
 
     println("trinity process " + pid + " started on port: " + port.toString)
     println("config args:")
-    println(Config)
+    println(config)
 
   }
 }

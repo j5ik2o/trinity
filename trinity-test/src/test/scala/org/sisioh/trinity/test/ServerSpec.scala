@@ -1,13 +1,16 @@
 package org.sisioh.trinity.test
 
-import org.sisioh.trinity.{Controller, TrinityServer, Config}
+import org.sisioh.trinity.Controller
+import org.sisioh.trinity.domain.Config
 import org.sisioh.trinity.view.ScalateView
+import org.sisioh.trinity.application.TrinityApplication
+import org.specs2.mutable.Specification
 
 
-class TestController(config: Config) extends Controller(config) {
+class TestController(application: TrinityApplication) extends Controller(application) {
 
   get("/hey") {
-    request => render.withPlain("hello").withOk.toFuture
+    request => responseBuilder.withPlain("hello").withOk.toFuture
   }
 
   //  class TestView extends MustacheView {
@@ -28,7 +31,7 @@ class TestController(config: Config) extends Controller(config) {
         "name" -> "Scalate",
         "languages" -> List("Java", "Scala", "Clojure", "Groovy")
       )
-      render.withBody(ScalateView(config, "scalate_test.ssp", bindings)).toFuture
+      responseBuilder.withBody(ScalateView(config, "scalate_test.ssp", bindings)).toFuture
   }
 
 
@@ -44,21 +47,20 @@ class TestController(config: Config) extends Controller(config) {
           println("content type is " + avatar.contentType)
           avatar.writeToFile("/tmp/avatar") //writes uploaded avatar to /tmp/avatar
       }
-      render.withPlain("ok").toFuture
+      responseBuilder.withPlain("ok").toFuture
   }
 
 
 }
 
-class ServerSpec extends SpecHelper {
+class ServerSpec extends Specification {
 
   val config = Config()
 
-  def controller = new TestController(config)
-
   "app" should {
     "register" in {
-      val s = TrinityServer(config)
+      val s = TrinityApplication(config)
+      val controller = new TestController(s)
       s.registerController(controller)
       s.start()
 

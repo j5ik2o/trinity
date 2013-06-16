@@ -1,9 +1,9 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.domain
 
+import java.util.regex.Pattern.{quote => escape}
 import scala.collection.mutable.{HashMap, ListBuffer}
 import scala.util.matching.Regex
 import scala.util.parsing.combinator.RegexParsers
-import java.util.regex.Pattern.{quote => escape}
 
 /**
  * A path pattern optionally matches a request path and extracts path

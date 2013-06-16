@@ -1,8 +1,15 @@
 package org.sisioh.trinity.view
 
-import org.sisioh.trinity.Config
 import org.fusesource.scalate.TemplateEngine
+import org.sisioh.trinity.domain.Config
 
+/**
+ * Scalateに対応した[[org.sisioh.trinity.view.View]]
+ *
+ * @param config
+ * @param path
+ * @param context
+ */
 case class ScalateView(config: Config, path: String, context: Map[String, Any] = Map.empty) extends View {
 
   private val engine = new TemplateEngine()

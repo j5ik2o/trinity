@@ -1,6 +1,6 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.infrastructure
 
-class RouteVector[A] {
+class MutableVector[A] {
 
   private var _vector = Vector[A]()
 

@@ -7,6 +7,7 @@ import org.sisioh.scala.toolbox.LoggingEx
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.jboss.netty.handler.codec.http.HttpVersion._
 import scala.Some
+import org.sisioh.trinity.domain.GlobalSetting
 
 class ControllerService(controllers: Controllers, globalSettingOpt: Option[GlobalSetting] = None)
   extends Service[FinagleRequest, FinagleResponse] with LoggingEx {
