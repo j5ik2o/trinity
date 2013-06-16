@@ -11,11 +11,20 @@ case class RouteId(method: HttpMethod, pathPattern: PathPattern) extends Identit
 
 trait Route extends Entity[RouteId] with EntityCloneable[RouteId, Route] {
   val action: Action
+
   def apply(request: RequestAdaptor): Future[ResponseBuilder]
 }
 
+
 object Route {
-  def apply(identity: RouteId, action: Action) = new RouteImpl(identity, action)
+
+  def apply(identity: RouteId, action: Action): Route = new RouteImpl(identity, action)
+
+  def apply(method: HttpMethod, path: String, action: Action)(implicit pathPatternParser: PathPatternParser): Route = {
+    val regex = pathPatternParser(path)
+    apply(RouteId(method, regex), action)
+  }
+
   def unapply(route: Route): Option[(RouteId, Action)] = Some(route.identity, route.action)
 }
 

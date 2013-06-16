@@ -1,6 +1,6 @@
 package org.sisioh.trinity.application
 
-import org.sisioh.trinity.domain.{RouteRepositoryOnMemory, GlobalSetting, Config, RouteRepository}
+import org.sisioh.trinity.domain._
 
 trait TrinityApplication {
 
@@ -8,6 +8,11 @@ trait TrinityApplication {
 
   val routeRepository: RouteRepositoryOnMemory
 
+  def addRoute(route: Route):Unit = {
+    routeRepository.store(route)
+  }
+
+  def getRoute(routeId: RouteId) = routeRepository.resolve(routeId)
 }
 
 object TrinityApplication {

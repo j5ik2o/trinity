@@ -1,11 +1,10 @@
 package org.sisioh.trinity.test
 
 import org.jboss.netty.handler.codec.http._
-import org.sisioh.trinity.{Controller}
-import org.sisioh.trinity.domain.{RouteRepositoryOnMemory, Config}
+import org.sisioh.trinity.domain.{ScalatraLikeController, RouteRepositoryOnMemory, Config}
 import org.sisioh.trinity.application.TrinityApplication
 
-class CookieTestController(application: TrinityApplication) extends Controller(application) {
+class CookieTestController(application: TrinityApplication) extends ScalatraLikeController(application) {
 
   get("/sendCookie") {
     request => responseBuilder.withPlain("get:path").withCookie("Foo", "Bar").toFuture

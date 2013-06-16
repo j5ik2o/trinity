@@ -4,7 +4,7 @@ import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
 import org.sisioh.trinity._
 import org.sisioh.trinity.view.ScalateView
-import org.sisioh.trinity.domain.{GlobalSetting, ContentType, Config}
+import org.sisioh.trinity.domain.{ScalatraLikeController, GlobalSetting, ContentType, Config}
 import org.sisioh.trinity.application.TrinityApplication
 
 class ExampleSpec extends SpecHelper {
@@ -20,7 +20,7 @@ class ExampleSpec extends SpecHelper {
 
   /* ###BEGIN_APP### */
 
-  class ExampleController(application: TrinityApplication) extends Controller(application) {
+  class ExampleController(application: TrinityApplication) extends ScalatraLikeController(application) {
 
     /**
      * Basic Example

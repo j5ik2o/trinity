@@ -2,6 +2,7 @@ package org.sisioh.trinity.application
 
 import com.twitter.conversions.storage._
 import com.twitter.finagle.builder.{Server, ServerBuilder}
+import com.twitter.finagle.http.RichHttp
 import com.twitter.finagle.http._
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
 import com.twitter.finagle.tracing.{Tracer, NullTracer}
@@ -19,13 +20,7 @@ import java.net.InetSocketAddress
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain._
 import org.sisioh.trinity.infrastructure.DurationUtil
-import org.sisioh.trinity.{ControllerService, Controller, Controllers}
-import com.twitter.ostrich.admin.TimeSeriesCollectorFactory
-import com.twitter.ostrich.admin.AdminServiceFactory
-import com.twitter.ostrich.admin.JsonStatsLoggerFactory
 import scala.Some
-import com.twitter.finagle.http.RichHttp
-import com.twitter.ostrich.admin.StatsFactory
 
 
 class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSetting] = None)
@@ -35,17 +30,13 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
 
   val routeRepository = new RouteRepositoryOnMemory
 
-  private val controllers = new Controllers
+
   private var filters: Seq[SimpleFilter[FinagleRequest, FinagleResponse]] = Seq.empty
 
   val pid = ManagementFactory.getRuntimeMXBean.getName.split('@').head
 
 
-  def addRoute(route: Route):Unit = {
-    routeRepository.store(route)
-  }
 
-  def getRoute(routeId: RouteId) = routeRepository.resolve(routeId)
 
 
   def allFilters(baseService: Service[FinagleRequest, FinagleResponse]) = {
@@ -55,13 +46,11 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
     }
   }
 
-  /**
-   * コントローラを追加する。
-   *
-   * @param controller [[org.sisioh.trinity.Controller]]
-   */
   def registerController(controller: Controller) {
-    controllers.add(controller)
+    controller.routeRepository.foreach{
+      e =>
+        routeRepository.store(e).get
+    }
   }
 
   def registerFilter(filter: SimpleFilter[FinagleRequest, FinagleResponse]) {
@@ -70,7 +59,7 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
 
   private def initAdminService(runtimeEnv: RuntimeEnvironment) {
     AdminServiceFactory(
-      httpPort = config.statsPort.get,
+      httpPort = config.statsPort.getOrElse(9990),
       statsNodes = StatsFactory(
         reporters = JsonStatsLoggerFactory(serviceName = Some("trinity")) ::
           TimeSeriesCollectorFactory() :: Nil
@@ -97,7 +86,7 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
       initAdminService(runtimeEnv)
     }
 
-    val controllerService = new ControllerService(controllers, globalSetting)
+    val controllerService = new ControllerService(this, globalSetting)
     val fileService = new FileService(config)
 
     registerFilter(fileService)

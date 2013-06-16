@@ -1,13 +1,12 @@
 package org.sisioh.trinity.test
 
-import org.sisioh.trinity.Controller
-import org.sisioh.trinity.domain.Config
+import org.sisioh.trinity.domain.{ScalatraLikeController, Config}
 import org.sisioh.trinity.view.ScalateView
 import org.sisioh.trinity.application.TrinityApplication
 import org.specs2.mutable.Specification
 
 
-class TestController(application: TrinityApplication) extends Controller(application) {
+class TestController(application: TrinityApplication) extends ScalatraLikeController(application) {
 
   get("/hey") {
     request => responseBuilder.withPlain("hello").withOk.toFuture
