@@ -114,7 +114,7 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity-example"
     )
-  ) dependsOn (core)
+  ) dependsOn (core, view)
 
   val root = Project(
     id = "trinity",
