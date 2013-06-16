@@ -1,6 +1,6 @@
 package org.sisioh.trinity
 
-import org.sisih.scala.toolbox.{EnumEntry, Enum}
+import org.sisioh.scala.toolbox.{EnumEntry, Enum}
 import javax.activation.MimetypesFileTypeMap
 import java.io.File
 

@@ -1,10 +1,11 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.test
 
-import com.twitter.util.Future
-import scala.collection.Map
-import org.jboss.netty.util.CharsetUtil.UTF_8
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
+import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http.HttpMethod
+import org.jboss.netty.util.CharsetUtil.UTF_8
+import org.sisioh.trinity.{GlobalSetting, Controller, ControllerService, Controllers}
+import scala.collection.Map
 import org.specs2.mutable.Specification
 
 class MockResponse(val originalResponse: FinagleResponse) {

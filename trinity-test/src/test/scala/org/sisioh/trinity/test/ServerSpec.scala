@@ -1,4 +1,7 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.test
+
+import org.sisioh.trinity.{Controller, TrinityServer, Config}
+import org.sisioh.trinity.view.ScalateView
 
 
 class TestController(config: Config) extends Controller(config) {
