@@ -14,3 +14,6 @@ project/plugins/project/
 
 .idea*
 *.iml
+
+tmp
+log
