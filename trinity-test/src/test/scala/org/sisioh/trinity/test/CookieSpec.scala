@@ -1,18 +1,20 @@
 package org.sisioh.trinity.test
 
 import org.jboss.netty.handler.codec.http._
-import org.sisioh.trinity.{Controller, Config}
+import org.sisioh.trinity.{Controller}
+import org.sisioh.trinity.domain.{RouteRepositoryOnMemory, Config}
+import org.sisioh.trinity.application.TrinityApplication
 
-class CookieTestController(config: Config) extends Controller(config) {
+class CookieTestController(application: TrinityApplication) extends Controller(application) {
 
   get("/sendCookie") {
-    request => render.withPlain("get:path").withCookie("Foo", "Bar").toFuture
+    request => responseBuilder.withPlain("get:path").withCookie("Foo", "Bar").toFuture
   }
 
   get("/sendAdvCookie") {
     val c = new DefaultCookie("Biz", "Baz")
     c.setSecure(true)
-    request => render.withPlain("get:path").withCookie(c).toFuture
+    request => responseBuilder.withPlain("get:path").withCookie(c).toFuture
   }
 
 }
@@ -20,7 +22,7 @@ class CookieTestController(config: Config) extends Controller(config) {
 class CookieSpec extends SpecHelper {
 
   def controller = {
-    new CookieTestController(Config(""))
+    new CookieTestController(new MockApplication(Config(), new RouteRepositoryOnMemory))
   }
 
   "basic k/v cookie" should {

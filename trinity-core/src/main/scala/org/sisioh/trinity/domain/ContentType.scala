@@ -1,8 +1,8 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.domain
 
-import org.sisioh.scala.toolbox.{EnumEntry, Enum}
-import javax.activation.MimetypesFileTypeMap
 import java.io.File
+import javax.activation.MimetypesFileTypeMap
+import org.sisioh.scala.toolbox.{EnumEntry, Enum}
 
 trait ContentType extends EnumEntry {
   val main: String

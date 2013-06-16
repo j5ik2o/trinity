@@ -4,6 +4,8 @@ import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
 import org.sisioh.trinity._
 import org.sisioh.trinity.view.ScalateView
+import org.sisioh.trinity.domain.{GlobalSetting, ContentType, Config}
+import org.sisioh.trinity.application.TrinityApplication
 
 class ExampleSpec extends SpecHelper {
 
@@ -18,7 +20,7 @@ class ExampleSpec extends SpecHelper {
 
   /* ###BEGIN_APP### */
 
-  class ExampleController(config: Config) extends Controller(config) {
+  class ExampleController(application: TrinityApplication) extends Controller(application) {
 
     /**
      * Basic Example
@@ -27,7 +29,7 @@ class ExampleSpec extends SpecHelper {
      */
     get("/hello") {
       request =>
-        render.withPlain("hello world").toFuture
+        responseBuilder.withPlain("hello world").toFuture
     }
 
     /**
@@ -38,7 +40,7 @@ class ExampleSpec extends SpecHelper {
     get("/user/:username") {
       request =>
         val username = request.routeParams.getOrElse("username", "default_user")
-        render.withPlain("hello " + username).toFuture
+        responseBuilder.withPlain("hello " + username).toFuture
     }
 
     /**
@@ -48,7 +50,7 @@ class ExampleSpec extends SpecHelper {
      */
     get("/headers") {
       request =>
-        render.withPlain("look at headers").withHeader("Foo", "Bar").toFuture
+        responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").toFuture
     }
 
     /**
@@ -59,7 +61,7 @@ class ExampleSpec extends SpecHelper {
     get("/data.json") {
       request =>
         import org.json4s.JsonDSL._
-        render.withJson(Map("foo" -> "bar")).toFuture
+        responseBuilder.withJson(Map("foo" -> "bar")).toFuture
     }
 
     /**
@@ -70,8 +72,8 @@ class ExampleSpec extends SpecHelper {
     get("/search") {
       request =>
         request.params.get("q") match {
-          case Some(q) => render.withPlain("no results for " + q).toFuture
-          case None => render.withPlain("query param q needed").withStatus(500).toFuture
+          case Some(q) => responseBuilder.withPlain("no results for " + q).toFuture
+          case None => responseBuilder.withPlain("query param q needed").withStatus(500).toFuture
         }
     }
 
@@ -87,13 +89,13 @@ class ExampleSpec extends SpecHelper {
             println("content type is " + avatar.contentType)
             avatar.writeToFile("/tmp/avatar") //writes uploaded avatar to /tmp/avatar
         }
-        render.withPlain("ok").toFuture
+        responseBuilder.withPlain("ok").toFuture
     }
 
     get("/template") {
       request =>
         val view = ScalateView(config, "test_view.mustache", Map("test_val" -> "aaaa"))
-        render.withBody(view).toFuture
+        responseBuilder.withBody(view).toFuture
     }
 
 
@@ -105,7 +107,7 @@ class ExampleSpec extends SpecHelper {
     get("/error") {
       request =>
         1234 / 0
-        render.withPlain("we never make it here").toFuture
+        responseBuilder.withPlain("we never make it here").toFuture
     }
 
 
@@ -124,8 +126,8 @@ class ExampleSpec extends SpecHelper {
       request =>
         import org.json4s.JsonDSL._
         respondTo(request) {
-          case ContentType.TextHtml => render.withHtml("<h1>Hello</h1>").toFuture
-          case ContentType.AppJson => render.withJson(Map("value" -> "hello")).toFuture
+          case ContentType.TextHtml => responseBuilder.withHtml("<h1>Hello</h1>").toFuture
+          case ContentType.AppJson => responseBuilder.withJson(Map("value" -> "hello")).toFuture
         }
     }
 
@@ -140,9 +142,9 @@ class ExampleSpec extends SpecHelper {
     get("/another/page") {
       request =>
         respondTo(request) {
-          case ContentType.TextHtml => render.withPlain("an html response").toFuture
-          case ContentType.AppJson => render.withPlain("an json response").toFuture
-          case ContentType.All => render.withPlain("default fallback response").toFuture
+          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toFuture
+          case ContentType.AppJson => responseBuilder.withPlain("an json response").toFuture
+          case ContentType.All => responseBuilder.withPlain("default fallback response").toFuture
         }
     }
 
@@ -164,12 +166,12 @@ class ExampleSpec extends SpecHelper {
         Stats.time("slow_thing time") {
           Thread.sleep(100)
         }
-        render.withPlain("slow").toFuture
+        responseBuilder.withPlain("slow").toFuture
     }
 
   }
 
-  val controller = new ExampleController(Config())
+  val controller = new ExampleController(new MockApplication(Config()))
 
   override val globalSetting = Some(new GlobalSetting {
     def notFound(request: RequestAdaptor): Future[ResponseBuilder] = {

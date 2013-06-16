@@ -10,6 +10,8 @@ import org.jboss.netty.util.CharsetUtil.UTF_8
 import org.json4s.jackson.JsonMethods._
 import org.sisioh.scala.toolbox.LoggingEx
 import org.json4s.JsonAST.JValue
+import org.sisioh.trinity.domain.BodyRender
+
 
 object ResponseAdapter {
 
@@ -110,14 +112,14 @@ case class ResponseBuilder
 
   override def toString = {
     val buf = new StringBuilder
-    buf.append(getClass().getSimpleName())
+    buf.append(getClass.getSimpleName)
     buf.append('\n')
     buf.append(HTTP_1_1.toString)
     buf.append(' ')
     buf.append(this.status)
     buf.append('\n')
     appendCollection[String, String](buf, this.headers)
-    buf.toString
+    buf.toString()
   }
 
   private def appendCollection[A, B](buf: StringBuilder, x: Map[A, B]) {
