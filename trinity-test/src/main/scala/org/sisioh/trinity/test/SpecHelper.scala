@@ -4,11 +4,10 @@ import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleR
 import com.twitter.util.{Await, Future}
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.util.CharsetUtil.UTF_8
-import org.sisioh.trinity.{Controller, ControllerService, Controllers}
+import org.sisioh.trinity.application.TrinityApplication
+import org.sisioh.trinity.domain._
 import org.specs2.mutable.Specification
 import scala.collection.Map
-import org.sisioh.trinity.domain.{Config, RouteRepositoryOnMemory, GlobalSetting}
-import org.sisioh.trinity.application.TrinityApplication
 
 class MockResponse(val originalResponse: FinagleResponse) {
 
@@ -24,7 +23,8 @@ class MockResponse(val originalResponse: FinagleResponse) {
 
 }
 
-class MockApplication(val config: Config = Config(), val routeRepository: RouteRepositoryOnMemory = new RouteRepositoryOnMemory) extends TrinityApplication
+class MockApplication(val config: Config = Config(), val routeRepository: RouteRepositoryOnMemory = new RouteRepositoryOnMemory)
+  extends TrinityApplication
 
 abstract class SpecHelper extends Specification {
 
@@ -44,15 +44,12 @@ abstract class SpecHelper extends Specification {
         request.httpRequest.setHeader(header._1, header._2)
     }
 
-    val collection = new Controllers
-    collection.add(controller)
-
-    val service = new ControllerService(collection, globalSetting)
+    val service = new ControllerService(new MockApplication(), globalSetting)
 
     lastResponse = service(request)
   }
 
-  def controller: Controller
+  def controller: ScalatraLikeController
 
   def globalSetting: Option[GlobalSetting] = None
 

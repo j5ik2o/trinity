@@ -2,10 +2,12 @@ package org.sisioh.trinity.example
 
 import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
+import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity._
 import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.domain.{GlobalSetting, ContentType, Config}
+import org.sisioh.trinity.domain._
 import org.sisioh.trinity.view.ScalateView
+import scala.Some
 
 
 /**
@@ -17,7 +19,7 @@ class UnauthorizedException extends Exception
 
 object TrinityExample {
 
-  class ExampleController(application: TrinityApplication) extends Controller(application) {
+  class ExampleController(application: TrinityApplication) extends ScalatraLikeController(application) {
 
     /**
      * Basic Example
@@ -190,10 +192,23 @@ object TrinityExample {
 
     }
 
+    def hogeIndex = Action {
+      request =>
+        ResponseBuilder().withBody("hoge").withOk.toFuture
+    }
+
+
+
     val config = Config()
+
     val application = TrinityApplication(config, Some(globalSettings))
     val controller = new ExampleController(application)
+
     application.registerController(controller)
+
+    implicit val parser = new SinatraPathPatternParser()
+    application.addRoute(Route(HttpMethod.GET, "/hoge", hogeIndex))
+
     application.start()
 
   }
