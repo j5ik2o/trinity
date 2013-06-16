@@ -6,6 +6,7 @@ import scala.collection.JavaConversions._
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.multipart.{MixedFileUpload, HttpPostRequestDecoder}
 import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 case class MultipartItem(mixedFileUpload: MixedFileUpload) {
 
