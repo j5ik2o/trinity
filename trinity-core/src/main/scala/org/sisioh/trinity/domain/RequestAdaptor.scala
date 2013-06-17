@@ -1,13 +1,13 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.domain
 
-import com.twitter.finagle.http.{Request => FinagleRequest, RequestProxy}
-import util.Sorting
 import com.google.common.base.Splitter
-import scala.collection.JavaConversions._
+import com.twitter.finagle.http.{Request => FinagleRequest, RequestProxy}
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.{MultiPartItem, ContentType}
+import scala.collection.JavaConversions._
+import util.Sorting
 
 case class RequestAdaptor
 (rawRequest: FinagleRequest,

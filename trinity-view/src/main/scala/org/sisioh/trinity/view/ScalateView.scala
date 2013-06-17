@@ -10,7 +10,7 @@ import org.sisioh.trinity.domain.Config
  * @param path
  * @param context
  */
-case class ScalateView(config: Config, path: String, context: Map[String, Any] = Map.empty) extends View {
+case class ScalateView(path: String, context: Map[String, Any] = Map.empty)(implicit config: Config) extends View {
 
   private val engine = new TemplateEngine()
   engine.workingDirectory = config.templateWorkDir

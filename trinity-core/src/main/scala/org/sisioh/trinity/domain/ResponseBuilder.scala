@@ -1,4 +1,4 @@
-package org.sisioh.trinity
+package org.sisioh.trinity.domain
 
 import com.twitter.finagle.http.{Response => FinagleResponse, Request => FinagleRequest}
 import com.twitter.util.Future
@@ -7,19 +7,10 @@ import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
 import org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1
 import org.jboss.netty.handler.codec.http._
 import org.jboss.netty.util.CharsetUtil.UTF_8
+import org.json4s.JsonAST.JValue
 import org.json4s.jackson.JsonMethods._
 import org.sisioh.scala.toolbox.LoggingEx
-import org.json4s.JsonAST.JValue
 import org.sisioh.trinity.domain.BodyRender
-
-
-object ResponseAdapter {
-
-  def apply(resp: Future[ResponseBuilder]): Future[FinagleResponse] = {
-    resp.map(_.build)
-  }
-
-}
 
 object ResponseBuilder {
 
@@ -107,7 +98,7 @@ case class ResponseBuilder
   }
 
   def toFuture = {
-    Future.value(this)
+    Future.value(build)
   }
 
   override def toString = {

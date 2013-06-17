@@ -4,6 +4,7 @@ import com.google.common.base.Splitter
 import scala.util.Sorting
 import org.specs2.mutable.Specification
 import scala.collection.JavaConversions._
+import org.sisioh.trinity.domain.AcceptOrdering
 
 class RequestSpec extends Specification {
   "AcceptOrdering" should {

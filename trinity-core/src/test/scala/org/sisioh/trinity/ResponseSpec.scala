@@ -2,6 +2,7 @@ package org.sisioh.trinity
 
 import org.jboss.netty.util.CharsetUtil.UTF_8
 import org.specs2.mutable.Specification
+import org.sisioh.trinity.domain.ResponseBuilder
 
 
 class ResponseSpec extends Specification {
