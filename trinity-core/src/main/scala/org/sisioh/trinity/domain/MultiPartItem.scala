@@ -7,23 +7,25 @@ import org.sisioh.scala.toolbox.Loan._
 import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
-import org.sisioh.trinity.domain
 
 /**
  * マルチパートアイテムを表現する値オブジェクト。
  *
  * @param mixedFileUpload [[org.jboss.netty.handler.codec.http.multipart.MixedFileUpload]]
  */
-case class MultiPartItem(mixedFileUpload: MixedFileUpload) {
+case class MultiPartItem(mixedFileUpload: MixedFileUpload, ioChunkSize: Int = 1024) {
 
-  val data = mixedFileUpload.get
+  val data = mixedFileUpload.getChannelBuffer
   val name = mixedFileUpload.getName
   val contentType = mixedFileUpload.getContentType
   val fileName = mixedFileUpload.getFilename
 
   def writeToFile(path: String) = future {
     using(new FileOutputStream(path)) {
-      _.write(data)
+      fis =>
+        while (data.readable()) {
+          data.readBytes(fis, ioChunkSize)
+        }
     }.get
   }
 
@@ -32,10 +34,10 @@ case class MultiPartItem(mixedFileUpload: MixedFileUpload) {
 object MultiPartItem {
 
   /**
-   * リクエストから[[domain.MultiPartItem]]のマップを取得する。
+   * リクエストから[[org.sisioh.trinity.domain.MultiPartItem]]のマップを取得する。
    *
    * @param request [[com.twitter.finagle.http.Request]]
-   * @return [[domain.MultiPartItem]]のマップ
+   * @return [[org.sisioh.trinity.domain.MultiPartItem]]のマップ
    */
   def fromRequest(request: FinagleRequest): Map[String, MultiPartItem] = {
     val httpPostRequestDecoder = new HttpPostRequestDecoder(request)
