@@ -17,7 +17,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
         globalSetting =>
           globalSetting.notFound(request)
       }.getOrElse {
-        render.withStatus(404).withPlain("Not Found").toFuture
+        builder.withStatus(404).withPlain("Not Found").toFuture
       }
   }
 
@@ -28,14 +28,14 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
       }.getOrElse {
         request.error match {
           case Some(ex) =>
-            render.withStatus(415).withPlain("No handler for this media type found").toFuture
+            builder.withStatus(415).withPlain("No handler for this media type found").toFuture
           case _ =>
-            render.withStatus(500).withPlain("Something went wrong!").toFuture
+            builder.withStatus(500).withPlain("Something went wrong!").toFuture
         }
       }
   }
 
-  def render = new ResponseBuilder
+  def builder = new ResponseBuilder
 
   def dispatch(request: RequestAdaptor): Option[Future[FinagleResponse]] = {
     logger.info("%s %s".format(request.method, request.uri))

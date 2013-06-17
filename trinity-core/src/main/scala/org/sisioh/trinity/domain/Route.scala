@@ -4,7 +4,6 @@ import com.twitter.finagle.http.Response
 import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.dddbase.core.{EntityCloneable, Entity, Identity}
-import RequestAdaptor
 
 case class RouteId(method: HttpMethod, pathPattern: PathPattern) extends Identity[(HttpMethod, PathPattern)] {
   def value: (HttpMethod, PathPattern) = (method, pathPattern)
