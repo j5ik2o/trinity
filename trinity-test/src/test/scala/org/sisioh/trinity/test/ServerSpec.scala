@@ -30,7 +30,7 @@ class TestController(application: TrinityApplication) extends ScalatraLikeContro
         "name" -> "Scalate",
         "languages" -> List("Java", "Scala", "Clojure", "Groovy")
       )
-      responseBuilder.withBody(ScalateView(config, "scalate_test.ssp", bindings)).toFuture
+      responseBuilder.withBody(ScalateView("scalate_test.ssp", bindings)).toFuture
   }
 
 

@@ -1,9 +1,10 @@
 package org.sisioh.trinity.domain
 
+import com.twitter.finagle.http.Response
 import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.dddbase.core.{EntityCloneable, Entity, Identity}
-import org.sisioh.trinity.{ResponseBuilder, RequestAdaptor}
+import RequestAdaptor
 
 case class RouteId(method: HttpMethod, pathPattern: PathPattern) extends Identity[(HttpMethod, PathPattern)] {
   def value: (HttpMethod, PathPattern) = (method, pathPattern)
@@ -12,7 +13,7 @@ case class RouteId(method: HttpMethod, pathPattern: PathPattern) extends Identit
 trait Route extends Entity[RouteId] with EntityCloneable[RouteId, Route] {
   val action: Action
 
-  def apply(request: RequestAdaptor): Future[ResponseBuilder]
+  def apply(request: RequestAdaptor): Future[Response]
 }
 
 
@@ -30,5 +31,5 @@ object Route {
 
 private[domain]
 class RouteImpl(val identity: RouteId, val action: Action) extends Route {
-  def apply(request: RequestAdaptor): Future[ResponseBuilder] = action(request)
+  def apply(request: RequestAdaptor): Future[Response] = action(request)
 }

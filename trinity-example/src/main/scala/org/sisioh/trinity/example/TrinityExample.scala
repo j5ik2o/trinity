@@ -8,6 +8,7 @@ import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain._
 import org.sisioh.trinity.view.ScalateView
 import scala.Some
+import com.twitter.finagle.http.Response
 
 
 /**
@@ -93,7 +94,7 @@ object TrinityExample {
 
     get("/template") {
       request =>
-        responseBuilder.withBody(ScalateView(config, "template.mustache", Map("some_val" -> "random value here"))).toFuture
+        responseBuilder.withBody(ScalateView("template.mustache", Map("some_val" -> "random value here"))).toFuture
     }
 
 
@@ -173,7 +174,7 @@ object TrinityExample {
   def main(args: Array[String]) = {
 
     val globalSettings = new GlobalSetting {
-      def error(request: RequestAdaptor): Future[ResponseBuilder] = {
+      def error(request: RequestAdaptor): Future[Response] = {
         request.error match {
           case Some(e: ArithmeticException) =>
             ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
@@ -186,7 +187,7 @@ object TrinityExample {
         }
       }
 
-      def notFound(request: RequestAdaptor): Future[ResponseBuilder] = {
+      def notFound(request: RequestAdaptor): Future[Response] = {
         ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
       }
 
@@ -194,7 +195,7 @@ object TrinityExample {
 
     def hogeIndex = Action {
       request =>
-        ResponseBuilder().withBody("hoge").withOk.toFuture
+        Future(ResponseBuilder().withBody("hoge").withOk.build)
     }
 
 

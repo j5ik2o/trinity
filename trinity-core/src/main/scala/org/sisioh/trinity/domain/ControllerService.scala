@@ -7,7 +7,6 @@ import org.jboss.netty.handler.codec.http.HttpVersion._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponseStatus}
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.{ResponseAdapter, ResponseBuilder, RequestAdaptor}
 
 class ControllerService(application: TrinityApplication, globalSettingOpt: Option[GlobalSetting] = None)
   extends Service[FinagleRequest, FinagleResponse] with LoggingEx {
@@ -63,7 +62,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
           routeParams =>
             requestAdaptor.copy(routeParams = requestAdaptor.routeParams ++ routeParams)
         }.getOrElse(requestAdaptor)
-        Some(ResponseAdapter(callback(newReq)))
+        Some(callback(newReq))
     }.getOrElse {
       orCallback(request)
     }
@@ -79,14 +78,14 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
 
   protected def attemptRequest(request: RequestAdaptor) = {
     dispatch(request).getOrElse {
-      ResponseAdapter(notFoundHandler(request))
+      notFoundHandler(request)
     }
   }
 
   protected def handleError(adaptedRequest: RequestAdaptor, throwable: Throwable) = {
     error("Internal Server Error", throwable)
     val newRequest = adaptedRequest.copy(error = Some(throwable))
-    ResponseAdapter(errorHandler(newRequest))
+    errorHandler(newRequest)
   }
 
   def apply(rawRequest: FinagleRequest): Future[FinagleResponse] = {

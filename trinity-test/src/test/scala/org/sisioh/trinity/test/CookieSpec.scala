@@ -3,17 +3,20 @@ package org.sisioh.trinity.test
 import org.jboss.netty.handler.codec.http._
 import org.sisioh.trinity.domain.{ScalatraLikeController, RouteRepositoryOnMemory, Config}
 import org.sisioh.trinity.application.TrinityApplication
+import com.twitter.util.Future
 
 class CookieTestController(application: TrinityApplication) extends ScalatraLikeController(application) {
 
   get("/sendCookie") {
-    request => responseBuilder.withPlain("get:path").withCookie("Foo", "Bar").toFuture
+    request =>
+      Future(responseBuilder.withPlain("get:path").withCookie("Foo", "Bar").build)
   }
 
   get("/sendAdvCookie") {
     val c = new DefaultCookie("Biz", "Baz")
     c.setSecure(true)
-    request => responseBuilder.withPlain("get:path").withCookie(c).toFuture
+    request =>
+      Future(responseBuilder.withPlain("get:path").withCookie(c).build)
   }
 
 }

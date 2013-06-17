@@ -1,13 +1,13 @@
 package org.sisioh.trinity.domain
 
 import com.twitter.util.Future
-import org.sisioh.trinity.{ResponseBuilder, RequestAdaptor}
+import com.twitter.finagle.http.Response
 
 
-trait Action extends (RequestAdaptor => Future[ResponseBuilder])
+trait Action extends (RequestAdaptor => Future[Response])
 
 object Action {
-  def apply(action: RequestAdaptor => Future[ResponseBuilder]) = new Action {
-    def apply(request: RequestAdaptor): Future[ResponseBuilder] = action(request)
+  def apply(action: RequestAdaptor => Future[Response]) = new Action {
+    def apply(request: RequestAdaptor): Future[Response] = action(request)
   }
 }
