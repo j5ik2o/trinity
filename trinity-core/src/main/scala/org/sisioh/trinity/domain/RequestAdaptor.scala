@@ -5,7 +5,6 @@ import com.twitter.finagle.http.{Request => FinagleRequest, RequestProxy}
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.scala.toolbox.LoggingEx
-import org.sisioh.trinity.domain.{MultiPartItem, ContentType}
 import scala.collection.JavaConversions._
 import util.Sorting
 
