@@ -1,14 +1,11 @@
 package org.sisioh.trinity.example
 
-import com.twitter.ostrich.stats.Stats
+import com.twitter.finagle.http.Response
 import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http.HttpMethod
-import org.sisioh.trinity._
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain._
 import org.sisioh.trinity.view.ScalateView
-import scala.Some
-import com.twitter.finagle.http.Response
 
 
 /**
@@ -161,8 +158,8 @@ object TrinityExample {
 
     get("/slow_thing") {
       request =>
-        Stats.incr("slow_thing")
-        Stats.time("slow_thing time") {
+        stats.counter("slow_thing").incr()
+        stats.time("slow_thing time") {
           Thread.sleep(100)
         }
         responseBuilder.withPlain("slow").toFuture
@@ -174,7 +171,7 @@ object TrinityExample {
   def main(args: Array[String]) = {
 
     val globalSettings = new GlobalSetting {
-      def error(request: RequestAdaptor): Future[Response] = {
+      def error(request: Request): Future[Response] = {
         request.error match {
           case Some(e: ArithmeticException) =>
             ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
@@ -187,7 +184,7 @@ object TrinityExample {
         }
       }
 
-      def notFound(request: RequestAdaptor): Future[Response] = {
+      def notFound(request: Request): Future[Response] = {
         ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
       }
 
@@ -208,7 +205,7 @@ object TrinityExample {
     application.registerController(controller)
 
     implicit val parser = new SinatraPathPatternParser()
-    application.addRoute(Route(HttpMethod.GET, "/hoge", hogeIndex))
+    application.addRoute(HttpMethod.GET, "/hoge", hogeIndex)
 
     application.start()
 

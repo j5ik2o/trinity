@@ -10,35 +10,36 @@ import com.twitter.finagle.http.Response
 abstract class ScalatraLikeController(application: TrinityApplication, statsReceiver: StatsReceiver = NullStatsReceiver)
   extends Controller with LoggingEx {
 
-  implicit val config = application.config
+  implicit protected val config = application.config
+  implicit protected val pathParser = new SinatraPathPatternParser()
 
   val routeRepository = new RouteRepositoryOnMemory
 
-  protected def get(path: String)(callback: RequestAdaptor => Future[Response]) {
+  protected def get(path: String)(callback: Request => Future[Response]) {
     addRoute(HttpMethod.GET, path)(callback)
   }
 
-  protected def delete(path: String)(callback: RequestAdaptor => Future[Response]) {
+  protected def delete(path: String)(callback: Request => Future[Response]) {
     addRoute(HttpMethod.DELETE, path)(callback)
   }
 
-  protected def post(path: String)(callback: RequestAdaptor => Future[Response]) {
+  protected def post(path: String)(callback: Request => Future[Response]) {
     addRoute(HttpMethod.POST, path)(callback)
   }
 
-  protected def put(path: String)(callback: RequestAdaptor => Future[Response]) {
+  protected def put(path: String)(callback: Request => Future[Response]) {
     addRoute(HttpMethod.PUT, path)(callback)
   }
 
-  protected def head(path: String)(callback: RequestAdaptor => Future[Response]) {
+  protected def head(path: String)(callback: Request => Future[Response]) {
     addRoute(HttpMethod.HEAD, path)(callback)
   }
 
-  protected def patch(path: String)(callback: RequestAdaptor => Future[Response]) {
+  protected def patch(path: String)(callback: Request => Future[Response]) {
     addRoute(HttpMethod.PATCH, path)(callback)
   }
 
-  private val stats = statsReceiver.scope("Controller")
+  protected val stats = statsReceiver.scope("Controller")
 
   protected def responseBuilder = new ResponseBuilder
 
@@ -46,7 +47,7 @@ abstract class ScalatraLikeController(application: TrinityApplication, statsRece
     responseBuilder.withPlain(message).withStatus(301).withHeader("Location", location).toFuture
   }
 
-  protected def respondTo(r: RequestAdaptor)(callback: PartialFunction[ContentType, Future[Response]]): Future[Response] = {
+  protected def respondTo(r: Request)(callback: PartialFunction[ContentType, Future[Response]]): Future[Response] = {
     if (!r.routeParams.get("format").isEmpty) {
       val format = r.routeParams("format")
       val mime = ContentType.getContentType("." + format)
@@ -69,9 +70,8 @@ abstract class ScalatraLikeController(application: TrinityApplication, statsRece
     }
   }
 
-  implicit val parser = new SinatraPathPatternParser()
 
-  protected def addRoute(method: HttpMethod, path: String)(callback: RequestAdaptor => Future[Response]) {
+  protected def addRoute(method: HttpMethod, path: String)(callback: Request => Future[Response]) {
     routeRepository.store(
       Route(method, path, Action {
         request =>

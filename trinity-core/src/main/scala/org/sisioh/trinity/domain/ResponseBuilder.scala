@@ -10,7 +10,6 @@ import org.jboss.netty.util.CharsetUtil.UTF_8
 import org.json4s.JsonAST.JValue
 import org.json4s.jackson.JsonMethods._
 import org.sisioh.scala.toolbox.LoggingEx
-import org.sisioh.trinity.domain.BodyRender
 
 object ResponseBuilder {
 

@@ -12,7 +12,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
   extends Service[FinagleRequest, FinagleResponse] with LoggingEx {
 
   protected def notFoundHandler = {
-    request: RequestAdaptor =>
+    request: Request =>
       globalSettingOpt.map {
         globalSetting =>
           globalSetting.notFound(request)
@@ -22,7 +22,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
   }
 
   protected def errorHandler = {
-    request: RequestAdaptor =>
+    request: Request =>
       globalSettingOpt.map {
         _.error(request)
       }.getOrElse {
@@ -37,7 +37,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
 
   def builder = new ResponseBuilder
 
-  def dispatch(request: RequestAdaptor): Option[Future[FinagleResponse]] = {
+  def dispatch(request: Request): Option[Future[FinagleResponse]] = {
     logger.info("%s %s".format(request.method, request.uri))
     dispatchRouteOrCallback(request, request.method, (request) => {
       // fallback to GET for 404'ed GET requests (curl -I support)
@@ -50,25 +50,24 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
   }
 
   private def dispatchRouteOrCallback
-  (request: RequestAdaptor,
+  (request: Request,
    method: HttpMethod,
-   orCallback: RequestAdaptor => Option[Future[FinagleResponse]])
+   orCallback: Request => Option[Future[FinagleResponse]])
   : Option[Future[FinagleResponse]] = {
-    val requestAdaptor = RequestAdaptor(request)
-    findRoute(requestAdaptor, method).map {
+    findRoute(request, method).map {
       case Route(RouteId(method, pattern), callback) =>
         val routeParamsOpt = pattern(request.path.split('?').head)
         val newReq = routeParamsOpt.map {
           routeParams =>
-            requestAdaptor.copy(routeParams = requestAdaptor.routeParams ++ routeParams)
-        }.getOrElse(requestAdaptor)
+            request.copy(routeParams = request.routeParams ++ routeParams)
+        }.getOrElse(request)
         Some(callback(newReq))
     }.getOrElse {
       orCallback(request)
     }
   }
 
-  def findRoute(request: RequestAdaptor, method: HttpMethod): Option[Route] = {
+  def findRoute(request: Request, method: HttpMethod): Option[Route] = {
     application.routeRepository.find {
       case Route(RouteId(m, p), _) =>
         val routeParamsOpt = p(request.path.split('?').head)
@@ -76,20 +75,20 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
     }
   }
 
-  protected def attemptRequest(request: RequestAdaptor) = {
+  protected def attemptRequest(request: Request) = {
     dispatch(request).getOrElse {
       notFoundHandler(request)
     }
   }
 
-  protected def handleError(adaptedRequest: RequestAdaptor, throwable: Throwable) = {
+  protected def handleError(adaptedRequest: Request, throwable: Throwable) = {
     error("Internal Server Error", throwable)
     val newRequest = adaptedRequest.copy(error = Some(throwable))
     errorHandler(newRequest)
   }
 
   def apply(rawRequest: FinagleRequest): Future[FinagleResponse] = {
-    val adaptedRequest = RequestAdaptor(rawRequest)
+    val adaptedRequest = Request(rawRequest)
     Try {
       attemptRequest(adaptedRequest).rescue {
         case throwable: Throwable =>
