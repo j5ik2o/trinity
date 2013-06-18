@@ -11,7 +11,7 @@ abstract class ScalatraLikeController(application: TrinityApplication, statsRece
   extends Controller with LoggingEx {
 
   implicit protected val config = application.config
-  implicit protected val pathParser = new SinatraPathPatternParser()
+  implicit protected val pathParser: PathPatternParser = new SinatraPathPatternParser()
 
   val routeRepository = new RouteRepositoryOnMemory
 
@@ -43,7 +43,7 @@ abstract class ScalatraLikeController(application: TrinityApplication, statsRece
 
   protected def responseBuilder = new ResponseBuilder
 
-  protected def redirect(location: String, message: String = "moved"): Future[Response]= {
+  protected def redirect(location: String, message: String = "moved"): Future[Response] = {
     responseBuilder.withPlain(message).withStatus(301).withHeader("Location", location).toFuture
   }
 
@@ -73,7 +73,7 @@ abstract class ScalatraLikeController(application: TrinityApplication, statsRece
 
   protected def addRoute(method: HttpMethod, path: String)(callback: Request => Future[Response]) {
     routeRepository.store(
-      Route(method, path, Action {
+      Route(method, path, FutureAction {
         request =>
           stats.timeFuture("%s/Root/%s".format(method.toString, path.stripPrefix("/"))) {
             callback(request)
