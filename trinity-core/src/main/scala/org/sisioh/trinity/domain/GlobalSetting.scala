@@ -5,8 +5,8 @@ import com.twitter.finagle.http.Response
 
 trait GlobalSetting {
 
-  def notFound(request: RequestAdaptor): Future[Response]
+  def notFound(request: Request): Future[Response]
 
-  def error(request: RequestAdaptor): Future[Response]
+  def error(request: Request): Future[Response]
 
 }

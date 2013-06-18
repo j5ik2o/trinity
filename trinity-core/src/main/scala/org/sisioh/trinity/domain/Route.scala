@@ -12,7 +12,7 @@ case class RouteId(method: HttpMethod, pathPattern: PathPattern) extends Identit
 trait Route extends Entity[RouteId] with EntityCloneable[RouteId, Route] {
   val action: Action
 
-  def apply(request: RequestAdaptor): Future[Response]
+  def apply(request: Request): Future[Response]
 }
 
 
@@ -30,5 +30,5 @@ object Route {
 
 private[domain]
 class RouteImpl(val identity: RouteId, val action: Action) extends Route {
-  def apply(request: RequestAdaptor): Future[Response] = action(request)
+  def apply(request: Request): Future[Response] = action(request)
 }

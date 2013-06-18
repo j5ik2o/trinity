@@ -177,11 +177,11 @@ class ExampleSpec extends SpecHelper {
   val controller = new ExampleController(new MockApplication(Config()))
 
   override val globalSetting = Some(new GlobalSetting {
-    def notFound(request: RequestAdaptor): Future[Response] = {
+    def notFound(request: Request): Future[Response] = {
       ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
     }
 
-    def error(request: RequestAdaptor): Future[Response] = {
+    def error(request: Request): Future[Response] = {
       request.error match {
         case Some(e: ArithmeticException) =>
           ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture

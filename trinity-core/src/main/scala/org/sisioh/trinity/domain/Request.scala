@@ -8,7 +8,7 @@ import org.sisioh.scala.toolbox.LoggingEx
 import scala.collection.JavaConversions._
 import util.Sorting
 
-case class RequestAdaptor
+case class Request
 (rawRequest: FinagleRequest,
  routeParams: Map[String, String] = Map.empty,
  error: Option[Throwable] = None)
