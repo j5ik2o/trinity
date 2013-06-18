@@ -1,15 +1,25 @@
 package org.sisioh.trinity.domain
 
-import com.twitter.util.Future
+import com.twitter.util.{FuturePool, Future => TFuture}
 import com.twitter.finagle.http.Response
+import scala.concurrent.{Future => SFuture, ExecutionContext}
+import org.sisioh.trinity.infrastructure.FutureUtil._
 
+trait Action extends (Request => TFuture[Response])
 
-trait Action extends (Request => Future[Response])
+case class FutureAction(action: Request => TFuture[Response]) extends Action {
+  def apply(request: Request): TFuture[Response] = action(request)
+}
 
-object Action {
-
-  def apply(action: Request => Future[Response]) = new Action {
-    def apply(request: Request): Future[Response] = action(request)
+case class SimpleAction(action: Request => Response)(implicit futurePool: FuturePool) extends Action {
+  def apply(request: Request): TFuture[Response] = futurePool {
+    action(request)
   }
+}
+
+case class ScalaFutureAction(action: Request => SFuture[Response])(implicit executor: ExecutionContext) extends Action {
+
+  def apply(request: Request): TFuture[Response] =
+    action(request).toTwitter
 
 }

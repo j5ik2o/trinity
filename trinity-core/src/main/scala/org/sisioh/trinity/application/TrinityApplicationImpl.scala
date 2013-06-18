@@ -35,10 +35,6 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
 
   val pid = ManagementFactory.getRuntimeMXBean.getName.split('@').head
 
-
-
-
-
   def allFilters(baseService: Service[FinagleRequest, FinagleResponse]) = {
     filters.foldRight(baseService) {
       (b, a) =>

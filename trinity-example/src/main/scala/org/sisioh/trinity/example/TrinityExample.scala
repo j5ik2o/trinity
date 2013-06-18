@@ -164,7 +164,6 @@ object TrinityExample {
         }
         responseBuilder.withPlain("slow").toFuture
     }
-
   }
 
 
@@ -190,23 +189,10 @@ object TrinityExample {
 
     }
 
-    def hogeIndex = Action {
-      request =>
-        Future(ResponseBuilder().withBody("hoge").withOk.build)
-    }
-
-
-
     val config = Config()
-
     val application = TrinityApplication(config, Some(globalSettings))
     val controller = new ExampleController(application)
-
     application.registerController(controller)
-
-    implicit val parser = new SinatraPathPatternParser()
-    application.addRoute(HttpMethod.GET, "/hoge", hogeIndex)
-
     application.start()
 
   }

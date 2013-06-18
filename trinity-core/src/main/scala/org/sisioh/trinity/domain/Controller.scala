@@ -1,7 +1,8 @@
 package org.sisioh.trinity.domain
 
-trait Controller {
+trait Controller extends Routes {
 
-  val routeRepository: RouteRepositoryOnMemory
+  implicit protected val config: Config
+  implicit protected val pathParser: PathPatternParser
 
 }
