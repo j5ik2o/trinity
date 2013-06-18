@@ -1,12 +1,13 @@
 package org.sisioh.trinity.example
 
 import com.twitter.finagle.http.Response
-import com.twitter.util.Future
+import com.twitter.util.{FuturePool, Future}
+import java.util.concurrent.Executors
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain._
 import org.sisioh.trinity.view.ScalateView
-
+import scala.concurrent._
 
 /**
  * Custom Error Handling with custom Exception
@@ -16,6 +17,38 @@ import org.sisioh.trinity.view.ScalateView
 class UnauthorizedException extends Exception
 
 object TrinityExample {
+
+  val threadPool = Executors.newCachedThreadPool()
+  implicit val futurePool = FuturePool(threadPool)
+  implicit val executor = ExecutionContext.fromExecutor(threadPool)
+
+  class PlayLikeController(application: TrinityApplication) extends AbstractController(application) {
+
+    def index = SimpleAction {
+      request: Request =>
+        responseBuilder.withOk.build
+    }
+
+    def getUser = FutureAction {
+      request: Request =>
+        val name = request.routeParams("name")
+        responseBuilder.withBody(name).toFuture
+    }
+
+    def getGroup = ScalaFutureAction {
+      request: Request =>
+        future {
+          val name = request.routeParams("name")
+          responseBuilder.withBody(name).build
+        }
+    }
+
+    addRoute(HttpMethod.GET, "/", index)
+    addRoute(HttpMethod.GET, "/user/:name", getUser)
+    addRoute(HttpMethod.GET, "/group/:name", getGroup)
+
+  }
+
 
   class ExampleController(application: TrinityApplication) extends ScalatraLikeController(application) {
 
@@ -191,8 +224,8 @@ object TrinityExample {
 
     val config = Config()
     val application = TrinityApplication(config, Some(globalSettings))
-    val controller = new ExampleController(application)
-    application.registerController(controller)
+    application.registerController(new PlayLikeController(application))
+    application.registerController(new ExampleController(application))
     application.start()
 
   }

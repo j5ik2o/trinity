@@ -1,19 +1,14 @@
 package org.sisioh.trinity.domain
 
+import com.twitter.finagle.http.Response
 import com.twitter.finagle.stats.{StatsReceiver, NullStatsReceiver}
 import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http._
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
-import com.twitter.finagle.http.Response
 
 abstract class ScalatraLikeController(application: TrinityApplication, statsReceiver: StatsReceiver = NullStatsReceiver)
-  extends Controller with LoggingEx {
-
-  implicit protected val config = application.config
-  implicit protected val pathParser: PathPatternParser = new SinatraPathPatternParser()
-
-  val routeRepository = new RouteRepositoryOnMemory
+  extends AbstractController(application, statsReceiver) with LoggingEx {
 
   protected def get(path: String)(callback: Request => Future[Response]) {
     addRoute(HttpMethod.GET, path)(callback)
@@ -38,10 +33,6 @@ abstract class ScalatraLikeController(application: TrinityApplication, statsRece
   protected def patch(path: String)(callback: Request => Future[Response]) {
     addRoute(HttpMethod.PATCH, path)(callback)
   }
-
-  protected val stats = statsReceiver.scope("Controller")
-
-  protected def responseBuilder = new ResponseBuilder
 
   protected def redirect(location: String, message: String = "moved"): Future[Response] = {
     responseBuilder.withPlain(message).withStatus(301).withHeader("Location", location).toFuture
