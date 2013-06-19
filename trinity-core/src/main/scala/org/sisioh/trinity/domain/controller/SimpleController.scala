@@ -8,7 +8,7 @@ import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.routing.{FutureAction, Route}
 import org.sisioh.trinity.domain.http.Request
 
-abstract class ScalatraLikeController(implicit application: TrinityApplication)
+abstract class SimpleController(implicit application: TrinityApplication)
   extends AbstractController with LoggingEx {
 
   protected def get(path: String)(callback: Request => Future[Response]) {

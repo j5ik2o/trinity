@@ -1,12 +1,13 @@
 package org.sisioh.trinity.test
 
-import org.sisioh.trinity.domain.{ScalatraLikeController, Config}
-import org.sisioh.trinity.view.ScalateView
+import org.sisioh.trinity.view.ScalateRender
 import org.sisioh.trinity.application.TrinityApplication
 import org.specs2.mutable.Specification
+import org.sisioh.trinity.domain.controller.SimpleController
+import org.sisioh.trinity.domain.config.Config
 
 
-class TestController(implicit application: TrinityApplication) extends ScalatraLikeController {
+class TestController(implicit application: TrinityApplication) extends SimpleController {
 
   get("/hey") {
     request => responseBuilder.withPlain("hello").withOk.toFuture
@@ -30,7 +31,7 @@ class TestController(implicit application: TrinityApplication) extends ScalatraL
         "name" -> "Scalate",
         "languages" -> List("Java", "Scala", "Clojure", "Groovy")
       )
-      responseBuilder.withBody(ScalateView("scalate_test.ssp", bindings)).toFuture
+      responseBuilder.withBody(ScalateRender("scalate_test.ssp", bindings)).toFuture
   }
 
 
