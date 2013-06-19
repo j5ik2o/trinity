@@ -131,7 +131,6 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
         serverBuilder.hostConnectionMaxIdleTime(v.toTwitter)
     }
 
-
     server = serverBuilder
       .build(service)
 
