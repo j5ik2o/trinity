@@ -1,10 +1,11 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.http
 
 import com.google.common.base.Splitter
 import com.twitter.finagle.http.{Request => FinagleRequest, RequestProxy}
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.scala.toolbox.LoggingEx
+import org.sisioh.trinity.domain.fileupload.MultiPartItem
 import scala.collection.JavaConversions._
 import util.Sorting
 

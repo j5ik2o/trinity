@@ -1,8 +1,9 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.http
 
 import java.io.File
 import javax.activation.MimetypesFileTypeMap
 import org.sisioh.scala.toolbox.{EnumEntry, Enum}
+import org.sisioh.trinity.domain.resource.FileReadFilter
 
 trait ContentType extends EnumEntry {
   val main: String
@@ -28,7 +29,7 @@ object ContentType extends Enum[ContentType] {
   }
 
 
-  private lazy val extMap = new MimetypesFileTypeMap(FileService.getClass.getResourceAsStream("/META-INF/mime.types"))
+  private lazy val extMap = new MimetypesFileTypeMap(FileReadFilter.getClass.getResourceAsStream("/META-INF/mime.types"))
 
   def valueOf(value: String): Option[ContentType] = {
     values.find(_.toString() == value)

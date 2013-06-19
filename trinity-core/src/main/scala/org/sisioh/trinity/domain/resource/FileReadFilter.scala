@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.resource
 
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
 import com.twitter.finagle.{Service, SimpleFilter}
@@ -8,6 +8,8 @@ import org.apache.commons.io.IOUtils
 import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.sisioh.scala.toolbox.LoggingEx
+import org.sisioh.trinity.domain.config.{Environment, Config}
+import org.sisioh.trinity.domain.http.ContentType
 
 object FileResolver {
 
@@ -68,15 +70,15 @@ class FileResolver(config: Config) {
 }
 
 
-object FileService {
+object FileReadFilter {
 
   def apply(config: Config) =
-    new FileService(config)
+    new FileReadFilter(config)
 
 
 }
 
-class FileService(config: Config)
+class FileReadFilter(config: Config)
   extends SimpleFilter[FinagleRequest, FinagleResponse] with LoggingEx {
 
   val fileResolver = FileResolver(config)

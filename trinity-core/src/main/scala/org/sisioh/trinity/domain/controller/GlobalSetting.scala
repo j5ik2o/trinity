@@ -1,7 +1,8 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.controller
 
-import com.twitter.util.Future
 import com.twitter.finagle.http.Response
+import com.twitter.util.Future
+import org.sisioh.trinity.domain.http.Request
 
 trait GlobalSetting {
 

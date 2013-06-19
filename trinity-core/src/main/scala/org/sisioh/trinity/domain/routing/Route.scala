@@ -1,18 +1,36 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.routing
 
 import com.twitter.finagle.http.Response
 import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.dddbase.core.{EntityCloneable, Entity, Identity}
+import org.sisioh.trinity.domain.{routing}
+import org.sisioh.trinity.domain.http.Request
 
+/**
+ * [[routing.Route]]のための識別子。
+ *
+ * @param method
+ * @param pathPattern
+ */
 case class RouteId(method: HttpMethod, pathPattern: PathPattern) extends Identity[(HttpMethod, PathPattern)] {
   def value: (HttpMethod, PathPattern) = (method, pathPattern)
 }
 
+/**
+ * ルートを表すエンティティ。
+ */
 trait Route extends Entity[RouteId] with EntityCloneable[RouteId, Route] {
+
   val action: Action
 
-  def apply(request: Request): Future[Response]
+  /**
+   *
+   * @param request
+   * @return
+   */
+  def apply(request: Request): Future[Response] = action(request)
+
 }
 
 
@@ -29,6 +47,5 @@ object Route {
 }
 
 private[domain]
-class RouteImpl(val identity: RouteId, val action: Action) extends Route {
-  def apply(request: Request): Future[Response] = action(request)
-}
+class RouteImpl(val identity: RouteId, val action: Action) extends Route
+
