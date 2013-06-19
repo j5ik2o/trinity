@@ -15,12 +15,20 @@ object FutureAction {
 
 }
 
-object SimpleAction {
+object FuturePoolAction {
   def apply(action: Request => Response)(implicit futurePool: FuturePool) = new Action {
     def apply(v1: Request): TFuture[Response] = futurePool {
       action(v1)
     }
   }
+}
+
+object PartialAction {
+
+  def apply(pfAction: PartialFunction[Request, TFuture[Response]]) = new Action {
+    def apply(v1: Request): TFuture[Response] = pfAction(v1)
+  }
+
 }
 
 object ScalaFutureAction {

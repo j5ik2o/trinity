@@ -48,7 +48,7 @@ object TrinityExample extends App {
 
   object PlayLikeController extends AbstractController {
 
-    def index = SimpleAction {
+    def index = FuturePoolAction {
       request =>
         responseBuilder.withOk.build
     }
@@ -65,6 +65,12 @@ object TrinityExample extends App {
           val name = request.routeParams("name")
           responseBuilder.withBody("group = " + name).build
         }
+    }
+
+    def test = PartialAction {
+      case Request(_, routeParams, _) =>
+        val name = routeParams("name")
+        responseBuilder.withBody("name = " + name).toFuture
     }
 
   }
