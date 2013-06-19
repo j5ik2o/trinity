@@ -4,8 +4,11 @@ import com.twitter.finagle.http.Response
 import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
 import org.sisioh.trinity.domain._
-import org.sisioh.trinity.view.ScalateView
+import org.sisioh.trinity.view.ScalateRender
 import scala.Some
+import org.sisioh.trinity.domain.controller.{GlobalSetting, SimpleController}
+import org.sisioh.trinity.domain.config.Config
+import org.sisioh.trinity.domain.http.{ResponseBuilder, Request, ContentType}
 
 class ExampleSpec extends SpecHelper {
 
@@ -22,7 +25,7 @@ class ExampleSpec extends SpecHelper {
 
   implicit val application = new MockApplication(Config())
 
-  object ExampleController extends ScalatraLikeController {
+  object ExampleController extends SimpleController {
 
     /**
      * Basic Example
@@ -96,7 +99,7 @@ class ExampleSpec extends SpecHelper {
 
     get("/template") {
       request =>
-        val view = ScalateView("test_view.mustache", Map("test_val" -> "aaaa"))
+        val view = ScalateRender("test_view.mustache", Map("test_val" -> "aaaa"))
         Future(responseBuilder.withBody(view).build)
     }
 

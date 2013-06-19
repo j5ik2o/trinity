@@ -27,7 +27,7 @@ import org.sisioh.trinity.domain.resource.FileReadFilter
 import org.sisioh.trinity.domain.controller.{GlobalSetting, ControllerService, Controller}
 import org.sisioh.trinity.domain.config.Config
 
-
+private[application]
 class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSetting] = None)
   extends TrinityApplication with LoggingEx with OstrichService {
 

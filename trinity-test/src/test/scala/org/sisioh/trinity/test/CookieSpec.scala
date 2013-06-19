@@ -3,9 +3,10 @@ package org.sisioh.trinity.test
 import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http._
 import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.domain.{ScalatraLikeController, Config}
+import org.sisioh.trinity.domain.controller.SimpleController
+import org.sisioh.trinity.domain.config.Config
 
-class CookieTestController()(implicit application: TrinityApplication) extends ScalatraLikeController {
+class CookieTestController()(implicit application: TrinityApplication) extends SimpleController {
 
   get("/sendCookie") {
     request =>

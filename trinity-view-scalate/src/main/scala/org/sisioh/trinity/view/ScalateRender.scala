@@ -1,16 +1,17 @@
 package org.sisioh.trinity.view
 
 import org.fusesource.scalate.TemplateEngine
-import org.sisioh.trinity.domain.Config
+import org.sisioh.trinity.domain.config.Config
+import org.sisioh.trinity.domain.http.BodyRender
 
 /**
- * Scalateに対応した[[org.sisioh.trinity.view.View]]
+ * Scalateに対応した[[org.sisioh.trinity.domain.http.BodyRender]]
  *
  * @param config
  * @param path
  * @param context
  */
-case class ScalateView(path: String, context: Map[String, Any] = Map.empty)(implicit config: Config) extends View {
+case class ScalateRender(path: String, context: Map[String, Any] = Map.empty)(implicit config: Config) extends BodyRender {
 
   private val engine = new TemplateEngine()
   engine.workingDirectory = config.templateWorkDir

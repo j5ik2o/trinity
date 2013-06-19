@@ -1,82 +1,12 @@
 package org.sisioh.trinity.example
 
-import com.twitter.finagle.http.Response
-import com.twitter.util.{FuturePool, Future}
-import java.util.concurrent.Executors
-import org.jboss.netty.handler.codec.http.HttpMethod
-import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.domain._
-import org.sisioh.trinity.view.ScalateView
-import scala.concurrent._
+import org.sisioh.trinity.domain.controller.SimpleController
+import org.sisioh.trinity.view.ScalateRender
+import org.sisioh.trinity.domain.http.ContentType
 
-/**
- * Custom Error Handling with custom Exception
- *
- * curl http://localhost:7070/unautorized
- */
-class UnauthorizedException extends Exception
+object ScalatraLikeExample extends App with Example {
 
-object TrinityExample extends App {
-
-  val globalSettings = new GlobalSetting {
-    def error(request: Request): Future[Response] = {
-      request.error match {
-        case Some(e: ArithmeticException) =>
-          ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
-        case Some(e: UnauthorizedException) =>
-          ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFuture
-        case Some(e) =>
-          ResponseBuilder().withStatus(415).withPlain("Unsupported Media Type!").toFuture
-        case _ =>
-          ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFuture
-      }
-    }
-
-    def notFound(request: Request): Future[Response] = {
-      ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
-    }
-
-  }
-
-  val config = Config()
-  implicit val application = TrinityApplication(config, Some(globalSettings))
-
-  // Thread Pool
-  val threadPool = Executors.newFixedThreadPool(10)
-  implicit val futurePool = FuturePool(threadPool)
-  implicit val executor = ExecutionContext.fromExecutor(threadPool)
-
-  object PlayLikeController extends AbstractController {
-
-    def index = FuturePoolAction {
-      request =>
-        responseBuilder.withOk.build
-    }
-
-    def getUser = FutureAction {
-      request =>
-        val name = request.routeParams("name")
-        responseBuilder.withBody("name = " + name).toFuture
-    }
-
-    def getGroup = ScalaFutureAction {
-      request =>
-        future {
-          val name = request.routeParams("name")
-          responseBuilder.withBody("group = " + name).build
-        }
-    }
-
-    def test = PartialAction {
-      case Request(_, routeParams, _) =>
-        val name = routeParams("name")
-        responseBuilder.withBody("name = " + name).toFuture
-    }
-
-  }
-
-
-  class ExampleController(implicit application: TrinityApplication) extends ScalatraLikeController {
+  object ScalatraLikeController extends SimpleController {
 
     /**
      * Basic Example
@@ -150,7 +80,7 @@ object TrinityExample extends App {
 
     get("/template") {
       request =>
-        responseBuilder.withBody(ScalateView("template.mustache", Map("some_val" -> "random value here"))).toFuture
+        responseBuilder.withBody(ScalateRender("template.mustache", Map("some_val" -> "random value here"))).toFuture
     }
 
 
@@ -166,17 +96,23 @@ object TrinityExample extends App {
     }
 
 
+    /**
+     * Custom Error Handling with custom Exception
+     *
+     * curl http://localhost:7070/unautorized
+     */
     get("/unauthorized") {
       request =>
         throw new UnauthorizedException
     }
 
 
-    /* Dispatch based on Content-Type
-    *
-    * curl http://localhost:7070/index.json
-    * curl http://localhost:7070/index.html
-    */
+    /**
+     * Dispatch based on Content-Type
+     *
+     * curl http://localhost:7070/index.json
+     * curl http://localhost:7070/index.html
+     */
     get("/blog/index.:format") {
       request =>
         import org.json4s.JsonDSL._
@@ -193,7 +129,6 @@ object TrinityExample extends App {
      * curl -H "Accept: application/json" http://localhost:7070/another/page
      * curl -H "Accept: foo/bar" http://localhost:7070/another/page
      */
-
     get("/another/page") {
       request =>
         respondTo(request) {
@@ -214,7 +149,6 @@ object TrinityExample extends App {
      * curl http://localhost:9990/stats.txt
      *
      */
-
     get("/slow_thing") {
       request =>
         stats.counter("slow_thing").incr()
@@ -225,15 +159,7 @@ object TrinityExample extends App {
     }
   }
 
-  implicit val pathParser = new SinatraPathPatternParser()
-
-  application.addRoute(HttpMethod.GET, "/play", PlayLikeController.index)
-  application.addRoute(HttpMethod.GET, "/play/user/:name", PlayLikeController.getUser)
-  application.addRoute(HttpMethod.GET, "/play/group/:name", PlayLikeController.getGroup)
-
-  application.registerController(PlayLikeController)
-  application.registerController(new ExampleController)
+  application.registerController(ScalatraLikeController)
   application.start()
 
 }
-

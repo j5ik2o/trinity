@@ -1,7 +1,7 @@
 package org.sisioh.trinity
 
 import org.specs2.mutable.Specification
-import org.sisioh.trinity.domain.SinatraPathPatternParser
+import org.sisioh.trinity.domain.routing.SinatraPathPatternParser
 
 class PathPatternSpec extends Specification {
 

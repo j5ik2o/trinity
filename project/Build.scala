@@ -81,11 +81,11 @@ object TrinityBuild extends Build {
     )
   )
 
-  lazy val view = Project(
-    id = "trinity-view",
-    base = file("trinity-view"),
+  lazy val viewScalate = Project(
+    id = "trinity-view-scalate",
+    base = file("trinity-view-scalate"),
     settings = commonSettings ++ Seq(
-      name := "trinity-view",
+      name := "trinity-view-scalate",
       libraryDependencies ++= Seq(
         "org.fusesource.scalate" %% "scalate-core" % "1.6.1"
       ),
@@ -105,7 +105,7 @@ object TrinityBuild extends Build {
       ),
       publish
     )
-  ) dependsOn(core, view)
+  ) dependsOn(core, viewScalate)
 
 
   lazy val example = Project(
@@ -114,7 +114,7 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity-example"
     )
-  ) dependsOn (core, view)
+  ) dependsOn (core, viewScalate)
 
   val root = Project(
     id = "trinity",
@@ -122,6 +122,6 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity"
     )
-  ) aggregate(core, view, test, example)
+  ) aggregate(core, viewScalate, test, example)
 
 }
