@@ -1,7 +1,7 @@
 package org.sisioh.trinity.example
 
 import org.sisioh.trinity.domain.controller.SimpleController
-import org.sisioh.trinity.view.ScalateRender
+import org.sisioh.trinity.view.ScalateRenderer
 import org.sisioh.trinity.domain.http.ContentType
 
 object ScalatraLikeExample extends App with Example {
@@ -80,7 +80,7 @@ object ScalatraLikeExample extends App with Example {
 
     get("/template") {
       request =>
-        responseBuilder.withBody(ScalateRender("template.mustache", Map("some_val" -> "random value here"))).toFuture
+        responseBuilder.withBody(ScalateRenderer("template.mustache", Map("some_val" -> "random value here"))).toFuture
     }
 
 
