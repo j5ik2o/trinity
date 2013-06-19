@@ -1,17 +1,16 @@
 package org.sisioh.trinity.test
 
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
+import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
 import com.twitter.util.{Await, Future}
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.util.CharsetUtil.UTF_8
 import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.domain._
+import org.sisioh.trinity.domain.config.Config
+import org.sisioh.trinity.domain.controller._
+import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
 import org.specs2.mutable.Specification
 import scala.collection.Map
-import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
-import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
-import org.sisioh.trinity.domain.controller.{Controller, GlobalSetting, SimpleController, ControllerService}
-import org.sisioh.trinity.domain.config.Config
 
 class MockResponse(val originalResponse: FinagleResponse) {
 
@@ -27,8 +26,12 @@ class MockResponse(val originalResponse: FinagleResponse) {
 
 }
 
-class MockApplication(val config: Config = Config(), val routeRepository: RouteRepositoryOnMemory = new RouteRepositoryOnMemory, val statsReceiver: StatsReceiver = NullStatsReceiver)
-  extends TrinityApplication{
+class MockApplication
+(val config: Config = Config(),
+ val routeRepository: RouteRepositoryOnMemory = new RouteRepositoryOnMemory,
+ val controllerRepository: ControllerRepository = new ControllerRepositoryOnMemory,
+ val statsReceiver: StatsReceiver = NullStatsReceiver)
+  extends TrinityApplication {
   def registerController(controller: Controller) {}
 
   def start() {}

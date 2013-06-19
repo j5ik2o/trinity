@@ -1,9 +1,9 @@
 package org.sisioh.trinity.example
 
+import org.jboss.netty.handler.codec.http.HttpMethod
+import org.sisioh.trinity.domain.controller.AbstractController
 import org.sisioh.trinity.domain.routing._
 import scala.concurrent._
-import org.sisioh.trinity.domain.controller.AbstractController
-import org.jboss.netty.handler.codec.http.HttpMethod
 
 object PlayLikeExample extends App with Example {
 
@@ -22,9 +22,8 @@ object PlayLikeExample extends App with Example {
      * `com.twitter.util.Future`で実現するアクション
      * @return
      */
-    def getUser = FutureAction {
+    def getUser(name: String) = FutureAction {
       request =>
-        val name = request.routeParams("name")
         responseBuilder.withBody("name = " + name).toFuture
     }
 
@@ -32,9 +31,8 @@ object PlayLikeExample extends App with Example {
      * `scala.concurrent.Future`で実現するアクション
      * @return
      */
-    def getGroup = ScalaFutureAction {
+    def getGroup(name: String) = ScalaFutureAction {
       request => future {
-        val name = request.routeParams("name")
         responseBuilder.withBody("group = " + name).build
       }
     }
@@ -43,9 +41,15 @@ object PlayLikeExample extends App with Example {
 
   implicit val pathParser = new SinatraPathPatternParser()
 
-  application.addRoute(HttpMethod.GET, "/", PlayLikeController.index)
-  application.addRoute(HttpMethod.GET, "/user/:name", PlayLikeController.getUser)
-  application.addRoute(HttpMethod.GET, "/group/:name", PlayLikeController.getGroup)
+  application.addRoute(HttpMethod.GET, "/", PlayLikeController.identity, PlayLikeController.index)
+  application.addRoute(HttpMethod.GET, "/user/:name", PlayLikeController.identity) {
+    request =>
+      PlayLikeController.getUser(request.routeParams("name"))(request)
+  }
+  application.addRoute(HttpMethod.GET, "/group/:name", PlayLikeController.identity) {
+    request =>
+      PlayLikeController.getGroup(request.routeParams("name"))(request)
+  }
 
   application.registerController(PlayLikeController)
   application.start()

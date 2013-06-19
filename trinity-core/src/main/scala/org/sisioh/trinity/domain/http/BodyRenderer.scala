@@ -1,6 +1,6 @@
 package org.sisioh.trinity.domain.http
 
-trait BodyRender {
+trait BodyRenderer {
 
   def render: String
 

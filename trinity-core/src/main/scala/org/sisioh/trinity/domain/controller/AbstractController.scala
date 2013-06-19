@@ -3,10 +3,9 @@ package org.sisioh.trinity.domain.controller
 import com.twitter.finagle.http.Response
 import com.twitter.util.Future
 import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.domain._
-import org.sisioh.trinity.domain.routing.{RouteRepositoryOnMemory, SinatraPathPatternParser, PathPatternParser}
 import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.http.{Request, ContentType}
+import org.sisioh.trinity.domain.routing.{RouteRepositoryOnMemory, SinatraPathPatternParser, PathPatternParser}
 
 abstract class AbstractController()(implicit val application: TrinityApplication) extends Controller {
 
@@ -15,6 +14,8 @@ abstract class AbstractController()(implicit val application: TrinityApplication
   implicit protected val pathParser: PathPatternParser = new SinatraPathPatternParser()
 
   val routeRepository: RouteRepositoryOnMemory = new RouteRepositoryOnMemory
+
+  val controllerRepository: ControllerRepository = new ControllerRepositoryOnMemory
 
   protected def redirect(location: String, message: String = "moved"): Future[Response] = {
     responseBuilder.withPlain(message).withStatus(301).withHeader("Location", location).toFuture

@@ -1,12 +1,16 @@
 package org.sisioh.trinity.domain.controller
 
 import com.twitter.finagle.stats.StatsReceiver
+import java.util.UUID
+import org.sisioh.dddbase.core.{EntityCloneable, Identity, Entity}
 import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.domain.routing.{Routes, PathPatternParser}
 import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.http.ResponseBuilder
+import org.sisioh.trinity.domain.routing.{Routes, PathPatternParser}
 
-trait Controller extends Routes {
+trait Controller extends Entity[Identity[UUID]] with Routes with EntityCloneable[Identity[UUID], Controller] {
+
+  val identity: Identity[UUID] = Identity(UUID.randomUUID())
 
   implicit protected val config: Config
   implicit protected val pathParser: PathPatternParser

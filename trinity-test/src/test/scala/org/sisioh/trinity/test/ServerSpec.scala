@@ -1,6 +1,6 @@
 package org.sisioh.trinity.test
 
-import org.sisioh.trinity.view.ScalateRender
+import org.sisioh.trinity.view.ScalateRenderer
 import org.sisioh.trinity.application.TrinityApplication
 import org.specs2.mutable.Specification
 import org.sisioh.trinity.domain.controller.SimpleController
@@ -31,7 +31,7 @@ class TestController(implicit application: TrinityApplication) extends SimpleCon
         "name" -> "Scalate",
         "languages" -> List("Java", "Scala", "Clojure", "Groovy")
       )
-      responseBuilder.withBody(ScalateRender("scalate_test.ssp", bindings)).toFuture
+      responseBuilder.withBody(ScalateRenderer("scalate_test.ssp", bindings)).toFuture
   }
 
 

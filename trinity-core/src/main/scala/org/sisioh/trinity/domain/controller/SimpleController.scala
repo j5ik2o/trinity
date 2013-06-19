@@ -5,8 +5,8 @@ import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http._
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.domain.routing.{FutureAction, Route}
 import org.sisioh.trinity.domain.http.Request
+import org.sisioh.trinity.domain.routing.{FutureAction, Route}
 
 abstract class SimpleController(implicit application: TrinityApplication)
   extends AbstractController with LoggingEx {
@@ -37,7 +37,7 @@ abstract class SimpleController(implicit application: TrinityApplication)
 
   protected def addRoute(method: HttpMethod, path: String)(callback: Request => Future[Response]) {
     routeRepository.store(
-      Route(method, path, FutureAction {
+      Route(method, path, identity, FutureAction {
         request =>
           stats.timeFuture("%s/Root/%s".format(method.toString, path.stripPrefix("/"))) {
             callback(request)

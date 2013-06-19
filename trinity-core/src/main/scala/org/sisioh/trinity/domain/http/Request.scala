@@ -19,9 +19,9 @@ case class Request
 
   val multiParams: Map[String, MultiPartItem] =
     if (method == HttpMethod.POST) {
-      getContent.markReaderIndex
+      getContent().markReaderIndex()
       val m = MultiPartItem.fromRequest(request)
-      getContent.resetReaderIndex()
+      getContent().resetReaderIndex()
       m
     } else Map.empty[String, MultiPartItem]
 

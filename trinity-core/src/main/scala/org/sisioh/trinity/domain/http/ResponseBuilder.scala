@@ -51,7 +51,7 @@ case class ResponseBuilder
   def withBody(body: String): ResponseBuilder =
     copy(body = Some(copiedBuffer(body, UTF_8)))
 
-  def withBody(bodyRender: BodyRender): ResponseBuilder =
+  def withBody(bodyRender: BodyRenderer): ResponseBuilder =
     withBody(bodyRender.render)
 
   def withPlain(body: String): ResponseBuilder = {

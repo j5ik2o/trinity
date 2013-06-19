@@ -24,7 +24,7 @@ import scala.Some
 import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
 import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
 import org.sisioh.trinity.domain.resource.FileReadFilter
-import org.sisioh.trinity.domain.controller.{GlobalSetting, ControllerService, Controller}
+import org.sisioh.trinity.domain.controller.{ControllerRepositoryOnMemory, GlobalSetting, ControllerService, Controller}
 import org.sisioh.trinity.domain.config.Config
 
 private[application]
@@ -37,6 +37,7 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
 
   val routeRepository = new RouteRepositoryOnMemory
 
+  val controllerRepository = new ControllerRepositoryOnMemory
 
   private var filters: Seq[SimpleFilter[FinagleRequest, FinagleResponse]] = Seq.empty
 
@@ -50,6 +51,7 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
   }
 
   def registerController(controller: Controller) {
+    controllerRepository.store(controller)
     controller.routeRepository.foreach {
       e =>
         routeRepository.store(e).get

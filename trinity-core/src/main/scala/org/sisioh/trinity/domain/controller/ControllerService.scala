@@ -7,8 +7,8 @@ import org.jboss.netty.handler.codec.http.HttpVersion._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponseStatus}
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.domain.routing.{RouteId, Route}
 import org.sisioh.trinity.domain.http.{ResponseBuilder, Request}
+import org.sisioh.trinity.domain.routing.{RouteId, Route}
 
 class ControllerService(application: TrinityApplication, globalSettingOpt: Option[GlobalSetting] = None)
   extends Service[FinagleRequest, FinagleResponse] with LoggingEx {
@@ -57,7 +57,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
    orCallback: Request => Option[Future[FinagleResponse]])
   : Option[Future[FinagleResponse]] = {
     findRoute(request, method).map {
-      case Route(RouteId(method, pattern), callback) =>
+      case Route(RouteId(method, pattern), _, callback) =>
         val routeParamsOpt = pattern(request.path.split('?').head)
         val newReq = routeParamsOpt.map {
           routeParams =>
@@ -71,9 +71,10 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
 
   def findRoute(request: Request, method: HttpMethod): Option[Route] = {
     application.routeRepository.find {
-      case Route(RouteId(m, p), _) =>
+      case Route(RouteId(m, p), controllerId, _) =>
+        val hasController = application.controllerRepository.contains(controllerId)
         val routeParamsOpt = p(request.path.split('?').head)
-        if (routeParamsOpt.isDefined && m == method) true else false
+        if (hasController.toOption.get && routeParamsOpt.isDefined && m == method) true else false
     }
   }
 
