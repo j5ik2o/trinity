@@ -6,7 +6,7 @@ import org.sisioh.trinity.application.TrinityApplication
 import org.specs2.mutable.Specification
 
 
-class TestController(application: TrinityApplication) extends ScalatraLikeController(application) {
+class TestController(implicit application: TrinityApplication) extends ScalatraLikeController {
 
   get("/hey") {
     request => responseBuilder.withPlain("hello").withOk.toFuture
@@ -58,8 +58,8 @@ class ServerSpec extends Specification {
 
   "app" should {
     "register" in {
-      val s = TrinityApplication(config)
-      val controller = new TestController(s)
+      implicit val s = TrinityApplication(config)
+      val controller = new TestController
       s.registerController(controller)
       s.start()
 

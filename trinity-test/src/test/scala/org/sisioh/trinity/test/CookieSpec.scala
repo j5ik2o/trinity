@@ -1,11 +1,11 @@
 package org.sisioh.trinity.test
 
-import org.jboss.netty.handler.codec.http._
-import org.sisioh.trinity.domain.{ScalatraLikeController, RouteRepositoryOnMemory, Config}
-import org.sisioh.trinity.application.TrinityApplication
 import com.twitter.util.Future
+import org.jboss.netty.handler.codec.http._
+import org.sisioh.trinity.application.TrinityApplication
+import org.sisioh.trinity.domain.{ScalatraLikeController, Config}
 
-class CookieTestController(application: TrinityApplication) extends ScalatraLikeController(application) {
+class CookieTestController()(implicit application: TrinityApplication) extends ScalatraLikeController {
 
   get("/sendCookie") {
     request =>
@@ -23,8 +23,10 @@ class CookieTestController(application: TrinityApplication) extends ScalatraLike
 
 class CookieSpec extends SpecHelper {
 
+  implicit val application = new MockApplication(Config())
+
   def controller = {
-    new CookieTestController(new MockApplication(Config(), new RouteRepositoryOnMemory))
+    new CookieTestController()
   }
 
   "basic k/v cookie" should {

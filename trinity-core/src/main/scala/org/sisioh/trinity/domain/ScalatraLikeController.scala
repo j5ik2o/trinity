@@ -7,8 +7,8 @@ import org.jboss.netty.handler.codec.http._
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
 
-abstract class ScalatraLikeController(application: TrinityApplication, statsReceiver: StatsReceiver = NullStatsReceiver)
-  extends AbstractController(application, statsReceiver) with LoggingEx {
+abstract class ScalatraLikeController(implicit application: TrinityApplication)
+  extends AbstractController with LoggingEx {
 
   protected def get(path: String)(callback: Request => Future[Response]) {
     addRoute(HttpMethod.GET, path)(callback)

@@ -1,12 +1,9 @@
 package org.sisioh.trinity.test
 
+import com.twitter.finagle.http.Response
 import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
-import org.sisioh.trinity._
-import org.sisioh.trinity.view.ScalateView
 import org.sisioh.trinity.domain._
-import org.sisioh.trinity.application.TrinityApplication
-import com.twitter.finagle.http.Response
 import org.sisioh.trinity.view.ScalateView
 import scala.Some
 
@@ -23,7 +20,9 @@ class ExampleSpec extends SpecHelper {
 
   /* ###BEGIN_APP### */
 
-  class ExampleController(application: TrinityApplication) extends ScalatraLikeController(application) {
+  implicit val application = new MockApplication(Config())
+
+  object ExampleController extends ScalatraLikeController {
 
     /**
      * Basic Example
@@ -174,7 +173,7 @@ class ExampleSpec extends SpecHelper {
 
   }
 
-  val controller = new ExampleController(new MockApplication(Config()))
+  val controller = ExampleController
 
   override val globalSetting = Some(new GlobalSetting {
     def notFound(request: Request): Future[Response] = {

@@ -1,4 +1,5 @@
 package org.sisioh.trinity.domain
+
 import com.twitter.finagle.stats.StatsReceiver
 
 trait Controller extends Routes {
@@ -8,7 +9,7 @@ trait Controller extends Routes {
 
   protected val statsReceiver: StatsReceiver
 
-  protected val stats = statsReceiver.scope("Controller")
+  protected lazy val stats = statsReceiver.scope("Controller")
 
   protected def responseBuilder = new ResponseBuilder
 }
