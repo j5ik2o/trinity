@@ -16,41 +16,61 @@ import scala.concurrent._
  */
 class UnauthorizedException extends Exception
 
-object TrinityExample {
+object TrinityExample extends App {
 
-  val threadPool = Executors.newCachedThreadPool()
+  val globalSettings = new GlobalSetting {
+    def error(request: Request): Future[Response] = {
+      request.error match {
+        case Some(e: ArithmeticException) =>
+          ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
+        case Some(e: UnauthorizedException) =>
+          ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFuture
+        case Some(e) =>
+          ResponseBuilder().withStatus(415).withPlain("Unsupported Media Type!").toFuture
+        case _ =>
+          ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFuture
+      }
+    }
+
+    def notFound(request: Request): Future[Response] = {
+      ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
+    }
+
+  }
+
+  val config = Config()
+  implicit val application = TrinityApplication(config, Some(globalSettings))
+
+  // Thread Pool
+  val threadPool = Executors.newFixedThreadPool(10)
   implicit val futurePool = FuturePool(threadPool)
   implicit val executor = ExecutionContext.fromExecutor(threadPool)
 
-  class PlayLikeController(application: TrinityApplication) extends AbstractController(application) {
+  object PlayLikeController extends AbstractController {
 
     def index = SimpleAction {
-      request: Request =>
+      request =>
         responseBuilder.withOk.build
     }
 
     def getUser = FutureAction {
-      request: Request =>
+      request =>
         val name = request.routeParams("name")
-        responseBuilder.withBody(name).toFuture
+        responseBuilder.withBody("name = " + name).toFuture
     }
 
     def getGroup = ScalaFutureAction {
-      request: Request =>
+      request =>
         future {
           val name = request.routeParams("name")
-          responseBuilder.withBody(name).build
+          responseBuilder.withBody("group = " + name).build
         }
     }
-
-    addRoute(HttpMethod.GET, "/", index)
-    addRoute(HttpMethod.GET, "/user/:name", getUser)
-    addRoute(HttpMethod.GET, "/group/:name", getGroup)
 
   }
 
 
-  class ExampleController(application: TrinityApplication) extends ScalatraLikeController(application) {
+  class ExampleController(implicit application: TrinityApplication) extends ScalatraLikeController {
 
     /**
      * Basic Example
@@ -199,34 +219,15 @@ object TrinityExample {
     }
   }
 
+  implicit val pathParser = new SinatraPathPatternParser()
 
-  def main(args: Array[String]) = {
+  application.addRoute(HttpMethod.GET, "/play", PlayLikeController.index)
+  application.addRoute(HttpMethod.GET, "/play/user/:name", PlayLikeController.getUser)
+  application.addRoute(HttpMethod.GET, "/play/group/:name", PlayLikeController.getGroup)
 
-    val globalSettings = new GlobalSetting {
-      def error(request: Request): Future[Response] = {
-        request.error match {
-          case Some(e: ArithmeticException) =>
-            ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
-          case Some(e: UnauthorizedException) =>
-            ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFuture
-          case Some(e) =>
-            ResponseBuilder().withStatus(415).withPlain("Unsupported Media Type!").toFuture
-          case _ =>
-            ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFuture
-        }
-      }
+  application.registerController(PlayLikeController)
+  application.registerController(new ExampleController)
+  application.start()
 
-      def notFound(request: Request): Future[Response] = {
-        ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
-      }
-
-    }
-
-    val config = Config()
-    val application = TrinityApplication(config, Some(globalSettings))
-    application.registerController(new PlayLikeController(application))
-    application.registerController(new ExampleController(application))
-    application.start()
-
-  }
 }
+

@@ -21,12 +21,15 @@ import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain._
 import org.sisioh.trinity.infrastructure.DurationUtil
 import scala.Some
+import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
 
 
 class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSetting] = None)
   extends TrinityApplication with LoggingEx with OstrichService {
 
   private var server: Server = _
+
+  val statsReceiver: StatsReceiver = NullStatsReceiver
 
   val routeRepository = new RouteRepositoryOnMemory
 
@@ -133,6 +136,7 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
     println(config)
 
   }
+
 }
 
 

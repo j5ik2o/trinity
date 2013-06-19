@@ -8,6 +8,7 @@ import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain._
 import org.specs2.mutable.Specification
 import scala.collection.Map
+import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
 
 class MockResponse(val originalResponse: FinagleResponse) {
 
@@ -23,7 +24,7 @@ class MockResponse(val originalResponse: FinagleResponse) {
 
 }
 
-class MockApplication(val config: Config = Config(), val routeRepository: RouteRepositoryOnMemory = new RouteRepositoryOnMemory)
+class MockApplication(val config: Config = Config(), val routeRepository: RouteRepositoryOnMemory = new RouteRepositoryOnMemory, val statsReceiver: StatsReceiver = NullStatsReceiver)
   extends TrinityApplication
 
 abstract class SpecHelper extends Specification {
