@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.controller
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
@@ -7,6 +7,8 @@ import org.jboss.netty.handler.codec.http.HttpVersion._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponseStatus}
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
+import org.sisioh.trinity.domain.routing.{RouteId, Route}
+import org.sisioh.trinity.domain.http.{ResponseBuilder, Request}
 
 class ControllerService(application: TrinityApplication, globalSettingOpt: Option[GlobalSetting] = None)
   extends Service[FinagleRequest, FinagleResponse] with LoggingEx {

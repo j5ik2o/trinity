@@ -1,9 +1,10 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.routing
 
 import com.twitter.finagle.http.Response
 import com.twitter.util.{Future => TFuture, FuturePool}
 import org.sisioh.trinity.infrastructure.FutureUtil._
 import scala.concurrent.{Future => SFuture, ExecutionContext}
+import org.sisioh.trinity.domain.http.Request
 
 trait Action extends (Request => TFuture[Response])
 

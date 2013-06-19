@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.fileupload
 
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import java.io._
@@ -7,6 +7,7 @@ import org.sisioh.scala.toolbox.Loan._
 import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
+import org.sisioh.trinity.domain.fileupload
 
 /**
  * マルチパートアイテムを表現する値オブジェクト。
@@ -34,10 +35,10 @@ case class MultiPartItem(mixedFileUpload: MixedFileUpload, ioChunkSize: Int = 10
 object MultiPartItem {
 
   /**
-   * リクエストから[[org.sisioh.trinity.domain.MultiPartItem]]のマップを取得する。
+   * リクエストから[[fileupload.MultiPartItem]]のマップを取得する。
    *
    * @param request [[com.twitter.finagle.http.Request]]
-   * @return [[org.sisioh.trinity.domain.MultiPartItem]]のマップ
+   * @return [[fileupload.MultiPartItem]]のマップ
    */
   def fromRequest(request: FinagleRequest): Map[String, MultiPartItem] = {
     val httpPostRequestDecoder = new HttpPostRequestDecoder(request)

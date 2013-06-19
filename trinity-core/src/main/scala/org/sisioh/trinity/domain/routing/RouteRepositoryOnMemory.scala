@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.routing
 
 import org.sisioh.dddbase.core.OnMemoryMutableRepository
 

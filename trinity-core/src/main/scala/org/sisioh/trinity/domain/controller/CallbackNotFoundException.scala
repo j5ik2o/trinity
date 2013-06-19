@@ -1,3 +1,3 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.controller
 
 case class CallbackNotFoundException() extends Exception

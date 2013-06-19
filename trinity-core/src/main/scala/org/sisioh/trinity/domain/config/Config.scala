@@ -1,9 +1,8 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.config
 
 import com.twitter.util.Eval
 import java.io.File
 import scala.concurrent.duration.Duration
-
 
 
 trait Config {

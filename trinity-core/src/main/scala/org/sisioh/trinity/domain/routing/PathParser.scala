@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.routing
 
 import java.util.regex.Pattern.{quote => escape}
 import scala.collection.mutable.{HashMap, ListBuffer}

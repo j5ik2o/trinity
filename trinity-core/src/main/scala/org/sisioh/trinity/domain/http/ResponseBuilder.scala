@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain
+package org.sisioh.trinity.domain.http
 
 import com.twitter.finagle.http.{Response => FinagleResponse, Request => FinagleRequest}
 import com.twitter.util.Future

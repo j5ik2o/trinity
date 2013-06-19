@@ -22,6 +22,10 @@ import org.sisioh.trinity.domain._
 import org.sisioh.trinity.infrastructure.DurationUtil
 import scala.Some
 import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
+import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
+import org.sisioh.trinity.domain.resource.FileReadFilter
+import org.sisioh.trinity.domain.controller.{GlobalSetting, ControllerService, Controller}
+import org.sisioh.trinity.domain.config.Config
 
 
 class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSetting] = None)
@@ -46,7 +50,7 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
   }
 
   def registerController(controller: Controller) {
-    controller.routeRepository.foreach{
+    controller.routeRepository.foreach {
       e =>
         routeRepository.store(e).get
     }
@@ -86,9 +90,9 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
     }
 
     val controllerService = new ControllerService(this, globalSetting)
-    val fileService = new FileService(config)
+    val fileReadFilter = new FileReadFilter(config)
 
-    registerFilter(fileService)
+    registerFilter(fileReadFilter)
 
     val port = config.applicationPort.get
 
