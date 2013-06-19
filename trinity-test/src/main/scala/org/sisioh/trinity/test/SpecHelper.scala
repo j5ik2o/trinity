@@ -11,6 +11,7 @@ import org.sisioh.trinity.domain.controller._
 import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
 import org.specs2.mutable.Specification
 import scala.collection.Map
+import com.twitter.finagle.SimpleFilter
 
 class MockResponse(val originalResponse: FinagleResponse) {
 
@@ -32,11 +33,15 @@ class MockApplication
  val controllerRepository: ControllerRepository = new ControllerRepositoryOnMemory,
  val statsReceiver: StatsReceiver = NullStatsReceiver)
   extends TrinityApplication {
+
   def registerController(controller: Controller) {}
+
+  def registerFilter(filter: SimpleFilter[FinagleRequest, FinagleResponse]) {}
 
   def start() {}
 
   def shutdown() {}
+
 }
 
 abstract class SpecHelper extends Specification {

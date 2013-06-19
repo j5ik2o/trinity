@@ -4,7 +4,7 @@ import org.sisioh.trinity.domain.controller.SimpleController
 import org.sisioh.trinity.view.ScalateRenderer
 import org.sisioh.trinity.domain.http.ContentType
 
-object ScalatraLikeExample extends App with Example {
+object ScalatraLikeExample extends App with ApplicationContext {
 
   object ScalatraLikeController extends SimpleController {
 

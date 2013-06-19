@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext
 
 class UnauthorizedException extends Exception
 
-trait Example {
+trait ApplicationContext {
 
   val globalSettings = new GlobalSetting {
     def error(request: Request): Future[Response] = {

@@ -4,13 +4,17 @@ import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity.domain.controller.AbstractController
 import org.sisioh.trinity.domain.routing._
 import scala.concurrent._
+import org.sisioh.trinity.application.TrinityApplication
 
-object PlayLikeExample extends App with Example {
+object PlayLikeExample extends App with ApplicationContext {
 
   object PlayLikeController extends AbstractController {
 
     /**
      * `com.twitter.util.FuturePool`で実現するアクション
+     *
+     * ブロッキングする処理でもスレッドプールが枯渇しなければ並行処理可能。
+     *
      * @return
      */
     def index = FuturePoolAction {
@@ -20,6 +24,9 @@ object PlayLikeExample extends App with Example {
 
     /**
      * `com.twitter.util.Future`で実現するアクション
+     *
+     * ブロッキングする処理を書かないようにする。
+     *
      * @return
      */
     def getUser(name: String) = FutureAction {
@@ -41,12 +48,12 @@ object PlayLikeExample extends App with Example {
 
   implicit val pathParser = new SinatraPathPatternParser()
 
-  application.addRoute(HttpMethod.GET, "/", PlayLikeController.identity, PlayLikeController.index)
-  application.addRoute(HttpMethod.GET, "/user/:name", PlayLikeController.identity) {
+  application.addRoute(HttpMethod.GET, "/", PlayLikeController, PlayLikeController.index)
+  application.addRoute(HttpMethod.GET, "/user/:name", PlayLikeController) {
     request =>
       PlayLikeController.getUser(request.routeParams("name"))(request)
   }
-  application.addRoute(HttpMethod.GET, "/group/:name", PlayLikeController.identity) {
+  application.addRoute(HttpMethod.GET, "/group/:name", PlayLikeController) {
     request =>
       PlayLikeController.getGroup(request.routeParams("name"))(request)
   }
