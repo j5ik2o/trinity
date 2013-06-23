@@ -3,7 +3,7 @@ trinity
 
 MVC framework by Finagle based
 
-- Finatraベースであったがバグ改修しているうちに原型をとどめなくなった。
-- Scala 2.10に対応
-- テンプレートエンジンは [Scalate](http://scalate.fusesource.org/) をサポートした。
-- NotFoundハンドラとErrorハンドラはPlay2にならってGlobalSettingに記述できるようにした
+- FinagleをベースにしたMVCフレームワーク
+- コントローラのアクションは基本的にFutureを返す前提。
+- Scalatraのようにコントローラにルート情報を記述する方法と、Play2のようにルート情報をまとめて記述する方法の、二通りが可能。
+- テンプレートエンジンは、Scalate, Thymeleafに対応。
