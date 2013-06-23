@@ -9,13 +9,23 @@ trait ThymeleafEngineContext extends TemplateEngineContext {
 
   val engine: TemplateEngine
 
-  protected val resolver : ITemplateResolver
+  protected val resolver: ITemplateResolver
 
+  val templateMode: TemplateMode.Value
+  val characterEncoding: String
+  val cacheable: Boolean
+  val cacheTTLMs: Option[Long]
+  val suffix: String
 }
 
 object ThymeleafEngineContext {
 
-  def apply()(implicit config: Config): ThymeleafEngineContext =
-    ThymeleafEngineContextImpl()
+  def apply
+  (templateMode: TemplateMode.Value = TemplateMode.XHTML,
+   characterEncoding: String = "utf-8",
+   suffix: String = ".html",
+   cacheable: Boolean = true,
+   cacheTTLMs: Option[Long] = None)(implicit config: Config): ThymeleafEngineContext =
+    ThymeleafEngineContextImpl(templateMode, characterEncoding, suffix, cacheable, cacheTTLMs)
 
 }
