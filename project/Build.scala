@@ -95,6 +95,18 @@ object TrinityBuild extends Build {
     )
   ) dependsOn (core)
 
+  lazy val viewVelocity = Project(
+    id = "trinity-view-velocity",
+    base = file("trinity-view-velocity"),
+    settings = commonSettings ++ Seq(
+      name := "trinity-view-velocity",
+      libraryDependencies ++= Seq(
+        "velocity" % "velocity" % "1.5"
+      ),
+      publish
+    )
+  ) dependsOn (view)
+
   lazy val viewThymeleaf = Project(
     id = "trinity-view-thymeleaf",
     base = file("trinity-view-thymeleaf"),
@@ -140,7 +152,7 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity-example"
     )
-  ) dependsOn (core, viewScalate, viewThymeleaf)
+  ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity)
 
   val root = Project(
     id = "trinity",
@@ -148,6 +160,6 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity"
     )
-  ) aggregate(core, view, viewScalate, viewThymeleaf, test, example)
+  ) aggregate(core, view, viewScalate, viewThymeleaf, viewVelocity, test, example)
 
 }
