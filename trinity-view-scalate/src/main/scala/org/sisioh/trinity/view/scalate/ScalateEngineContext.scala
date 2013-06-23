@@ -6,10 +6,8 @@ import org.sisioh.trinity.domain.config.Config
 
 trait ScalateEngineContext extends TemplateEngineContext {
 
-  val engine = new TemplateEngine()
-  engine.workingDirectory = config.templateWorkDir
+  val engine: TemplateEngine
 
- engine.resourceLoader
 }
 
 object ScalateEngineContext {
