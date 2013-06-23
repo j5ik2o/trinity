@@ -4,6 +4,7 @@ import org.sisioh.trinity.domain.controller.SimpleController
 import org.sisioh.trinity.domain.http.ContentType
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.sisioh.trinity.view.thymeleaf.{ThymeleafEngineContext, ThymeleafRenderer}
+import org.sisioh.trinity.view.velocity.VelocityRenderer
 
 object ScalatraLikeExample extends App with ApplicationContext {
 
@@ -80,14 +81,19 @@ object ScalatraLikeExample extends App with ApplicationContext {
     }
 
 
-    get("/template") {
+    get("/template1") {
       request =>
-        responseBuilder.withBody(ScalateRenderer("template.mustache", Map("message" -> "hello"))).toFuture
+        responseBuilder.withBody(ScalateRenderer("scalate.mustache", Map("message" -> "hello"))).toFuture
     }
 
     get("/template2") {
       request =>
-        responseBuilder.withBody(ThymeleafRenderer("home", Map("message" -> "hello"))).toFuture
+        responseBuilder.withBody(ThymeleafRenderer("thymeleaf", Map("message" -> "hello"))).toFuture
+    }
+
+    get("/template3") {
+      request =>
+        responseBuilder.withBody(VelocityRenderer("velocity.vm", Map("message" -> "hello"))).toFuture
     }
 
     /**

@@ -10,6 +10,7 @@ import java.util.concurrent.Executors
 import scala.concurrent.ExecutionContext
 import org.sisioh.trinity.view.scalate.ScalateEngineContext
 import org.sisioh.trinity.view.thymeleaf.ThymeleafEngineContext
+import org.sisioh.trinity.view.velocity.VelocityEngineContext
 
 class UnauthorizedException extends Exception
 
@@ -45,4 +46,5 @@ trait ApplicationContext {
 
   implicit val scalate = ScalateEngineContext()
   implicit val thymeleaf = ThymeleafEngineContext()
+  implicit val velocity = VelocityEngineContext()
 }
