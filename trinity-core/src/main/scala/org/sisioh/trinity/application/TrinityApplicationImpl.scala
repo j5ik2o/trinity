@@ -24,11 +24,11 @@ import scala.Some
 import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
 import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
 import org.sisioh.trinity.domain.resource.FileReadFilter
-import org.sisioh.trinity.domain.controller.{ControllerRepositoryOnMemory, GlobalSetting, ControllerService, Controller}
+import org.sisioh.trinity.domain.controller.{ControllerRepositoryOnMemory, GlobalSettings, ControllerService, Controller}
 import org.sisioh.trinity.domain.config.Config
 
 private[application]
-class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSetting] = None)
+class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSettings] = None)
   extends TrinityApplication with LoggingEx with OstrichService {
 
   private var server: Server = _
@@ -76,6 +76,7 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
   def shutdown() {
     Await.ready(server.close())
     info("shutting down")
+    globalSetting.foreach(_.onStop(this))
     System.exit(0)
   }
 
@@ -139,6 +140,8 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
     println("trinity process " + pid + " started on port: " + port.toString)
     println("config args:")
     println(config)
+
+    globalSetting.foreach(_.onStart(this))
 
   }
 

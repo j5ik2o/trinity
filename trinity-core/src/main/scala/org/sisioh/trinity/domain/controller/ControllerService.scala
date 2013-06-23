@@ -10,7 +10,7 @@ import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.http.{ResponseBuilder, Request}
 import org.sisioh.trinity.domain.routing.{RouteId, Route}
 
-class ControllerService(application: TrinityApplication, globalSettingOpt: Option[GlobalSetting] = None)
+class ControllerService(application: TrinityApplication, globalSettingOpt: Option[GlobalSettings] = None)
   extends Service[FinagleRequest, FinagleResponse] with LoggingEx {
 
   protected def notFoundHandler = {
@@ -57,13 +57,13 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
    orCallback: Request => Option[Future[FinagleResponse]])
   : Option[Future[FinagleResponse]] = {
     findRoute(request, method).map {
-      case Route(RouteId(method, pattern), _, callback) =>
+      case Route(RouteId(method, pattern), _, action) =>
         val routeParamsOpt = pattern(request.path.split('?').head)
         val newReq = routeParamsOpt.map {
           routeParams =>
             request.copy(routeParams = request.routeParams ++ routeParams)
         }.getOrElse(request)
-        Some(callback(newReq))
+        Some(action(newReq))
     }.getOrElse {
       orCallback(request)
     }
