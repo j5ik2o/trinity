@@ -95,6 +95,18 @@ object TrinityBuild extends Build {
     )
   ) dependsOn (core)
 
+  lazy val viewSmarty4J = Project(
+    id = "trinity-view-smarty4j",
+    base = file("trinity-view-smarty4j"),
+    settings = commonSettings ++ Seq(
+      name := "trinity-view-smarty4j",
+      libraryDependencies ++= Seq(
+        "asm" % "asm-all" % "3.3.1"
+      ),
+      publish
+    )
+  ) dependsOn (view)
+
   lazy val viewFreeMarker = Project(
     id = "trinity-view-freemarker",
     base = file("trinity-view-freemarker"),
@@ -155,8 +167,7 @@ object TrinityBuild extends Build {
       ),
       publish
     )
-  ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker)
-
+  ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker, viewSmarty4J)
 
   lazy val example = Project(
     id = "trinity-example",
@@ -164,7 +175,7 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity-example"
     )
-  ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker)
+  ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker, viewSmarty4J)
 
   val root = Project(
     id = "trinity",
@@ -172,6 +183,6 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity"
     )
-  ) aggregate(core, view, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker, test, example)
+  ) aggregate(core, view, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker, viewSmarty4J, test, example)
 
 }

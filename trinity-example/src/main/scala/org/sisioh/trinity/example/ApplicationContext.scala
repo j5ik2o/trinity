@@ -12,6 +12,7 @@ import org.sisioh.trinity.view.scalate.ScalateEngineContext
 import org.sisioh.trinity.view.thymeleaf.ThymeleafEngineContext
 import org.sisioh.trinity.view.velocity.VelocityEngineContext
 import org.sisioh.trinity.view.freemarker.FreeMarkerEngineContext
+import org.sisioh.trinity.view.smarty4j.Smarty4JEngineContext
 
 class UnauthorizedException extends Exception
 
@@ -49,4 +50,5 @@ trait ApplicationContext {
   implicit val thymeleaf = ThymeleafEngineContext()
   implicit val velocity = VelocityEngineContext()
   implicit val freemarker = FreeMarkerEngineContext(getClass)
+  implicit val smart4j = Smarty4JEngineContext()
 }
