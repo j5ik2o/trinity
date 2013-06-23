@@ -69,7 +69,7 @@ abstract class SpecHelper extends Specification {
 
   def controller: SimpleController
 
-  def globalSetting: Option[GlobalSetting] = None
+  def globalSetting: Option[GlobalSettings] = None
 
   def get(path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map()) {
     buildRequest(HttpMethod.GET, path, params, headers)

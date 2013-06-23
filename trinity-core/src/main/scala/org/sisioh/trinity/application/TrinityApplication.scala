@@ -4,7 +4,7 @@ import com.twitter.finagle.SimpleFilter
 import com.twitter.finagle.http.{Response, Request}
 import com.twitter.finagle.stats.StatsReceiver
 import org.sisioh.trinity.domain.config.Config
-import org.sisioh.trinity.domain.controller.{Controller, GlobalSetting}
+import org.sisioh.trinity.domain.controller.{Controller, GlobalSettings}
 import org.sisioh.trinity.domain.routing.Routes
 
 /**
@@ -44,10 +44,10 @@ object TrinityApplication {
    * ファクトリメソッド。
    *
    * @param config [[org.sisioh.trinity.domain.config.Config]]
-   * @param globalSetting [[org.sisioh.trinity.domain.controller.GlobalSetting]]
+   * @param globalSetting [[org.sisioh.trinity.domain.controller.GlobalSettings]]
    * @return [[org.sisioh.trinity.application.TrinityApplication]]
    */
-  def apply(config: Config, globalSetting: Option[GlobalSetting] = None): TrinityApplication = synchronized {
+  def apply(config: Config, globalSetting: Option[GlobalSettings] = None): TrinityApplication = synchronized {
     if (currentApplication == null) {
       currentApplication = new TrinityApplicationImpl(config, globalSetting)
       currentApplication

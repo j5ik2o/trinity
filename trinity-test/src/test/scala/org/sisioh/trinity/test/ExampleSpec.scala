@@ -5,7 +5,7 @@ import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
 import org.sisioh.trinity.domain._
 import scala.Some
-import org.sisioh.trinity.domain.controller.{GlobalSetting, SimpleController}
+import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
 import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.http.{ResponseBuilder, Request, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
@@ -179,7 +179,7 @@ class ExampleSpec extends SpecHelper {
 
   val controller = ExampleController
 
-  override val globalSetting = Some(new GlobalSetting {
+  override val globalSetting = Some(new GlobalSettings {
     def notFound(request: Request): Future[Response] = {
       ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
     }

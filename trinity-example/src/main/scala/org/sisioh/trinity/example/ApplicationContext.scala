@@ -1,6 +1,6 @@
 package org.sisioh.trinity.example
 
-import org.sisioh.trinity.domain.controller.GlobalSetting
+import org.sisioh.trinity.domain.controller.GlobalSettings
 import org.sisioh.trinity.domain.http.{ResponseBuilder, Request}
 import com.twitter.util.{FuturePool, Future}
 import com.twitter.finagle.http.Response
@@ -15,7 +15,7 @@ class UnauthorizedException extends Exception
 
 trait ApplicationContext {
 
-  val globalSettings = new GlobalSetting {
+  val globalSettings = new GlobalSettings {
     def error(request: Request): Future[Response] = {
       request.error match {
         case Some(e: ArithmeticException) =>
