@@ -2,7 +2,7 @@ package org.sisioh.trinity.domain.controller
 
 import com.twitter.finagle.stats.StatsReceiver
 import java.util.UUID
-import org.sisioh.dddbase.core.{EntityCloneable, Identity, Entity}
+import org.sisioh.dddbase.core.model.{EntityCloneable, Identity, Entity}
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.http.ResponseBuilder
