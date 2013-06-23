@@ -11,6 +11,7 @@ import scala.concurrent.ExecutionContext
 import org.sisioh.trinity.view.scalate.ScalateEngineContext
 import org.sisioh.trinity.view.thymeleaf.ThymeleafEngineContext
 import org.sisioh.trinity.view.velocity.VelocityEngineContext
+import org.sisioh.trinity.view.freemarker.FreeMarkerEngineContext
 
 class UnauthorizedException extends Exception
 
@@ -47,4 +48,5 @@ trait ApplicationContext {
   implicit val scalate = ScalateEngineContext()
   implicit val thymeleaf = ThymeleafEngineContext()
   implicit val velocity = VelocityEngineContext()
+  implicit val freemarker = FreeMarkerEngineContext(getClass)
 }

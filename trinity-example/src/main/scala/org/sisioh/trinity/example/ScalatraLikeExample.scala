@@ -5,6 +5,7 @@ import org.sisioh.trinity.domain.http.ContentType
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.sisioh.trinity.view.thymeleaf.{ThymeleafEngineContext, ThymeleafRenderer}
 import org.sisioh.trinity.view.velocity.VelocityRenderer
+import org.sisioh.trinity.view.freemarker.FreeMarkerRenderer
 
 object ScalatraLikeExample extends App with ApplicationContext {
 
@@ -94,6 +95,11 @@ object ScalatraLikeExample extends App with ApplicationContext {
     get("/template3") {
       request =>
         responseBuilder.withBody(VelocityRenderer("velocity.vm", Map("message" -> "hello"))).toFuture
+    }
+
+    get("/template4") {
+      request =>
+        responseBuilder.withBody(FreeMarkerRenderer("freemarker.tpl", Map("message" -> "hello"))).toFuture
     }
 
     /**
