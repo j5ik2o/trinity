@@ -12,6 +12,7 @@ import org.sisioh.trinity.view.scalate.ScalateEngineContext
 import org.sisioh.trinity.view.thymeleaf.ThymeleafEngineContext
 import org.sisioh.trinity.view.velocity.VelocityEngineContext
 import org.sisioh.trinity.view.freemarker.FreeMarkerEngineContext
+import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 class UnauthorizedException extends Exception
 
@@ -21,18 +22,18 @@ trait ApplicationContext {
     def error(request: Request): Future[Response] = {
       request.error match {
         case Some(e: ArithmeticException) =>
-          ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
+          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("whoops, divide by zero!").toFuture
         case Some(e: UnauthorizedException) =>
-          ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFuture
+          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(401)).withPlain("Not Authorized!").toFuture
         case Some(e) =>
-          ResponseBuilder().withStatus(415).withPlain("Unsupported Media Type!").toFuture
+          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(415)).withPlain("Unsupported Media Type!").toFuture
         case _ =>
-          ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFuture
+          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("Something went wrong!").toFuture
       }
     }
 
     def notFound(request: Request): Future[Response] = {
-      ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
+      ResponseBuilder().withStatus(HttpResponseStatus.valueOf(404)).withPlain("not found yo").toFuture
     }
 
   }

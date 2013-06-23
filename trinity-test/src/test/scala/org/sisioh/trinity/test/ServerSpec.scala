@@ -32,7 +32,7 @@ class TestController(implicit application: TrinityApplication) extends SimpleCon
         "languages" -> List("Java", "Scala", "Clojure", "Groovy")
       )
       implicit val scalate = ScalateEngineContext()
-      responseBuilder.withBody(ScalateRenderer("scalate_test.ssp", bindings)).toFuture
+      responseBuilder.withBodyRenderer(ScalateRenderer("scalate_test.ssp", bindings)).toFuture
   }
 
 

@@ -1,6 +1,5 @@
 package org.sisioh.trinity.test
 
-import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http._
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.controller.SimpleController
@@ -10,14 +9,14 @@ class CookieTestController()(implicit application: TrinityApplication) extends S
 
   get("/sendCookie") {
     request =>
-      Future(responseBuilder.withPlain("get:path").withCookie("Foo", "Bar").build)
+      responseBuilder.withPlain("get:path").withCookie("Foo", "Bar").toFuture
   }
 
   get("/sendAdvCookie") {
     val c = new DefaultCookie("Biz", "Baz")
     c.setSecure(true)
     request =>
-      Future(responseBuilder.withPlain("get:path").withCookie(c).build)
+      responseBuilder.withPlain("get:path").withCookie(c).toFuture
   }
 
 }

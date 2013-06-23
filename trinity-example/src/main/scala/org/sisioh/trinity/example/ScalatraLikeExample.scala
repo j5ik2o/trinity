@@ -6,6 +6,7 @@ import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.sisioh.trinity.view.thymeleaf.{ThymeleafEngineContext, ThymeleafRenderer}
 import org.sisioh.trinity.view.velocity.VelocityRenderer
 import org.sisioh.trinity.view.freemarker.FreeMarkerRenderer
+import org.jboss.netty.handler.codec.http.{HttpResponseStatus, HttpResponse}
 
 object ScalatraLikeExample extends App with ApplicationContext {
 
@@ -62,7 +63,7 @@ object ScalatraLikeExample extends App with ApplicationContext {
       request =>
         request.params.get("q") match {
           case Some(q) => responseBuilder.withPlain("no results for " + q).toFuture
-          case None => responseBuilder.withPlain("query param q needed").withStatus(500).toFuture
+          case None => responseBuilder.withPlain("query param q needed").withStatus(HttpResponseStatus.valueOf(500)).toFuture
         }
     }
 
@@ -84,22 +85,22 @@ object ScalatraLikeExample extends App with ApplicationContext {
 
     get("/template1") {
       request =>
-        responseBuilder.withBody(ScalateRenderer("scalate.mustache", Map("message" -> "hello"))).toFuture
+        responseBuilder.withBodyRenderer(ScalateRenderer("scalate.mustache", Map("message" -> "hello"))).toFuture
     }
 
     get("/template2") {
       request =>
-        responseBuilder.withBody(ThymeleafRenderer("thymeleaf", Map("message" -> "hello"))).toFuture
+        responseBuilder.withBodyRenderer(ThymeleafRenderer("thymeleaf", Map("message" -> "hello"))).toFuture
     }
 
     get("/template3") {
       request =>
-        responseBuilder.withBody(VelocityRenderer("velocity.vm", Map("message" -> "hello"))).toFuture
+        responseBuilder.withBodyRenderer(VelocityRenderer("velocity.vm", Map("message" -> "hello"))).toFuture
     }
 
     get("/template4") {
       request =>
-        responseBuilder.withBody(FreeMarkerRenderer("freemarker.tpl", Map("message" -> "hello"))).toFuture
+        responseBuilder.withBodyRenderer(FreeMarkerRenderer("freemarker.tpl", Map("message" -> "hello"))).toFuture
     }
 
     /**

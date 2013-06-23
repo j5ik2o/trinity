@@ -6,6 +6,7 @@ import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.http.{Request, ContentType}
 import org.sisioh.trinity.domain.routing.{RouteRepositoryOnMemory, SinatraPathPatternParser, PathPatternParser}
+import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 abstract class AbstractController()(implicit val application: TrinityApplication) extends Controller {
 
@@ -17,8 +18,12 @@ abstract class AbstractController()(implicit val application: TrinityApplication
 
   val controllerRepository: ControllerRepository = new ControllerRepositoryOnMemory
 
-  protected def redirect(location: String, message: String = "moved"): Future[Response] = {
-    responseBuilder.withPlain(message).withStatus(301).withHeader("Location", location).toFuture
+  protected def redirect
+  (location: String, message: String = "moved"): Future[Response] = {
+    responseBuilder.withPlain(message).
+      withStatus(HttpResponseStatus.MOVED_PERMANENTLY).
+      withHeader("Location", location).
+      toFuture
   }
 
   protected def respondTo(r: Request)(callback: PartialFunction[ContentType, Future[Response]]): Future[Response] = {

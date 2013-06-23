@@ -3,12 +3,12 @@ package org.sisioh.trinity.test
 import com.twitter.finagle.http.Response
 import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
-import org.sisioh.trinity.domain._
 import scala.Some
 import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
 import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.http.{ResponseBuilder, Request, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
+import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 class ExampleSpec extends SpecHelper {
 
@@ -34,7 +34,7 @@ class ExampleSpec extends SpecHelper {
      */
     get("/hello") {
       request =>
-        Future(responseBuilder.withPlain("hello world").build)
+       responseBuilder.withPlain("hello world").toFuture
     }
 
     /**
@@ -45,7 +45,7 @@ class ExampleSpec extends SpecHelper {
     get("/user/:username") {
       request =>
         val username = request.routeParams.getOrElse("username", "default_user")
-        Future(responseBuilder.withPlain("hello " + username).build)
+        responseBuilder.withPlain("hello " + username).toFuture
     }
 
     /**
@@ -55,7 +55,7 @@ class ExampleSpec extends SpecHelper {
      */
     get("/headers") {
       request =>
-        Future(responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").build)
+        responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").toFuture
     }
 
     /**
@@ -66,7 +66,7 @@ class ExampleSpec extends SpecHelper {
     get("/data.json") {
       request =>
         import org.json4s.JsonDSL._
-        Future(responseBuilder.withJson(Map("foo" -> "bar")).build)
+       responseBuilder.withJson(Map("foo" -> "bar")).toFuture
     }
 
     /**
@@ -77,8 +77,8 @@ class ExampleSpec extends SpecHelper {
     get("/search") {
       request =>
         request.params.get("q") match {
-          case Some(q) => Future(responseBuilder.withPlain("no results for " + q).build)
-          case None => Future(responseBuilder.withPlain("query param q needed").withStatus(500).build)
+          case Some(q) => responseBuilder.withPlain("no results for " + q).toFuture
+          case None => responseBuilder.withPlain("query param q needed").withStatus(HttpResponseStatus.valueOf(500)).toFuture
         }
     }
 
@@ -94,14 +94,14 @@ class ExampleSpec extends SpecHelper {
             println("content type is " + avatar.contentType)
             avatar.writeToFile("/tmp/avatar") //writes uploaded avatar to /tmp/avatar
         }
-        Future(responseBuilder.withPlain("ok").build)
+        responseBuilder.withPlain("ok").toFuture
     }
 
     get("/template") {
       request =>
         implicit val scalate = ScalateEngineContext()
         val view = ScalateRenderer("test_view.mustache", Map("test_val" -> "aaaa"))
-        Future(responseBuilder.withBody(view).build)
+        responseBuilder.withBodyRenderer(view).toFuture
     }
 
 
@@ -113,7 +113,7 @@ class ExampleSpec extends SpecHelper {
     get("/error") {
       request =>
         1234 / 0
-        Future(responseBuilder.withPlain("we never make it here").build)
+        responseBuilder.withPlain("we never make it here").toFuture
     }
 
 
@@ -132,8 +132,8 @@ class ExampleSpec extends SpecHelper {
       request =>
         import org.json4s.JsonDSL._
         respondTo(request) {
-          case ContentType.TextHtml => Future(responseBuilder.withHtml("<h1>Hello</h1>").build)
-          case ContentType.AppJson => Future(responseBuilder.withJson(Map("value" -> "hello")).build)
+          case ContentType.TextHtml => responseBuilder.withHtml("<h1>Hello</h1>").toFuture
+          case ContentType.AppJson => responseBuilder.withJson(Map("value" -> "hello")).toFuture
         }
     }
 
@@ -148,9 +148,9 @@ class ExampleSpec extends SpecHelper {
     get("/another/page") {
       request =>
         respondTo(request) {
-          case ContentType.TextHtml => Future(responseBuilder.withPlain("an html response").build)
-          case ContentType.AppJson => Future(responseBuilder.withPlain("an json response").build)
-          case ContentType.All => Future(responseBuilder.withPlain("default fallback response").build)
+          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toFuture
+          case ContentType.AppJson => responseBuilder.withPlain("an json response").toFuture
+          case ContentType.All => responseBuilder.withPlain("default fallback response").toFuture
         }
     }
 
@@ -172,7 +172,7 @@ class ExampleSpec extends SpecHelper {
         Stats.time("slow_thing time") {
           Thread.sleep(100)
         }
-        Future(responseBuilder.withPlain("slow").build)
+        responseBuilder.withPlain("slow").toFuture
     }
 
   }
@@ -181,19 +181,19 @@ class ExampleSpec extends SpecHelper {
 
   override val globalSetting = Some(new GlobalSettings {
     def notFound(request: Request): Future[Response] = {
-      ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
+      ResponseBuilder().withStatus(HttpResponseStatus.valueOf(404)).withPlain("not found yo").toFuture
     }
 
     def error(request: Request): Future[Response] = {
       request.error match {
         case Some(e: ArithmeticException) =>
-          ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
+          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("whoops, divide by zero!").toFuture
         case Some(e: UnauthorizedException) =>
-          ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFuture
+          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(401)).withPlain("Not Authorized!").toFuture
         case Some(ex) =>
-          ResponseBuilder().withStatus(415).withPlain("Unsupported Media Type!").toFuture
+          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(415)).withPlain("Unsupported Media Type!").toFuture
         case _ =>
-          ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFuture
+          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("Something went wrong!").toFuture
       }
     }
   })

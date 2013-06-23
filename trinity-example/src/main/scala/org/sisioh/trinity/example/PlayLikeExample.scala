@@ -19,7 +19,7 @@ object PlayLikeExample extends App with ApplicationContext {
      */
     def index = FuturePoolAction {
       request =>
-        responseBuilder.withOk.build
+        responseBuilder.withOk.build.get
     }
 
     /**
@@ -40,7 +40,7 @@ object PlayLikeExample extends App with ApplicationContext {
      */
     def getGroup(name: String) = ScalaFutureAction {
       request => future {
-        responseBuilder.withBody("group = " + name).build
+        responseBuilder.withBody("group = " + name).build.get
       }
     }
 

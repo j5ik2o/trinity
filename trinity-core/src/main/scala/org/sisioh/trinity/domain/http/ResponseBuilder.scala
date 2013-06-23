@@ -1,85 +1,34 @@
 package org.sisioh.trinity.domain.http
 
 import com.twitter.finagle.http.{Response => FinagleResponse, Request => FinagleRequest}
-import com.twitter.util.Future
-import org.jboss.netty.buffer.ChannelBuffer
-import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
-import org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1
+import org.jboss.netty.buffer.{ChannelBuffers, ChannelBuffer}
+import ChannelBuffers._
 import org.jboss.netty.handler.codec.http._
-import org.jboss.netty.util.CharsetUtil.UTF_8
-import org.json4s.JsonAST.JValue
+import org.jboss.netty.util.CharsetUtil._
+import org.json4s._
 import org.json4s.jackson.JsonMethods._
-import org.sisioh.scala.toolbox.LoggingEx
+import com.twitter.util.{Await, Future}
+import scala.collection.JavaConverters._
 
-object ResponseBuilder {
-
-  def apply(body: String): ResponseBuilder = ResponseBuilder().withBody(body).withStatus(200)
-
-  def apply(status: Int, body: String): ResponseBuilder = ResponseBuilder().withBody(body).withStatus(status)
-
-  def apply(status: Int, body: String, headers: Map[String, String]): ResponseBuilder = ResponseBuilder().withBody(body).withStatus(status).withHeaders(headers)
-
-}
-
-case class ResponseBuilder
-(status: Int = 200,
- headers: Map[String, String] = Map.empty,
+case class Response
+(status: HttpResponseStatus = HttpResponseStatus.OK,
+ headers: Map[String, AnyRef] = Map.empty,
  cookies: Seq[Cookie] = Seq.empty,
- body: Option[ChannelBuffer] = None) extends LoggingEx {
+ body: Option[ChannelBuffer] = None) {
 
+  def this(status: Int,
+           headers: Map[String, AnyRef],
+           cookies: Seq[Cookie] ,
+           body: Option[ChannelBuffer]) =
+    this(HttpResponseStatus.valueOf(status), headers, cookies, body)
 
-  def withCookie(tuple: (String, String)): ResponseBuilder = {
-    copy(cookies = cookies :+ new DefaultCookie(tuple._1, tuple._2))
-  }
-
-  def withCookie(cookie: Cookie): ResponseBuilder = {
-    copy(cookies = cookies :+ cookie)
-  }
-
-  def withHeader(header: (String, String)): ResponseBuilder =
-    copy(headers = headers + header)
-
-  def withHeaders(_headers: Map[String, String]): ResponseBuilder =
-    copy(headers = headers ++ _headers)
-
-  def withStatus(value: Int): ResponseBuilder =
-    copy(status = value)
-
-  def withBody(body: Array[Byte]): ResponseBuilder =
-    copy(body = Some(copiedBuffer(body)))
-
-  def withBody(body: String): ResponseBuilder =
-    copy(body = Some(copiedBuffer(body, UTF_8)))
-
-  def withBody(bodyRender: BodyRenderer): ResponseBuilder =
-    withBody(bodyRender.render)
-
-  def withPlain(body: String): ResponseBuilder = {
-    withHeader("Content-Type", "text/plain").withBody(body)
-  }
-
-  def withHtml(body: String) = {
-    withHeader("Content-Type", "text/html").withBody(body)
-  }
-
-  def withJson(jValue: JValue): ResponseBuilder = {
-    withHeader("Content-Type", "application/json").withBody(compact(jValue))
-  }
-
-  def withNothing = {
-    withHeader("Content-Type", "text/plain").withBody("")
-  }
-
-  def withOk = withStatus(200)
-
-  def withNotFound = withStatus(404)
-
-  def build: FinagleResponse = {
-    val responseStatus = HttpResponseStatus.valueOf(status)
-    val resp = new DefaultHttpResponse(HTTP_1_1, responseStatus)
+  def get: FinagleResponse = {
+    val result = new DefaultHttpResponse(HttpVersion.HTTP_1_1, status)
     headers.foreach {
-      xs =>
-        resp.setHeader(xs._1, xs._2)
+      case (k, v: Iterable[_]) =>
+        result.setHeader(k, v.asJava)
+      case (k, v) =>
+        result.setHeader(k, v)
     }
     if (!cookies.isEmpty) {
       val cookieEncoder = new CookieEncoder(true)
@@ -87,37 +36,110 @@ case class ResponseBuilder
         xs =>
           cookieEncoder.addCookie(xs)
       }
-      resp.setHeader("Set-Cookie", cookieEncoder.encode)
+      result.setHeader("Set-Cookie", cookieEncoder.encode)
     }
     body.foreach {
       b =>
-        resp.setContent(b)
+        result.setContent(b)
     }
-    FinagleResponse(resp)
+    FinagleResponse(result)
   }
 
-  def toFuture = {
-    Future.value(build)
-  }
-
-  override def toString = {
-    val buf = new StringBuilder
-    buf.append(getClass.getSimpleName)
-    buf.append('\n')
-    buf.append(HTTP_1_1.toString)
-    buf.append(' ')
-    buf.append(this.status)
-    buf.append('\n')
-    appendCollection[String, String](buf, this.headers)
-    buf.toString()
-  }
-
-  private def appendCollection[A, B](buf: StringBuilder, x: Map[A, B]) {
-    x foreach {
-      xs =>
-        buf.append(xs._1)
-        buf.append(" : ")
-        buf.append(xs._2)
-    }
-  }
 }
+
+
+case class ResponseBuilder(responseFuture: Future[Response] = Future(Response())) {
+
+  def withStatus
+  (status: HttpResponseStatus): ResponseBuilder = {
+    val newResposeFuture = responseFuture.map {
+      response =>
+        response.copy(status = status)
+    }
+    ResponseBuilder(newResposeFuture)
+  }
+
+  def withCookie
+  (tuple: (String, String)): ResponseBuilder = {
+    val newResposeFuture = responseFuture.map {
+      response =>
+        response.copy(cookies = response.cookies :+ new DefaultCookie(tuple._1, tuple._2))
+    }
+    ResponseBuilder(newResposeFuture)
+  }
+
+  def withCookie
+  (cookie: Cookie): ResponseBuilder = {
+    val newResposeFuture = responseFuture.map {
+      response =>
+        response.copy(cookies = response.cookies :+ cookie)
+    }
+    ResponseBuilder(newResposeFuture)
+  }
+
+  def withHeader
+  (header: (String, String)): ResponseBuilder = {
+    val newResposeFuture = responseFuture.map {
+      response =>
+        response.copy(headers = response.headers + header)
+    }
+    ResponseBuilder(newResposeFuture)
+  }
+
+  def withBody
+  (body: Array[Byte]): ResponseBuilder = {
+    val newResposeFuture = responseFuture.map {
+      response =>
+        response.copy(body = Some(copiedBuffer(body)))
+    }
+    ResponseBuilder(newResposeFuture)
+  }
+
+  def withBody
+  (body: => String): ResponseBuilder = {
+    val newResposeFuture = responseFuture.map {
+      response =>
+        response.copy(body = Some(copiedBuffer(body, UTF_8)))
+    }
+    ResponseBuilder(newResposeFuture)
+  }
+
+  def withBodyRenderer
+  (bodyRenderer: BodyRenderer): ResponseBuilder = {
+    val newResposeFuture = bodyRenderer.render.flatMap {
+      body =>
+        responseFuture.map {
+          response =>
+            response.copy(body = Some(copiedBuffer(body, UTF_8)))
+        }
+    }
+    ResponseBuilder(newResposeFuture)
+  }
+
+  def withPlain
+  (body: => String): ResponseBuilder = {
+    withHeader("Content-Type", "text/plain").withBody(body)
+  }
+
+  def withHtml(body: => String) = {
+    withHeader("Content-Type", "text/html").withBody(body)
+  }
+
+
+  def withJson(jValue: => JValue): ResponseBuilder = {
+    withHeader("Content-Type", "application/json").withBody(compact(jValue))
+  }
+
+  def withNothing = {
+    withHeader("Content-Type", "text/plain").withBody("")
+  }
+
+  def withOk = withStatus(HttpResponseStatus.OK)
+
+  def withNotFound = withStatus(HttpResponseStatus.NOT_FOUND)
+
+  def toFuture = responseFuture.map(_.get)
+
+  def build = Await.result(responseFuture)
+}
+
