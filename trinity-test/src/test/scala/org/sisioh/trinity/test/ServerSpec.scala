@@ -1,10 +1,10 @@
 package org.sisioh.trinity.test
 
-import org.sisioh.trinity.view.ScalateRenderer
 import org.sisioh.trinity.application.TrinityApplication
 import org.specs2.mutable.Specification
 import org.sisioh.trinity.domain.controller.SimpleController
 import org.sisioh.trinity.domain.config.Config
+import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 
 
 class TestController(implicit application: TrinityApplication) extends SimpleController {
@@ -31,6 +31,7 @@ class TestController(implicit application: TrinityApplication) extends SimpleCon
         "name" -> "Scalate",
         "languages" -> List("Java", "Scala", "Clojure", "Groovy")
       )
+      implicit val scalate = ScalateEngineContext()
       responseBuilder.withBody(ScalateRenderer("scalate_test.ssp", bindings)).toFuture
   }
 

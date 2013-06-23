@@ -5,4 +5,5 @@ import org.sisioh.dddbase.core.lifecycle.memory.mutable.OnMemoryRepositorySuppor
 import org.sisioh.dddbase.core.model.Identity
 
 class ControllerRepositoryOnMemory
-  extends OnMemoryRepositorySupport[ControllerRepositoryOnMemory, Identity[UUID], Controller] with ControllerRepository
+  extends OnMemoryRepositorySupport[ControllerRepositoryOnMemory, Identity[UUID], Controller]
+  with ControllerRepository

@@ -4,28 +4,37 @@ import com.twitter.util.Eval
 import java.io.File
 import scala.concurrent.duration.Duration
 
-
+/**
+ * [[org.sisioh.trinity.application.TrinityApplication]]のための設定情報を表す値オブジェクト。
+ */
 trait Config {
 
   val environment: Environment.Value
 
   val applicationName: String
+
   val applicationPort: Option[Int]
 
   val statsEnabled: Boolean
+
   val statsPort: Option[Int]
 
   val templateWorkDir: File
+
   val templatePath: String
 
   val localDocumentRoot: String
 
   val maxRequestSize: Option[Int]
+
   val maxResponseSize: Option[Int]
 
   val maxConcurrentRequests: Option[Int]
+
   val hostConnectionMaxIdleTime: Option[Duration]
+
   val hostConnectionMaxLifeTime: Option[Duration]
+
   val requestTimeout: Option[Int]
 
   override def toString = Seq(
@@ -38,11 +47,11 @@ trait Config {
     s"templatePath = $templatePath",
     s"localDocumentRoot = $localDocumentRoot",
     s"maxRequestSize = $maxRequestSize",
-    maxResponseSize,
-    maxConcurrentRequests,
-    hostConnectionMaxIdleTime,
-    hostConnectionMaxLifeTime,
-    requestTimeout
+    s"maxResponseSize = $maxResponseSize",
+    s"maxConcurrentRequests = $maxConcurrentRequests",
+    s"hostConnectionMaxIdleTime = $hostConnectionMaxIdleTime",
+    s"hostConnectionMaxLifeTime = $hostConnectionMaxLifeTime",
+    s"requestTimeout = $requestTimeout"
   ).mkString("Config(", ",", ")")
 }
 

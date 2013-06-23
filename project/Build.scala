@@ -24,14 +24,17 @@ object TrinityBuild extends Build {
       "Sisioh DDD Maven Release Repository" at "http://sisioh.github.com/scala-dddbase/repos/release/",
       "Sisioh DDD Maven Snapshot Repository" at "http://sisioh.github.com/scala-dddbase/repos/snapshot/",
       "Sisioh BaseUnits Mave Release Repository" at "http://sisioh.github.com/baseunits-scala/repos/release/",
-      "Sisioh Scala Toolbox Release Repository" at "http://sisioh.github.io/scala-toolbox/repos/release/"
+      "Sisioh Scala Toolbox Release Repository" at "http://sisioh.github.io/scala-toolbox/repos/release/",
+      "Seasar Repository" at "http://maven.seasar.org/maven2/"
+
     ),
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-reflect" % "2.10.2",
       "junit" % "junit" % "4.8.1" % "test",
       "org.hamcrest" % "hamcrest-all" % "1.3" % "test",
       "org.mockito" % "mockito-core" % "1.9.5" % "test",
-      "org.specs2" %% "specs2" % "1.14" % "test"
+      "org.specs2" %% "specs2" % "1.14" % "test",
+      "org.seasar.util" % "s2util" % "0.0.0"
     )
   )
 
@@ -81,6 +84,29 @@ object TrinityBuild extends Build {
     )
   )
 
+  lazy val view = Project(
+    id = "trinity-view",
+    base = file("trinity-view"),
+    settings = commonSettings ++ Seq(
+      name := "trinity-view",
+      libraryDependencies ++= Seq(
+      ),
+      publish
+    )
+  ) dependsOn (core)
+
+  lazy val viewThymeleaf = Project(
+    id = "trinity-view-thymeleaf",
+    base = file("trinity-view-thymeleaf"),
+    settings = commonSettings ++ Seq(
+      name := "trinity-view-thymeleaf",
+      libraryDependencies ++= Seq(
+        "org.thymeleaf" % "thymeleaf" % "2.0.17"
+      ),
+      publish
+    )
+  ) dependsOn (view)
+
   lazy val viewScalate = Project(
     id = "trinity-view-scalate",
     base = file("trinity-view-scalate"),
@@ -91,7 +117,7 @@ object TrinityBuild extends Build {
       ),
       publish
     )
-  ) dependsOn (core)
+  ) dependsOn (view)
 
   lazy val test = Project(
     id = "trinity-test",
@@ -114,7 +140,7 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity-example"
     )
-  ) dependsOn (core, viewScalate)
+  ) dependsOn (core, viewScalate, viewThymeleaf)
 
   val root = Project(
     id = "trinity",
@@ -122,6 +148,6 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity"
     )
-  ) aggregate(core, viewScalate, test, example)
+  ) aggregate(core, view, viewScalate, viewThymeleaf, test, example)
 
 }
