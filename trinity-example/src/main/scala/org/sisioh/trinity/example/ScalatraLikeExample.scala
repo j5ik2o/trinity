@@ -1,8 +1,9 @@
 package org.sisioh.trinity.example
 
 import org.sisioh.trinity.domain.controller.SimpleController
-import org.sisioh.trinity.view.ScalateRenderer
 import org.sisioh.trinity.domain.http.ContentType
+import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
+import org.sisioh.trinity.view.thymeleaf.{ThymeleafEngineContext, ThymeleafRenderer}
 
 object ScalatraLikeExample extends App with ApplicationContext {
 
@@ -78,11 +79,16 @@ object ScalatraLikeExample extends App with ApplicationContext {
         responseBuilder.withPlain("ok").toFuture
     }
 
+
     get("/template") {
       request =>
-        responseBuilder.withBody(ScalateRenderer("template.mustache", Map("some_val" -> "random value here"))).toFuture
+        responseBuilder.withBody(ScalateRenderer("template.mustache", Map("message" -> "hello"))).toFuture
     }
 
+    get("/template2") {
+      request =>
+        responseBuilder.withBody(ThymeleafRenderer("home", Map("message" -> "hello"))).toFuture
+    }
 
     /**
      * Custom Error Handling

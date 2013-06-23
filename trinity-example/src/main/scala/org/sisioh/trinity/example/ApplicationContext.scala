@@ -8,6 +8,8 @@ import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.application.TrinityApplication
 import java.util.concurrent.Executors
 import scala.concurrent.ExecutionContext
+import org.sisioh.trinity.view.scalate.ScalateEngineContext
+import org.sisioh.trinity.view.thymeleaf.ThymeleafEngineContext
 
 class UnauthorizedException extends Exception
 
@@ -33,7 +35,7 @@ trait ApplicationContext {
 
   }
 
-  val config = Config()
+  implicit val config = Config()
   implicit val application = TrinityApplication(config, Some(globalSettings))
 
   // Thread Pool
@@ -41,4 +43,6 @@ trait ApplicationContext {
   implicit val futurePool = FuturePool(threadPool)
   implicit val executor = ExecutionContext.fromExecutor(threadPool)
 
+  implicit val scalate = ScalateEngineContext()
+  implicit val thymeleaf = ThymeleafEngineContext()
 }

@@ -98,8 +98,8 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
           handleError(adaptedRequest, throwable)
       }
     }.rescue {
-      case e: Exception =>
-        Try(handleError(adaptedRequest, e))
+      case throwable: Exception =>
+        Try(handleError(adaptedRequest, throwable))
     }.getOrElse {
       Future.value(FinagleResponse(HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR))
     }
