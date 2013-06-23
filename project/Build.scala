@@ -95,6 +95,18 @@ object TrinityBuild extends Build {
     )
   ) dependsOn (core)
 
+  lazy val viewFreeMarker = Project(
+    id = "trinity-view-freemarker",
+    base = file("trinity-view-freemarker"),
+    settings = commonSettings ++ Seq(
+      name := "trinity-view-freemarker",
+      libraryDependencies ++= Seq(
+        "org.freemarker" % "freemarker" % "2.3.19"
+      ),
+      publish
+    )
+  ) dependsOn (view)
+
   lazy val viewVelocity = Project(
     id = "trinity-view-velocity",
     base = file("trinity-view-velocity"),
@@ -143,7 +155,7 @@ object TrinityBuild extends Build {
       ),
       publish
     )
-  ) dependsOn(core, viewScalate)
+  ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker)
 
 
   lazy val example = Project(
@@ -152,7 +164,7 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity-example"
     )
-  ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity)
+  ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker)
 
   val root = Project(
     id = "trinity",
@@ -160,6 +172,6 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity"
     )
-  ) aggregate(core, view, viewScalate, viewThymeleaf, viewVelocity, test, example)
+  ) aggregate(core, view, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker, test, example)
 
 }
