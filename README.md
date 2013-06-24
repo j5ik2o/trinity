@@ -25,7 +25,7 @@ object ScalatraLikeController extends SimpleController {
 object PlayLikeController extends AbstractController {
 
     // Play2のようなアクション。
-    // ブロッキングする処理を書いてもブロッキングしない。
+    // ブロッキングする処理を書いてもブロッキングしない(スレッドプールの範囲内で)
     def index = FuturePoolAction {
       request =>
         responseBuilder.withOk.getResultByAwait
