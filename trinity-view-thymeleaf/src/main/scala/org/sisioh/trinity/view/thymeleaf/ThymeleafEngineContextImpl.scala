@@ -22,7 +22,8 @@ case class ThymeleafEngineContextImpl
       config.templatePath.drop(1)
     else
       config.templatePath
-    classLoaderTemplateResolver.setPrefix(prefix)
+    if (!prefix.isEmpty)
+      classLoaderTemplateResolver.setPrefix(prefix)
     classLoaderTemplateResolver
   } else {
     val fileTemplateResolver = new FileTemplateResolver
