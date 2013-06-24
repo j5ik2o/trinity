@@ -8,6 +8,7 @@ MVC framework by Finagle based
   - com.twitter.util.Future, scala.concurrnet.Futureの両方が使える。
   - FuturePoolを使ったブロッキング前提のアクションも記述可能。
 - Scalatraのようにコントローラにルート情報を記述する方法と、Play2のようにルート情報をまとめて記述する方法の、二通りが可能。
+
 ```scala
 object ScalatraLikeController extends SimpleController {
 
@@ -19,6 +20,7 @@ object ScalatraLikeController extends SimpleController {
 
 }
 ```
+
 ```scala
 object PlayLikeController extends AbstractController {
 
