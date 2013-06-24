@@ -58,6 +58,7 @@ application.addRoute(HttpMethod.GET, "/group/:name", PlayLikeController) {
 }
 ```
 - テンプレートエンジンは、Scalate, Thymeleaf, Velocity, FreeMarkerに対応。
+  - Scalateはすべてのテンプレートに対応。
 
 ```scala
 // ...
