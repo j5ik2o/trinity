@@ -8,7 +8,8 @@ import org.sisioh.trinity.domain.http.{Request, ContentType}
 import org.sisioh.trinity.domain.routing.{RouteRepositoryOnMemory, SinatraPathPatternParser, PathPatternParser}
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
-abstract class AbstractController()(implicit val application: TrinityApplication) extends Controller {
+abstract class AbstractController()(implicit val application: TrinityApplication)
+  extends Controller {
 
   implicit protected val config: Config = application.config
 

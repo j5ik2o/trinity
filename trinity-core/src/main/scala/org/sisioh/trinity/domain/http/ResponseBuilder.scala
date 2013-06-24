@@ -18,7 +18,7 @@ case class Response
 
   def this(status: Int,
            headers: Map[String, AnyRef],
-           cookies: Seq[Cookie] ,
+           cookies: Seq[Cookie],
            body: Option[ChannelBuffer]) =
     this(HttpResponseStatus.valueOf(status), headers, cookies, body)
 
@@ -49,6 +49,11 @@ case class Response
 
 
 case class ResponseBuilder(responseFuture: Future[Response] = Future(Response())) {
+
+  def withStatus
+  (status: Int): ResponseBuilder = {
+    withStatus(HttpResponseStatus.valueOf(status))
+  }
 
   def withStatus
   (status: HttpResponseStatus): ResponseBuilder = {
@@ -140,6 +145,13 @@ case class ResponseBuilder(responseFuture: Future[Response] = Future(Response())
 
   def toFuture = responseFuture.map(_.get)
 
-  def build = Await.result(responseFuture)
+  def getResultByAwait = Await.result(responseFuture)
+
+  def getRawByAwait = Await.result(toFuture)
+
 }
 
+object ResponseBuilder {
+
+
+}

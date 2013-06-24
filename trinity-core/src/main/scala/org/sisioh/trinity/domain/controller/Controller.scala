@@ -5,7 +5,7 @@ import java.util.UUID
 import org.sisioh.dddbase.core.model.{EntityCloneable, Identity, Entity}
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.config.Config
-import org.sisioh.trinity.domain.http.ResponseBuilder
+import org.sisioh.trinity.domain.http.{Response, ResponseBuilder}
 import org.sisioh.trinity.domain.routing.{Routes, PathPatternParser}
 
 trait Controller extends Entity[Identity[UUID]] with Routes with EntityCloneable[Identity[UUID], Controller] {
@@ -21,6 +21,9 @@ trait Controller extends Entity[Identity[UUID]] with Routes with EntityCloneable
 
   protected lazy val stats = statsReceiver.scope("Controller")
 
-  protected def responseBuilder = new ResponseBuilder
+  protected def responseBuilder = ResponseBuilder()
+
+  implicit def convertToRaw(res : Response) =
+    res.get
 
 }
