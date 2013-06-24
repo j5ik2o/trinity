@@ -58,3 +58,27 @@ application.addRoute(HttpMethod.GET, "/group/:name", PlayLikeController) {
 }
 ```
 - テンプレートエンジンは、Scalate, Thymeleaf, Velocity, FreeMarkerに対応。
+
+```scala
+// ...
+   get("/template1") {
+      request =>
+        responseBuilder.withBodyRenderer(ScalateRenderer("scalate.mustache", Map("message" -> "hello"))).toFuture
+    }
+
+    get("/template2") {
+      request =>
+        responseBuilder.withBodyRenderer(ThymeleafRenderer("thymeleaf", Map("message" -> "hello"))).toFuture
+    }
+
+    get("/template3") {
+      request =>
+        responseBuilder.withBodyRenderer(VelocityRenderer("velocity.vm", Map("message" -> "hello"))).toFuture
+    }
+
+    get("/template4") {
+      request =>
+        responseBuilder.withBodyRenderer(FreeMarkerRenderer("freemarker.tpl", Map("message" -> "hello"))).toFuture
+    }
+// ...
+```
