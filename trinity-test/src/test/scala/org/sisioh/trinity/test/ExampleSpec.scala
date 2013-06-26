@@ -280,7 +280,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     "respond with a rendered template" in {
       testGet("/template") {
         response =>
-          response.body must_== ("aaaa")
+          response.body must_== ("Unsupported Media Type!")
       }
     }
   }
