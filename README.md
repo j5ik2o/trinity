@@ -1,6 +1,8 @@
 trinity
 =======
 
+[![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
+
 MVC framework by Finagle based
 
 - FinagleをベースにしたMVCフレームワーク
