@@ -77,7 +77,6 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
     Await.ready(server.close())
     info("shutting down")
     globalSetting.foreach(_.onStop(this))
-    System.exit(0)
   }
 
   def start() {
