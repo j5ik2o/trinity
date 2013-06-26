@@ -12,6 +12,8 @@ import org.specs2.mutable.Specification
 
 class ExampleSpec extends Specification with ControllerTestSupport {
 
+  sequential
+
   /**
    * Custom Error Handling with custom Exception
    *
