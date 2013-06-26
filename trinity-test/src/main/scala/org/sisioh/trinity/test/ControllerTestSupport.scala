@@ -1,19 +1,18 @@
 package org.sisioh.trinity.test
 
+import com.twitter.finagle.SimpleFilter
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
 import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
-import com.twitter.util.{Await, Future}
+import com.twitter.util.Await
+import java.io.File
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.util.CharsetUtil.UTF_8
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.config.{Environment, Config}
 import org.sisioh.trinity.domain.controller._
-import org.sisioh.trinity.domain.routing.{SinatraPathPatternParser, PathPatternParser, RouteRepositoryOnMemory}
-import org.specs2.mutable.Specification
+import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
 import scala.collection.Map
-import com.twitter.finagle.SimpleFilter
 import scala.concurrent.duration.Duration
-import java.io.File
 
 class MockResponse(val originalResponse: FinagleResponse) {
 
@@ -85,7 +84,8 @@ trait ControllerTestSupport {
     }
     application.registerController(controller)
     val service = new ControllerService(application, globalSetting)
-    new MockResponse(Await.result(service(request)))
+    val finagleResponse = Await.result(service(request))
+    new MockResponse(finagleResponse)
   }
 
   def controller: SimpleController

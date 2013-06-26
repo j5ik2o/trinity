@@ -9,7 +9,9 @@ import org.sisioh.trinity.domain.http.{Response, ResponseBuilder}
 import org.sisioh.trinity.domain.routing.{Routes, PathPatternParser}
 import scala.language.implicitConversions
 
-trait Controller extends Entity[Identity[UUID]] with Routes with EntityCloneable[Identity[UUID], Controller] {
+trait Controller
+  extends Entity[Identity[UUID]] with Routes
+  with EntityCloneable[Identity[UUID], Controller] {
 
   val identity: Identity[UUID] = Identity(UUID.randomUUID())
 
