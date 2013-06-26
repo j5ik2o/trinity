@@ -6,6 +6,7 @@ import java.util.UUID
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.dddbase.core.model.{Entity, EntityCloneable, Identity}
 import org.sisioh.trinity.domain.http.Request
+import scala.language.implicitConversions
 
 /**
  * [[org.sisioh.trinity.domain.routing.Route]]のための識別子。

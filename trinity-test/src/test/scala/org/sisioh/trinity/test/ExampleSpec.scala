@@ -5,7 +5,6 @@ import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
 import scala.Some
 import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
-import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.http.{ResponseBuilder, Request, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
@@ -22,7 +21,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
 
   /* ###BEGIN_APP### */
 
-  implicit val application = new MockApplication(Config())
+  implicit val application = MockApplication()
 
   object ExampleController extends SimpleController {
 

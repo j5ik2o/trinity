@@ -5,6 +5,7 @@ import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity.domain.controller.{Controller, ControllerRepository}
 import org.sisioh.trinity.domain.http.Request
+import scala.language.implicitConversions
 
 trait Routes {
 

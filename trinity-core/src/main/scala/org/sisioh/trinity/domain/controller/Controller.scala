@@ -7,6 +7,7 @@ import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.http.{Response, ResponseBuilder}
 import org.sisioh.trinity.domain.routing.{Routes, PathPatternParser}
+import scala.language.implicitConversions
 
 trait Controller extends Entity[Identity[UUID]] with Routes with EntityCloneable[Identity[UUID], Controller] {
 
