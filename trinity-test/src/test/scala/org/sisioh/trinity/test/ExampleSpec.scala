@@ -9,10 +9,9 @@ import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.http.{ResponseBuilder, Request, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
+import org.specs2.mutable.Specification
 
-class ExampleSpec extends SpecHelper {
-
-  sequential
+class ExampleSpec extends Specification with ControllerTestSupport {
 
   /**
    * Custom Error Handling with custom Exception
@@ -34,7 +33,7 @@ class ExampleSpec extends SpecHelper {
      */
     get("/hello") {
       request =>
-       responseBuilder.withPlain("hello world").toFuture
+        responseBuilder.withPlain("hello world").toFuture
     }
 
     /**
@@ -66,7 +65,7 @@ class ExampleSpec extends SpecHelper {
     get("/data.json") {
       request =>
         import org.json4s.JsonDSL._
-       responseBuilder.withJson(Map("foo" -> "bar")).toFuture
+        responseBuilder.withJson(Map("foo" -> "bar")).toFuture
     }
 
     /**
@@ -205,108 +204,139 @@ class ExampleSpec extends SpecHelper {
 
   "GET /notfound" should {
     "respond 404" in {
-      get("/notfound")
-      response.body must_== ("not found yo")
-      response.code must_== (404)
+      testGet("/notfound") {
+        response =>
+          response.body must_== ("not found yo")
+          response.code must_== (404)
+      }
     }
   }
 
   "GET /error" should {
     "respond 500" in {
-      get("/error")
-      response.body must_== ("whoops, divide by zero!")
-      response.code must_== (500)
+      testGet("/error") {
+        response =>
+          response.body must_== ("whoops, divide by zero!")
+          response.code must_== (500)
+      }
     }
   }
 
   "GET /unauthorized" should {
     "respond 401" in {
-      get("/unauthorized")
-      response.body must_== ("Not Authorized!")
-      response.code must_== (401)
+      testGet("/unauthorized") {
+        response =>
+          response.body must_== ("Not Authorized!")
+          response.code must_== (401)
+      }
     }
   }
 
   "GET /hello" should {
     "respond with hello world" in {
-      get("/hello")
-      response.body must_== ("hello world")
+      testGet("/hello") {
+        response =>
+          response.body must_== ("hello world")
+      }
     }
   }
 
   "GET /user/foo" should {
     "responsd with hello foo" in {
-      get("/user/foo")
-      response.body must_== ("hello foo")
+      testGet("/user/foo") {
+        response =>
+          response.body must_== ("hello foo")
+      }
     }
   }
 
   "GET /headers" should {
     "respond with Foo:Bar" in {
-      get("/headers")
-      response.getHeader("Foo") must_== ("Bar")
+      testGet("/headers") {
+        response =>
+          response.getHeader("Foo") must_== ("Bar")
+      }
     }
   }
 
-  "GET /data.json" should { """respond with {"foo":"bar"}""" in {
-    get("/data.json")
-    response.body must_== ("""{"foo":"bar"}""")
-  }
+  "GET /data.json" should {
+    """respond with {"foo":"bar"}""" in {
+      testGet("/data.json") {
+        response =>
+          response.body must_== ("""{"foo":"bar"}""")
+      }
+    }
   }
 
   "GET /search?q=foo" should {
     "respond with no results for foo" in {
-      get("/search?q=foo")
-      response.body must_== ("no results for foo")
+      testGet("/search?q=foo") {
+        response =>
+          response.body must_== ("no results for foo")
+      }
     }
   }
 
   "GET /template" should {
     "respond with a rendered template" in {
-      get("/template")
-      response.body must_== ("Your value is random value here")
+      testGet("/template") {
+        response =>
+          response.body must_== ("aaaa")
+      }
     }
   }
 
   "GET /blog/index.json" should {
     "should have json" in {
-      get("/blog/index.json")
-      response.body must_== ("""{"value":"hello"}""")
+      testGet("/blog/index.json") {
+        response =>
+          response.body must_== ("""{"value":"hello"}""")
+      }
     }
   }
 
   "GET /blog/index.html" should {
     "should have html" in {
-      get("/blog/index.html")
-      response.body must_== ("""<h1>Hello</h1>""")
+      testGet("/blog/index.html") {
+        response =>
+          response.body must_== ("""<h1>Hello</h1>""")
+      }
     }
   }
 
   "GET /blog/index.rss" should {
     "respond in a 415" in {
-      get("/blog/index.rss")
-      response.code must_== (415)
+      testGet("/blog/index.rss") {
+        response =>
+          response.code must_== (415)
+      }
     }
   }
 
   "GET /another/page with html" should {
     "respond with html" in {
-      get("/another/page", Map.empty, Map("Accept" -> "text/html"))
-      response.body must_== ("an html response")
+      testGet("/another/page", Map.empty, Map("Accept" -> "text/html")) {
+        response =>
+          response.body must_== ("an html response")
+      }
     }
   }
 
   "GET /another/page with json" should {
     "respond with json" in {
-      get("/another/page", Map.empty, Map("Accept" -> "application/json"))
-      response.body must_== ("an json response")
+      testGet("/another/page", Map.empty, Map("Accept" -> "application/json")) {
+        response =>
+          response.body must_== ("an json response")
+      }
     }
   }
 
   "GET /another/page with unsupported type" should {
     "respond with catch all" in {
-      get("/another/page", Map.empty, Map("Accept" -> "foo/bar"))
-      response.body must_== ("default fallback response")
+      testGet("/another/page", Map.empty, Map("Accept" -> "foo/bar")) {
+        response =>
+          response.body must_== ("default fallback response")
+      }
     }
   }
 

@@ -10,7 +10,8 @@ import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 class TestController(implicit application: TrinityApplication) extends SimpleController {
 
   get("/hey") {
-    request => responseBuilder.withPlain("hello").withOk.toFuture
+    request =>
+      responseBuilder.withPlain("hello").withOk.toFuture
   }
 
   //  class TestView extends MustacheView {
@@ -64,8 +65,6 @@ class ServerSpec extends Specification {
       val controller = new TestController
       s.registerController(controller)
       s.start()
-
-      Thread.sleep(5 * 60000)
     }
   }
 

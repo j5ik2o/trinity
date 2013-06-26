@@ -3,9 +3,10 @@ package org.sisioh.trinity.test
 import org.jboss.netty.handler.codec.http._
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.controller.SimpleController
-import org.sisioh.trinity.domain.config.Config
+import org.specs2.mutable.Specification
 
-class CookieTestController()(implicit application: TrinityApplication) extends SimpleController {
+class CookieTestController()(implicit application: TrinityApplication)
+  extends SimpleController {
 
   get("/sendCookie") {
     request =>
@@ -21,9 +22,9 @@ class CookieTestController()(implicit application: TrinityApplication) extends S
 
 }
 
-class CookieSpec extends SpecHelper {
+class CookieSpec extends Specification with ControllerTestSupport {
 
-  implicit val application = new MockApplication(Config())
+  implicit val application = MockApplication()
 
   def controller = {
     new CookieTestController()
@@ -31,15 +32,19 @@ class CookieSpec extends SpecHelper {
 
   "basic k/v cookie" should {
     "have Foo:Bar" in {
-      get("/sendCookie")
-      response.getHeader("Set-Cookie") must_== "Foo=Bar"
+      testGet("/sendCookie") {
+        response =>
+          response.getHeader("Set-Cookie") must_== "Foo=Bar"
+      }
     }
   }
 
   "advanced Cookie" should {
     "have Biz:Baz&Secure=true" in {
-      get("/sendAdvCookie")
-      response.getHeader("Set-Cookie") must_== "Biz=Baz; Secure"
+      testGet("/sendAdvCookie") {
+        response =>
+          response.getHeader("Set-Cookie") must_== "Biz=Baz; Secure"
+      }
     }
   }
 
