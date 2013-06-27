@@ -51,7 +51,7 @@ case class MockApplication
  statsReceiver: StatsReceiver = NullStatsReceiver)
   extends TrinityApplication {
 
-  def registerController(controller: Controller) {
+  def registerController(controller: Controller) = synchronized {
     controllerRepository.store(controller)
     controller.routeRepository.foreach {
       e =>

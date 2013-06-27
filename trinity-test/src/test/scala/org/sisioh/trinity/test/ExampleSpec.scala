@@ -12,7 +12,7 @@ import org.specs2.mutable.Specification
 
 class ExampleSpec extends Specification with ControllerTestSupport {
 
-  sequential
+  //sequential
 
   /**
    * Custom Error Handling with custom Exception
@@ -282,7 +282,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     "respond with a rendered template" in {
       testGet("/template") {
         response =>
-          response.body must_== ("Unsupported Media Type!")
+          response.body must_== ("aaaa")
       }
     }
   }

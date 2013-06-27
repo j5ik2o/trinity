@@ -24,7 +24,7 @@ class CookieTestController()(implicit application: TrinityApplication)
 
 class CookieSpec extends Specification with ControllerTestSupport {
 
-  sequential
+  //sequential
 
   implicit val application = MockApplication()
 
