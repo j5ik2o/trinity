@@ -24,7 +24,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
 
   /* ###BEGIN_APP### */
 
-  implicit val application = MockApplication()
+  implicit val application = MockApplication(MockConfig(localDocumentRoot = "trinity-test/src/test/resources"))
 
   object ExampleController extends SimpleController {
 
