@@ -11,7 +11,7 @@ import org.sisioh.trinity.domain.routing.{FutureAction, Route}
 /**
  * シンプルなコントローラ。
  *
- * @param application
+ * @param application [[org.sisioh.trinity.application.TrinityApplication]]
  */
 abstract class SimpleController(implicit application: TrinityApplication)
   extends AbstractController with LoggingEx {

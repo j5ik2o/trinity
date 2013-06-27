@@ -3,16 +3,17 @@ package org.sisioh.trinity.test
 import com.twitter.finagle.http.Response
 import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
-import scala.Some
+import org.jboss.netty.handler.codec.http.HttpResponseStatus
+import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
 import org.sisioh.trinity.domain.http.{ResponseBuilder, Request, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
-import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.specs2.mutable.Specification
+import scala.Some
 
 class ExampleSpec extends Specification with ControllerTestSupport {
 
-  //sequential
+ // sequential
 
   /**
    * Custom Error Handling with custom Exception
@@ -100,7 +101,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     get("/template") {
       request =>
         implicit val scalate = ScalateEngineContext()
-        val view = ScalateRenderer("test_view.mustache", Map("test_val" -> "aaaa"))
+        val view = ScalateRenderer("scalate.mustache", Map("message" -> "aaaa"))
         responseBuilder.withBodyRenderer(view).toFuture
     }
 
@@ -179,19 +180,19 @@ class ExampleSpec extends Specification with ControllerTestSupport {
 
   val controller = ExampleController
 
-  override val globalSetting = Some(new GlobalSettings {
+  override val globalSetting = Some(new GlobalSettings with LoggingEx {
     def notFound(request: Request): Future[Response] = {
       ResponseBuilder().withStatus(HttpResponseStatus.valueOf(404)).withPlain("not found yo").toFuture
     }
 
-    def error(request: Request): Future[Response] = {
+    def error(request: Request): Future[Response] = withDebugScope(s"error(${request.error})") {
       request.error match {
         case Some(e: ArithmeticException) =>
           ResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("whoops, divide by zero!").toFuture
         case Some(e: UnauthorizedException) =>
           ResponseBuilder().withStatus(HttpResponseStatus.valueOf(401)).withPlain("Not Authorized!").toFuture
         case Some(ex) =>
-          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(415)).withPlain("Unsupported Media Type!").toFuture
+          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(415)).withPlain(ex.toString).toFuture
         case _ =>
           ResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("Something went wrong!").toFuture
       }
@@ -282,7 +283,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     "respond with a rendered template" in {
       testGet("/template") {
         response =>
-          response.body must_== ("aaaa")
+          response.body.trim must_== ("aaaa")
       }
     }
   }

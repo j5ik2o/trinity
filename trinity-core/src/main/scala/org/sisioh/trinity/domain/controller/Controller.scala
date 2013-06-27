@@ -9,13 +9,18 @@ import org.sisioh.trinity.domain.http.{Response, ResponseBuilder}
 import org.sisioh.trinity.domain.routing.{Routes, PathPatternParser}
 import scala.language.implicitConversions
 
+/**
+ * アクションを集合で保持するコントローラ。
+ */
 trait Controller
-  extends Entity[Identity[UUID]] with Routes
+  extends Entity[Identity[UUID]]
+  with Routes
   with EntityCloneable[Identity[UUID], Controller] {
 
   val identity: Identity[UUID] = Identity(UUID.randomUUID())
 
   implicit protected val config: Config
+
   implicit protected val pathParser: PathPatternParser
 
   implicit val application: TrinityApplication
