@@ -3,26 +3,15 @@ package org.sisioh.trinity.test
 import com.twitter.finagle.http.Response
 import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
-import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
 import org.sisioh.trinity.domain.http.{ResponseBuilder, Request, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.specs2.mutable.Specification
-import scala.Some
 
 class ExampleSpec extends Specification with ControllerTestSupport {
 
- // sequential
-
-  /**
-   * Custom Error Handling with custom Exception
-   *
-   * curl http://localhost:7070/unautorized
-   */
   class UnauthorizedException extends Exception
-
-  /* ###BEGIN_APP### */
 
   implicit val application = MockApplication(MockConfig(localDocumentRoot = "trinity-test/src/test/resources"))
 
@@ -77,9 +66,11 @@ class ExampleSpec extends Specification with ControllerTestSupport {
      */
     get("/search") {
       request =>
-        request.params.get("q") match {
-          case Some(q) => responseBuilder.withPlain("no results for " + q).toFuture
-          case None => responseBuilder.withPlain("query param q needed").withStatus(HttpResponseStatus.valueOf(500)).toFuture
+        request.params.get("q").map {
+          q =>
+            responseBuilder.withPlain("no results for " + q).toFuture
+        }.getOrElse {
+          responseBuilder.withPlain("query param q needed").withStatus(500).toFuture
         }
     }
 
@@ -117,7 +108,11 @@ class ExampleSpec extends Specification with ControllerTestSupport {
         responseBuilder.withPlain("we never make it here").toFuture
     }
 
-
+    /**
+     * Custom Error Handling with custom Exception
+     *
+     * curl http://localhost:7070/unautorized
+     */
     get("/unauthorized") {
       request =>
         throw new UnauthorizedException
@@ -145,7 +140,6 @@ class ExampleSpec extends Specification with ControllerTestSupport {
      * curl -H "Accept: application/json" http://localhost:7070/another/page
      * curl -H "Accept: foo/bar" http://localhost:7070/another/page
      */
-
     get("/another/page") {
       request =>
         respondTo(request) {
@@ -166,7 +160,6 @@ class ExampleSpec extends Specification with ControllerTestSupport {
      * curl http://localhost:9990/stats.txt
      *
      */
-
     get("/slow_thing") {
       request =>
         Stats.incr("slow_thing")
@@ -181,35 +174,32 @@ class ExampleSpec extends Specification with ControllerTestSupport {
   val controller = ExampleController
 
   override val globalSetting = Some(new GlobalSettings with LoggingEx {
+
     def notFound(request: Request): Future[Response] = {
-      ResponseBuilder().withStatus(HttpResponseStatus.valueOf(404)).withPlain("not found yo").toFuture
+      ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
     }
 
     def error(request: Request): Future[Response] = withDebugScope(s"error(${request.error})") {
       request.error match {
         case Some(e: ArithmeticException) =>
-          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("whoops, divide by zero!").toFuture
+          ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
         case Some(e: UnauthorizedException) =>
-          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(401)).withPlain("Not Authorized!").toFuture
+          ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFuture
         case Some(ex) =>
-          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(415)).withPlain(ex.toString).toFuture
+          ResponseBuilder().withStatus(415).withPlain(ex.toString).toFuture
         case _ =>
-          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("Something went wrong!").toFuture
+          ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFuture
       }
     }
+
   })
-
-  /* ###END_APP### */
-
-
-  /* ###BEGIN_SPEC### */
 
   "GET /notfound" should {
     "respond 404" in {
       testGet("/notfound") {
         response =>
-          response.body must_== ("not found yo")
-          response.code must_== (404)
+          response.body must_== "not found yo"
+          response.code must_== 404
       }
     }
   }
@@ -218,8 +208,8 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     "respond 500" in {
       testGet("/error") {
         response =>
-          response.body must_== ("whoops, divide by zero!")
-          response.code must_== (500)
+          response.body must_== "whoops, divide by zero!"
+          response.code must_== 500
       }
     }
   }
@@ -228,8 +218,8 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     "respond 401" in {
       testGet("/unauthorized") {
         response =>
-          response.body must_== ("Not Authorized!")
-          response.code must_== (401)
+          response.body must_== "Not Authorized!"
+          response.code must_== 401
       }
     }
   }
@@ -238,7 +228,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     "respond with hello world" in {
       testGet("/hello") {
         response =>
-          response.body must_== ("hello world")
+          response.body must_== "hello world"
       }
     }
   }
@@ -247,7 +237,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     "responsd with hello foo" in {
       testGet("/user/foo") {
         response =>
-          response.body must_== ("hello foo")
+          response.body must_== "hello foo"
       }
     }
   }
@@ -256,7 +246,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     "respond with Foo:Bar" in {
       testGet("/headers") {
         response =>
-          response.getHeader("Foo") must_== ("Bar")
+          response.getHeader("Foo") must_== "Bar"
       }
     }
   }
@@ -265,7 +255,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     """respond with {"foo":"bar"}""" in {
       testGet("/data.json") {
         response =>
-          response.body must_== ("""{"foo":"bar"}""")
+          response.body must_== """{"foo":"bar"}"""
       }
     }
   }
@@ -274,7 +264,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     "respond with no results for foo" in {
       testGet("/search?q=foo") {
         response =>
-          response.body must_== ("no results for foo")
+          response.body must_== "no results for foo"
       }
     }
   }
@@ -342,5 +332,4 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     }
   }
 
-  /* ###END_SPEC### */
 }

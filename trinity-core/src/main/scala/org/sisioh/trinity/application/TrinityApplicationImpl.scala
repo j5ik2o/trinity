@@ -2,9 +2,9 @@ package org.sisioh.trinity.application
 
 import com.twitter.conversions.storage._
 import com.twitter.finagle.builder.{Server, ServerBuilder}
-import com.twitter.finagle.http.RichHttp
 import com.twitter.finagle.http._
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
+import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
 import com.twitter.finagle.tracing.{Tracer, NullTracer}
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.ostrich.admin.AdminServiceFactory
@@ -18,14 +18,12 @@ import com.twitter.util.Await
 import java.lang.management.ManagementFactory
 import java.net.InetSocketAddress
 import org.sisioh.scala.toolbox.LoggingEx
-import org.sisioh.trinity.domain._
+import org.sisioh.trinity.domain.config.Config
+import org.sisioh.trinity.domain.controller.{ControllerRepositoryOnMemory, GlobalSettings, ControllerService, Controller}
+import org.sisioh.trinity.domain.resource.FileReadFilter
+import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
 import org.sisioh.trinity.infrastructure.DurationUtil
 import scala.Some
-import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
-import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
-import org.sisioh.trinity.domain.resource.FileReadFilter
-import org.sisioh.trinity.domain.controller.{ControllerRepositoryOnMemory, GlobalSettings, ControllerService, Controller}
-import org.sisioh.trinity.domain.config.Config
 
 private[application]
 class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSettings] = None)
@@ -50,7 +48,7 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
     }
   }
 
-  def registerController(controller: Controller) {
+  def registerController(controller: Controller): Unit = synchronized {
     controllerRepository.store(controller)
     controller.routeRepository.foreach {
       e =>
