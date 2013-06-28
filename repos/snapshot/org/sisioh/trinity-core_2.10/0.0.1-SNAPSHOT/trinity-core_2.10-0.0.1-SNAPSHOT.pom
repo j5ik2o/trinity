@@ -46,6 +46,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.seasar.util</groupId>
+            <artifactId>s2util</artifactId>
+            <version>0.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.json4s</groupId>
             <artifactId>json4s-jackson_2.10</artifactId>
             <version>3.2.2</version>
@@ -53,7 +58,7 @@
         <dependency>
             <groupId>org.sisioh</groupId>
             <artifactId>scala-dddbase-core_2.10</artifactId>
-            <version>0.1.9</version>
+            <version>0.1.10</version>
         </dependency>
         <dependency>
             <groupId>org.sisioh</groupId>
@@ -234,6 +239,12 @@
             <id>SisiohScalaToolboxReleaseRepository</id>
             <name>Sisioh Scala Toolbox Release Repository</name>
             <url>http://sisioh.github.io/scala-toolbox/repos/release/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>SeasarRepository</id>
+            <name>Seasar Repository</name>
+            <url>http://maven.seasar.org/maven2/</url>
             <layout>default</layout>
         </repository>
     </repositories>
