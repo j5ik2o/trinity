@@ -14,19 +14,7 @@ import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
 import scala.collection.Map
 import scala.concurrent.duration.Duration
 
-class MockResponse(val originalResponse: FinagleResponse) {
 
-  def status = originalResponse.getStatus()
-
-  def code = originalResponse.getStatus().getCode
-
-  def body = originalResponse.getContent().toString(UTF_8)
-
-  def getHeader(name: String) = originalResponse.getHeader(name)
-
-  def getHeaders = originalResponse.getHeaders()
-
-}
 
 case class MockConfig
 (environment: Environment.Value = Environment.Development,
