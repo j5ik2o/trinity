@@ -147,7 +147,7 @@ object TrinityBuild extends Build {
         "org.specs2" %% "specs2" % "1.14"
       )
     )
-  ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker)
+  ) dependsOn(core, viewScalate % "test", viewThymeleaf % "test", viewVelocity % "test", viewFreeMarker % "test")
 
 
   lazy val example = Project(
