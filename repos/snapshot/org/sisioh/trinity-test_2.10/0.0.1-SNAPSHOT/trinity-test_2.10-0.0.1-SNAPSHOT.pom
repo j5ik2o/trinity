@@ -20,21 +20,25 @@
             <groupId>org.sisioh</groupId>
             <artifactId>trinity-view-scalate_2.10</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.sisioh</groupId>
             <artifactId>trinity-view-thymeleaf_2.10</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.sisioh</groupId>
             <artifactId>trinity-view-velocity_2.10</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.sisioh</groupId>
             <artifactId>trinity-view-freemarker_2.10</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
