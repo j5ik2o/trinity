@@ -9,7 +9,12 @@ import scala.util.parsing.combinator.RegexParsers
  * A path pattern optionally matches a request path and extracts path
  * parameters.
  */
-case class PathPattern(regex: Regex, captureGroupNames: List[String] = Nil) {
+case class PathPattern(regex: Regex, captureGroupNames: List[String] = Nil)
+  extends Ordered[PathPattern] {
+
+  def compare(that: PathPattern): Int = {
+    regex.toString().compare(that.regex.toString)
+  }
 
   def apply(path: String): Option[Map[String, String]] = {
     regex.findFirstMatchIn(path).map {

@@ -15,7 +15,11 @@ import scala.language.implicitConversions
 trait Controller
   extends Entity[Identity[UUID]]
   with Routes
-  with EntityCloneable[Identity[UUID], Controller] {
+  with EntityCloneable[Identity[UUID], Controller]
+  with Ordered[Controller] {
+
+  def compare(that: Controller): Int =
+    identity.value.compareTo(that.identity.value)
 
   val identity: Identity[UUID] = Identity(UUID.randomUUID())
 
@@ -31,7 +35,7 @@ trait Controller
 
   protected def responseBuilder = ResponseBuilder()
 
-  implicit def convertToRaw(res : Response) =
+  implicit def convertToRaw(res: Response) =
     res.get
 
 }

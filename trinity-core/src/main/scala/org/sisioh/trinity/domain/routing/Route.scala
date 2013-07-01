@@ -21,7 +21,22 @@ case class RouteId(method: HttpMethod, pathPattern: PathPattern) extends Identit
 /**
  * ルートを表すエンティティ。
  */
-trait Route extends Entity[RouteId] with EntityCloneable[RouteId, Route] {
+trait Route
+  extends Entity[RouteId]
+  with EntityCloneable[RouteId, Route]
+  with Ordered[Route] {
+
+  def compare(that: Route): Int = {
+    val v1 = identity.value._1.compareTo(that.identity.value._1)
+    if (v1 != 0) v1
+    else {
+      val v2 = identity.value._2.compareTo(that.identity.value._2)
+      if (v2 != 0) v2
+      else {
+        0
+      }
+    }
+  }
 
   val controllerId: Identity[UUID]
 
