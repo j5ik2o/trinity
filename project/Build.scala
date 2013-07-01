@@ -35,7 +35,8 @@ object TrinityBuild extends Build {
       "org.mockito" % "mockito-core" % "1.9.5" % "test",
       "org.specs2" %% "specs2" % "1.14" % "test",
       "org.seasar.util" % "s2util" % "0.0.0"
-    )
+    ),
+    publish
   )
 
   lazy val core = Project(
@@ -79,8 +80,7 @@ object TrinityBuild extends Build {
           ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
           ),
         "commons-io" % "commons-io" % "1.3.2"
-      ),
-      publish
+      )
     )
   )
 
@@ -88,10 +88,7 @@ object TrinityBuild extends Build {
     id = "trinity-view",
     base = file("trinity-view"),
     settings = commonSettings ++ Seq(
-      name := "trinity-view",
-      libraryDependencies ++= Seq(
-      ),
-      publish
+      name := "trinity-view"
     )
   ) dependsOn (core)
 
@@ -102,8 +99,7 @@ object TrinityBuild extends Build {
       name := "trinity-view-freemarker",
       libraryDependencies ++= Seq(
         "org.freemarker" % "freemarker" % "2.3.19"
-      ),
-      publish
+      )
     )
   ) dependsOn (view)
 
@@ -114,8 +110,7 @@ object TrinityBuild extends Build {
       name := "trinity-view-velocity",
       libraryDependencies ++= Seq(
         "velocity" % "velocity" % "1.5"
-      ),
-      publish
+      )
     )
   ) dependsOn (view)
 
@@ -126,8 +121,7 @@ object TrinityBuild extends Build {
       name := "trinity-view-thymeleaf",
       libraryDependencies ++= Seq(
         "org.thymeleaf" % "thymeleaf" % "2.0.17"
-      ),
-      publish
+      )
     )
   ) dependsOn (view)
 
@@ -138,8 +132,7 @@ object TrinityBuild extends Build {
       name := "trinity-view-scalate",
       libraryDependencies ++= Seq(
         "org.fusesource.scalate" %% "scalate-core" % "1.6.1"
-      ),
-      publish
+      )
     )
   ) dependsOn (view)
 
@@ -152,8 +145,7 @@ object TrinityBuild extends Build {
         "org.hamcrest" % "hamcrest-all" % "1.3",
         "org.mockito" % "mockito-core" % "1.9.5",
         "org.specs2" %% "specs2" % "1.14"
-      ),
-      publish
+      )
     )
   ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker)
 
