@@ -34,7 +34,7 @@ object TrinityBuild extends Build {
       "org.hamcrest" % "hamcrest-all" % "1.3" % "test",
       "org.mockito" % "mockito-core" % "1.9.5" % "test",
       "org.specs2" %% "specs2" % "1.14" % "test",
-      "org.seasar.util" % "s2util" % "0.0.0"
+      "org.seasar.util" % "s2util" % "0.0.1"
     ),
     publish
   )
