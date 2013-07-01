@@ -76,7 +76,7 @@ trait ControllerTestSupport {
     new MockResponse(finagleResponse)
   }
 
-  def controller: SimpleController
+  def controller: Controller
 
   def globalSetting: Option[GlobalSettings] = None
 
