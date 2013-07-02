@@ -7,6 +7,7 @@ import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.dddbase.core.model.{Entity, EntityCloneable, Identity}
 import org.sisioh.trinity.domain.http.Request
 import scala.language.implicitConversions
+import org.sisioh.trinity.domain.controller.Controller
 
 /**
  * [[org.sisioh.trinity.domain.routing.Route]]のための識別子。
@@ -56,12 +57,19 @@ object Route {
 
   def apply(identity: RouteId, controllerId: Identity[UUID], action: Action): Route = new RouteImpl(identity, controllerId, action)
 
+  def apply(identity: RouteId, controller: Controller, action: Action): Route = new RouteImpl(identity, controller.identity, action)
+
+
   def apply(method: HttpMethod, path: String, controllerId: Identity[UUID], action: Action)(implicit pathPatternParser: PathPatternParser): Route = {
     val regex = pathPatternParser(path)
     apply(RouteId(method, regex), controllerId, action)
   }
 
+  def apply(method: HttpMethod, path: String, controller: Controller, action: Action)(implicit pathPatternParser: PathPatternParser): Route =
+    apply(method, path, controller.identity, action)
+
   def unapply(route: Route): Option[(RouteId, Identity[UUID], Action)] = Some(route.identity, route.controllerId, route.action)
+
 }
 
 private[domain]

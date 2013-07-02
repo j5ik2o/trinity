@@ -171,9 +171,9 @@ class ExampleSpec extends Specification with ControllerTestSupport {
 
   }
 
-  val controller = ExampleController
+  val getController = ExampleController
 
-  override val globalSetting = Some(new GlobalSettings with LoggingEx {
+  override val getGlobalSettings = Some(new GlobalSettings with LoggingEx {
 
     def notFound(request: Request): Future[Response] = {
       ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture

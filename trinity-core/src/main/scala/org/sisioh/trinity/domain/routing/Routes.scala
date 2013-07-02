@@ -27,6 +27,9 @@ trait Routes {
     routeRepository.store(route)
   }
 
+  def addRoutes(routes: Seq[Route]): Unit =
+    routes.foreach(addRoute)
+
   def getRoute(routeId: RouteId) = routeRepository.resolve(routeId)
 
 }

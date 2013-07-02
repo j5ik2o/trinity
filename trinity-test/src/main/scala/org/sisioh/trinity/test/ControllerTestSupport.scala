@@ -70,15 +70,16 @@ trait ControllerTestSupport {
       header =>
         request.httpRequest.setHeader(header._1, header._2)
     }
+    val controller = getController
     application.registerController(controller)
-    val service = new ControllerService(application, globalSetting)
+    val service = new ControllerService(application, getGlobalSettings)
     val finagleResponse = Await.result(service(request))
     new MockResponse(finagleResponse)
   }
 
-  def controller: Controller
+  def getController: Controller
 
-  def globalSetting: Option[GlobalSettings] = None
+  def getGlobalSettings: Option[GlobalSettings] = None
 
   def testGet(path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
              (f: MockResponse => Unit)(implicit application: TrinityApplication) = {

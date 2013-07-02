@@ -26,7 +26,7 @@ class CookieSpec extends Specification with ControllerTestSupport {
 
   implicit val application = MockApplication()
 
-  def controller = {
+  def getController = {
     new CookieTestController()
   }
 
