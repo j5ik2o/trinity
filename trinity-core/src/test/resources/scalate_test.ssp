@@ -1,0 +1,7 @@
+<%@ var name: String %>
+<%@ var languages: List[String] %>
+Hello ${name}!! by Ssp Template
+Programming Languages:
+#for (l <- languages)
+  ${l}
+#end

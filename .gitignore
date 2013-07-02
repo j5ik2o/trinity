@@ -11,3 +11,11 @@ project/plugins/project/
 
 # Scala-IDE specific
 .scala_dependencies
+
+.idea*
+*.iml
+
+tmp
+log
+
+repos
