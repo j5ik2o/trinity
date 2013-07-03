@@ -8,8 +8,9 @@ import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
 import org.sisioh.trinity.domain.http.{ResponseBuilder, Request, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.specs2.mutable.Specification
+import org.sisioh.trinity.application.TrinityApplication
 
-class ExampleSpec extends Specification with ControllerTestSupport {
+class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   class UnauthorizedException extends Exception
 
@@ -171,7 +172,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
 
   }
 
-  val getController = ExampleController
+  def getController(implicit application: TrinityApplication) = ExampleController
 
   override val getGlobalSettings = Some(new GlobalSettings with LoggingEx {
 

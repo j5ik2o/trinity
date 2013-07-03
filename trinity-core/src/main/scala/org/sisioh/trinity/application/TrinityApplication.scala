@@ -6,6 +6,8 @@ import com.twitter.finagle.stats.StatsReceiver
 import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.controller.{Controller, GlobalSettings}
 import org.sisioh.trinity.domain.routing.Routes
+import com.twitter.finagle.tracing.{NullTracer, Tracer}
+import com.twitter.ostrich.admin.RuntimeEnvironment
 
 /**
  * `Trinity`のアプリケーション本体。
@@ -28,6 +30,10 @@ trait TrinityApplication extends Routes {
 
   def start(): Unit
 
+  def start
+  (tracer: Tracer = NullTracer,
+   runtimeEnv: RuntimeEnvironment = new RuntimeEnvironment(this)): Unit
+
   def shutdown(): Unit
 
 }
@@ -37,9 +43,6 @@ trait TrinityApplication extends Routes {
  */
 object TrinityApplication {
 
-  @volatile
-  private var currentApplication: TrinityApplication = _
-
   /**
    * ファクトリメソッド。
    *
@@ -48,14 +51,8 @@ object TrinityApplication {
    * @return [[org.sisioh.trinity.application.TrinityApplication]]
    */
   def apply(config: Config, globalSetting: Option[GlobalSettings] = None): TrinityApplication = synchronized {
-    if (currentApplication == null) {
-      currentApplication = new TrinityApplicationImpl(config, globalSetting)
-      currentApplication
-    } else {
-      currentApplication
-    }
+    new TrinityApplicationImpl(config, globalSetting)
   }
 
-  implicit def current = currentApplication
 
 }

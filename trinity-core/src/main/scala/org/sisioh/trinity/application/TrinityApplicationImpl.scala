@@ -23,11 +23,12 @@ import org.sisioh.trinity.domain.controller.{ControllerRepositoryOnMemory, Globa
 import org.sisioh.trinity.domain.resource.FileReadFilter
 import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
 import org.sisioh.trinity.infrastructure.DurationUtil
-import scala.Some
 
 private[application]
 class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSettings] = None)
   extends TrinityApplication with LoggingEx with OstrichService {
+
+  private var opened = false
 
   private var server: Server = _
 
@@ -71,17 +72,22 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
   }
 
 
-  def shutdown() {
-    Await.ready(server.close())
-    info("shutting down")
-    globalSetting.foreach(_.onStop(this))
+  def shutdown() = synchronized {
+    if (opened) {
+      Await.ready(server.close())
+      info("shutting down")
+      globalSetting.foreach(_.onStop(this))
+      opened = false
+    }
   }
 
   def start() {
     start(NullTracer, new RuntimeEnvironment(this))
   }
 
-  def start(tracer: Tracer = NullTracer, runtimeEnv: RuntimeEnvironment = new RuntimeEnvironment(this)) {
+  def start
+  (tracer: Tracer = NullTracer,
+   runtimeEnv: RuntimeEnvironment = new RuntimeEnvironment(this)): Unit = synchronized{
 
     ServiceTracker.register(this)
 
@@ -94,7 +100,7 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
 
     registerFilter(fileReadFilter)
 
-    val port = config.applicationPort.get
+    val port = config.applicationPort.getOrElse(7070)
 
     val service: Service[FinagleRequest, FinagleResponse] = allFilters(controllerService)
 
@@ -139,6 +145,8 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
     println(config)
 
     globalSetting.foreach(_.onStart(this))
+
+    opened = true
 
   }
 

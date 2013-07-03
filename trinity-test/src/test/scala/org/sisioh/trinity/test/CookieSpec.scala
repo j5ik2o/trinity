@@ -22,15 +22,14 @@ class CookieTestController()(implicit application: TrinityApplication)
 
 }
 
-class CookieSpec extends Specification with ControllerTestSupport {
+class CookieSpec extends Specification with ControllerUnitTestSupport {
 
-  implicit val application = MockApplication()
 
-  def getController = {
+  def getController(implicit application: TrinityApplication) =
     new CookieTestController()
-  }
 
   "basic k/v cookie" should {
+    implicit val application = MockApplication()
     "have Foo:Bar" in {
       testGet("/sendCookie") {
         response =>
@@ -40,6 +39,7 @@ class CookieSpec extends Specification with ControllerTestSupport {
   }
 
   "advanced Cookie" should {
+    implicit val application = MockApplication()
     "have Biz:Baz&Secure=true" in {
       testGet("/sendAdvCookie") {
         response =>
@@ -47,5 +47,33 @@ class CookieSpec extends Specification with ControllerTestSupport {
       }
     }
   }
+
+}
+
+class Cookie2Spec extends Specification with ControllerIntegrationTestSupport {
+
+  def getController(implicit application: TrinityApplication) =
+    new CookieTestController()
+
+  "basic k/v cookie" should {
+    implicit val application = TrinityApplication(MockConfig(applicationPort = randomPort))
+    "have Foo:Bar" in new WithServer(application) {
+      testGet("/sendCookie") {
+        response =>
+          response.getHeader("Set-Cookie") must_== "Foo=Bar"
+      }
+    }
+  }
+
+  "advanced Cookie" should {
+    implicit val application = TrinityApplication(MockConfig(applicationPort = randomPort))
+    "have Biz:Baz&Secure=true" in new WithServer(application) {
+      testGet("/sendAdvCookie") {
+        response =>
+          response.getHeader("Set-Cookie") must_== "Biz=Baz; Secure"
+      }
+    }
+  }
+
 
 }
