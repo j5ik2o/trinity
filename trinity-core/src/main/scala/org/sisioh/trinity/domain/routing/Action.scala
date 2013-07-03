@@ -6,8 +6,14 @@ import org.sisioh.trinity.infrastructure.FutureUtil._
 import scala.concurrent.{Future => SFuture, ExecutionContext}
 import org.sisioh.trinity.domain.http.Request
 
+/**
+ * コントローラのアクションを表す値オブジェクト。
+ */
 trait Action extends (Request => TFuture[Response])
 
+/**
+ * `com.twitter.util.Future`を返すアクションを生成するためのオブジェクト。
+ */
 object FutureAction {
 
   def apply(action: Request => TFuture[Response]) = new Action {
@@ -16,22 +22,22 @@ object FutureAction {
 
 }
 
+/**
+ * `com.twitter.finagle.http.Response`を返すアクションを生成するためのオブジェクト。
+ */
 object FuturePoolAction {
+
   def apply(action: Request => Response)(implicit futurePool: FuturePool) = new Action {
     def apply(v1: Request): TFuture[Response] = futurePool {
       action(v1)
     }
   }
-}
-
-object PartialAction {
-
-  def apply(pfAction: PartialFunction[Request, TFuture[Response]]) = new Action {
-    def apply(v1: Request): TFuture[Response] = pfAction(v1)
-  }
 
 }
 
+/**
+ * `scala.concurrent.Future`を返すアクションを生成するためのオブジェクト。
+ */
 object ScalaFutureAction {
 
   def apply(action: Request => SFuture[Response])(implicit executor: ExecutionContext) = new Action {
