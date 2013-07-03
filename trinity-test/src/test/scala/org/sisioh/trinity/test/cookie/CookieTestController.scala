@@ -1,4 +1,4 @@
-package org.sisioh.trinity.test
+package org.sisioh.trinity.test.cookie
 
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.controller.SimpleController

@@ -1,10 +1,10 @@
-package org.sisioh.trinity.test
+package org.sisioh.trinity.test.cookie
 
 import org.jboss.netty.handler.codec.http._
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.controller.SimpleController
 import org.specs2.mutable.Specification
-
+import org.sisioh.trinity.test.{MockApplication, ControllerUnitTestSupport}
 
 
 class CookieSpec extends Specification with ControllerUnitTestSupport {

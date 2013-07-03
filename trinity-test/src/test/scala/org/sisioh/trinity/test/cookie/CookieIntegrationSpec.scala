@@ -1,8 +1,12 @@
-package org.sisioh.trinity.test
+package org.sisioh.trinity.test.cookie
 
 import org.specs2.mutable.Specification
 import org.sisioh.trinity.application.TrinityApplication
+import org.sisioh.trinity.test.ControllerIntegrationTestSupport
 
+/**
+ * クッキーのためのスペック(インテグレーション用)。
+ */
 class CookieIntegrationSpec
   extends Specification with ControllerIntegrationTestSupport {
 
