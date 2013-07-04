@@ -1,7 +1,6 @@
 package org.sisioh.trinity.test.cookie
 
 import org.specs2.mutable.Specification
-import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.test.ControllerIntegrationTestSupport
 
 /**
@@ -10,12 +9,10 @@ import org.sisioh.trinity.test.ControllerIntegrationTestSupport
 class CookieIntegrationSpec
   extends Specification with ControllerIntegrationTestSupport {
 
-  def getController(implicit application: TrinityApplication) =
-    new CookieTestController()
-
   "basic k/v cookie" should {
     implicit val application = createApplicationWithRandomPort
-    "have Foo:Bar" in new WithServer(application) {
+    implicit val controller = new CookieTestController()
+    "have Foo:Bar" in new WithServer(application, controller) {
       testGetByParams("/sendCookie") {
         response =>
           response.getHeader("Set-Cookie") must_== "Foo=Bar"
@@ -25,7 +22,8 @@ class CookieIntegrationSpec
 
   "advanced Cookie" should {
     implicit val application = createApplicationWithRandomPort
-    "have Biz:Baz&Secure=true" in new WithServer(application) {
+    implicit val controller = new CookieTestController()
+    "have Biz:Baz&Secure=true" in new WithServer(application, controller) {
       testGetByParams("/sendAdvCookie") {
         response =>
           response.getHeader("Set-Cookie") must_== "Biz=Baz; Secure"
@@ -33,4 +31,3 @@ class CookieIntegrationSpec
     }
   }
 
-}

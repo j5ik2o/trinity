@@ -8,15 +8,16 @@ import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
 import org.sisioh.trinity.domain.http.{TrinityResponseBuilder, TrinityRequest, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.specs2.mutable.Specification
-import org.sisioh.trinity.application.TrinityApplication
 
-class ExampleSpec extends Specification with ControllerUnitTestSupport {
+class ExampleSpec
+  extends Specification
+  with ControllerUnitTestSupport {
 
   class UnauthorizedException extends Exception
 
   implicit val application = MockApplication(MockConfig(localDocumentRoot = "trinity-test/src/test/resources"))
 
-  object ExampleController extends SimpleController {
+  implicit object ExampleController extends SimpleController {
 
     /**
      * Basic Example
@@ -144,9 +145,12 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
     get("/another/page") {
       request =>
         respondTo(request) {
-          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toTrinityResponseFuture
-          case ContentType.AppJson => responseBuilder.withPlain("an json response").toTrinityResponseFuture
-          case ContentType.All => responseBuilder.withPlain("default fallback response").toTrinityResponseFuture
+          case ContentType.TextHtml =>
+            responseBuilder.withPlain("an html response").toTrinityResponseFuture
+          case ContentType.AppJson =>
+            responseBuilder.withPlain("an json response").toTrinityResponseFuture
+          case ContentType.All =>
+            responseBuilder.withPlain("default fallback response").toTrinityResponseFuture
         }
     }
 
@@ -172,7 +176,6 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   }
 
-  def getController(implicit application: TrinityApplication) = ExampleController
 
   override val getGlobalSettings = Some(new GlobalSettings with LoggingEx {
 

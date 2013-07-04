@@ -11,6 +11,7 @@ import org.specs2.specification.Scope
 import org.specs2.execute.{Result, AsResult}
 import org.specs2.mutable.Around
 import scala.util.Random
+import org.sisioh.trinity.domain.controller.Controller
 
 trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
@@ -26,14 +27,14 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
   def buildRequestByContent
   (method: HttpMethod, path: String, content: Option[String], headers: Map[String, String])
-  (implicit application: TrinityApplication): MockResponse = {
+  (implicit application: TrinityApplication, controller: Controller): MockResponse = {
     val request = FinagleRequest(path)
     request.httpRequest.setMethod(method)
     headers.foreach {
       header =>
         request.httpRequest.setHeader(header._1, header._2)
     }
-    content.foreach{
+    content.foreach {
       v =>
         request.contentString = v
     }
@@ -53,7 +54,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
    path: String,
    params: Map[String, String] = Map(),
    headers: Map[String, String] = Map())
-  (implicit application: TrinityApplication): MockResponse = withDebugScope(s"buildRequest($path)") {
+  (implicit application: TrinityApplication, controller: Controller): MockResponse = withDebugScope(s"buildRequest($path)") {
     val request = FinagleRequest(path, params.toList: _*)
     request.httpRequest.setMethod(method)
     headers.foreach {
@@ -71,13 +72,13 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
     new MockResponse(Response(finagleResponse))
   }
 
-  class WithServer(application: TrinityApplication)
+  class WithServer(application: TrinityApplication, controller: Controller)
     extends Around with Scope {
 
     private def running[T](application: TrinityApplication)(block: => T): T = {
       synchronized {
         try {
-          application.registerController(getController(application))
+          application.registerController(controller)
           application.start()
           block
         } finally {

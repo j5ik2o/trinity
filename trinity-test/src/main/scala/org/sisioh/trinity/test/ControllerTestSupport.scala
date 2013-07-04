@@ -12,35 +12,35 @@ trait ControllerTestSupport extends LoggingEx {
    path: String,
    content: Option[String] = None,
    headers: Map[String, String] = Map())
-  (implicit application: TrinityApplication): MockResponse
+  (implicit application: TrinityApplication, controller: Controller): MockResponse
 
   def testGetByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
-                (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                         (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByContent(HttpMethod.GET, path, content, headers))
   }
 
   def testPostByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
-                 (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                          (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByContent(HttpMethod.POST, path, content, headers))
   }
 
   def testPutByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
-                (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                         (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByContent(HttpMethod.PUT, path, content, headers))
   }
 
   def testDeleteByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
-                   (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                            (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByContent(HttpMethod.DELETE, path, content, headers))
   }
 
   def testHeadByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
-                 (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                          (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByContent(HttpMethod.HEAD, path, content, headers))
   }
 
   def testPatchByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
-                  (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                           (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByContent(HttpMethod.PATCH, path, content, headers))
   }
 
@@ -49,39 +49,37 @@ trait ControllerTestSupport extends LoggingEx {
    path: String,
    params: Map[String, String] = Map(),
    headers: Map[String, String] = Map())
-  (implicit application: TrinityApplication): MockResponse
+  (implicit application: TrinityApplication, controller: Controller): MockResponse
 
   def testGetByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
-                (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                        (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByParams(HttpMethod.GET, path, params, headers))
   }
 
   def testPostByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
-                 (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                         (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByParams(HttpMethod.POST, path, params, headers))
   }
 
   def testPutByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
-                (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                        (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByParams(HttpMethod.PUT, path, params, headers))
   }
 
   def testDeleteByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
-                   (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                           (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByParams(HttpMethod.DELETE, path, params, headers))
   }
 
   def testHeadByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
-                 (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                         (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByParams(HttpMethod.HEAD, path, params, headers))
   }
 
   def testPatchByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
-                  (f: MockResponse => T)(implicit application: TrinityApplication) = {
+                          (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller) = {
     f(buildRequestByParams(HttpMethod.PATCH, path, params, headers))
   }
-
-  def getController(implicit application: TrinityApplication): Controller
 
   def getGlobalSettings: Option[GlobalSettings] = None
 }
