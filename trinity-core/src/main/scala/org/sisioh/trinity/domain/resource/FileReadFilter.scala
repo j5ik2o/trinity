@@ -11,77 +11,18 @@ import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.config.{Environment, Config}
 import org.sisioh.trinity.domain.http.ContentType
 
-object FileResolver {
-
-  def apply(config: Config) =
-    new FileResolver(config)
-
-}
-
-class FileResolver(config: Config) {
-
-  def hasFile(path: String): Boolean = {
-    if (config.environment == Environment.Product) {
-      hasResourceFile(path)
-    } else {
-      hasLocalFile(path)
-    }
-  }
-
-  def getInputStream(path: String): InputStream = {
-    if (config.environment == Environment.Product) {
-      getResourceInputStream(path)
-    } else {
-      getLocalInputStream(path)
-    }
-  }
-
-  private def getResourceInputStream(path: String): InputStream = {
-    getClass.getResourceAsStream(path)
-  }
-
-  private def getLocalInputStream(path: String): InputStream = {
-    val file = new File(config.localDocumentRoot, path)
-    new FileInputStream(file)
-  }
-
-  private def hasResourceFile(path: String): Boolean = {
-    val fi = getClass.getResourceAsStream(path)
-    try {
-      if (fi != null && fi.available > 0) {
-        true
-      } else {
-        false
-      }
-    } catch {
-      case e: Exception =>
-        false
-    }
-  }
-
-  private def hasLocalFile(path: String): Boolean = {
-    val file = new File(config.localDocumentRoot, path)
-    if (file.toString.contains("trinity-core/src/test")) false
-    else if (!file.exists || file.isDirectory) false
-    else if (!file.canRead) false
-    else true
-  }
-
-}
-
-
 object FileReadFilter {
 
   def apply(config: Config) =
     new FileReadFilter(config)
 
-
 }
 
 class FileReadFilter(config: Config)
-  extends SimpleFilter[FinagleRequest, FinagleResponse] with LoggingEx {
+  extends SimpleFilter[FinagleRequest, FinagleResponse]
+  with LoggingEx {
 
-  val fileResolver = FileResolver(config)
+  private val fileResolver = FileResolver(config)
 
   def isValidPath(path: String): Boolean = {
     try {
