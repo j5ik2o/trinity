@@ -8,7 +8,30 @@ import com.twitter.util.Await
 
 trait ControllerUnitTestSupport extends ControllerTestSupport {
 
-  def buildRequest
+  def buildRequestByContent
+  (method: HttpMethod,
+   path: String,
+   content: Option[String],
+   headers: Map[String, String])
+  (implicit application: TrinityApplication): MockResponse = {
+    val request = FinagleRequest(path)
+    content.foreach{
+      v =>
+        request.contentString = v
+    }
+    request.httpRequest.setMethod(method)
+    headers.foreach {
+      header =>
+        request.httpRequest.setHeader(header._1, header._2)
+    }
+    val controller = getController
+    application.registerController(controller)
+    val service = new ControllerService(application, getGlobalSettings)
+    val finagleResponse = Await.result(service(request))
+    new MockResponse(finagleResponse)
+  }
+
+  def buildRequestByParams
   (method: HttpMethod,
    path: String,
    params: Map[String, String] = Map(),

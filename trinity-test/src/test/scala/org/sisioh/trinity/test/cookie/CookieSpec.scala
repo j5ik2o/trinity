@@ -14,7 +14,7 @@ class CookieSpec extends Specification with ControllerUnitTestSupport {
   "basic k/v cookie" should {
     implicit val application = MockApplication()
     "have Foo:Bar" in {
-      testGet("/sendCookie") {
+      testGetByParams("/sendCookie") {
         response =>
           response.getHeader("Set-Cookie") must_== "Foo=Bar"
       }
@@ -24,7 +24,7 @@ class CookieSpec extends Specification with ControllerUnitTestSupport {
   "advanced Cookie" should {
     implicit val application = MockApplication()
     "have Biz:Baz&Secure=true" in {
-      testGet("/sendAdvCookie") {
+      testGetByParams("/sendAdvCookie") {
         response =>
           response.getHeader("Set-Cookie") must_== "Biz=Baz; Secure"
       }

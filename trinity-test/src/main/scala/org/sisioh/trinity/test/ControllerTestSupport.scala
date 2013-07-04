@@ -7,41 +7,78 @@ import org.sisioh.scala.toolbox.LoggingEx
 
 trait ControllerTestSupport extends LoggingEx {
 
-  def buildRequest
+  def buildRequestByContent
+  (method: HttpMethod,
+   path: String,
+   content: Option[String] = None,
+   headers: Map[String, String] = Map())
+  (implicit application: TrinityApplication): MockResponse
+
+  def testGetByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
+                (f: MockResponse => T)(implicit application: TrinityApplication) = {
+    f(buildRequestByContent(HttpMethod.GET, path, content, headers))
+  }
+
+  def testPostByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
+                 (f: MockResponse => T)(implicit application: TrinityApplication) = {
+    f(buildRequestByContent(HttpMethod.POST, path, content, headers))
+  }
+
+  def testPutByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
+                (f: MockResponse => T)(implicit application: TrinityApplication) = {
+    f(buildRequestByContent(HttpMethod.PUT, path, content, headers))
+  }
+
+  def testDeleteByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
+                   (f: MockResponse => T)(implicit application: TrinityApplication) = {
+    f(buildRequestByContent(HttpMethod.DELETE, path, content, headers))
+  }
+
+  def testHeadByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
+                 (f: MockResponse => T)(implicit application: TrinityApplication) = {
+    f(buildRequestByContent(HttpMethod.HEAD, path, content, headers))
+  }
+
+  def testPatchByContent[T](path: String, content: Option[String], headers: Map[String, String] = Map())
+                  (f: MockResponse => T)(implicit application: TrinityApplication) = {
+    f(buildRequestByContent(HttpMethod.PATCH, path, content, headers))
+  }
+
+  def buildRequestByParams
   (method: HttpMethod,
    path: String,
    params: Map[String, String] = Map(),
    headers: Map[String, String] = Map())
   (implicit application: TrinityApplication): MockResponse
 
-  def testGet[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
+  def testGetByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
                 (f: MockResponse => T)(implicit application: TrinityApplication) = {
-    f(buildRequest(HttpMethod.GET, path, params, headers))
+    f(buildRequestByParams(HttpMethod.GET, path, params, headers))
   }
 
-  def testPost[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
+  def testPostByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
                  (f: MockResponse => T)(implicit application: TrinityApplication) = {
-    f(buildRequest(HttpMethod.POST, path, params, headers))
+    f(buildRequestByParams(HttpMethod.POST, path, params, headers))
   }
 
-  def testPut[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
+  def testPutByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
                 (f: MockResponse => T)(implicit application: TrinityApplication) = {
-    f(buildRequest(HttpMethod.PUT, path, params, headers))
+    f(buildRequestByParams(HttpMethod.PUT, path, params, headers))
   }
 
-  def testDelete[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
+  def testDeleteByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
                    (f: MockResponse => T)(implicit application: TrinityApplication) = {
-    f(buildRequest(HttpMethod.DELETE, path, params, headers))
+    f(buildRequestByParams(HttpMethod.DELETE, path, params, headers))
   }
 
-  def testHead[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
+  def testHeadByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
                  (f: MockResponse => T)(implicit application: TrinityApplication) = {
-    f(buildRequest(HttpMethod.HEAD, path, params, headers))
+    f(buildRequestByParams(HttpMethod.HEAD, path, params, headers))
   }
 
-  def testPatch[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
+  def testPatchByParams[T](path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map())
                   (f: MockResponse => T)(implicit application: TrinityApplication) = {
-    f(buildRequest(HttpMethod.PATCH, path, params, headers))
+    f(buildRequestByParams(HttpMethod.PATCH, path, params, headers))
   }
 
   def getController(implicit application: TrinityApplication): Controller

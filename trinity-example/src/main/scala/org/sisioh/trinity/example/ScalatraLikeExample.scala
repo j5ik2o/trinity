@@ -17,9 +17,10 @@ object ScalatraLikeExample extends App with ApplicationContext {
      *
      * curl http://localhost:7070/hello => "hello world"
      */
-    get("/") {
+    post("/") {
       request =>
-        responseBuilder.withPlain("hello world").toFinagleResponseFuture
+        val r = request.request.getContentString()
+        responseBuilder.withPlain("r = "+r).toFinagleResponseFuture
     }
 
     /**
