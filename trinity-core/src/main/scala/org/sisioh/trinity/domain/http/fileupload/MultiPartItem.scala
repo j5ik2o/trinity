@@ -32,13 +32,16 @@ case class MultiPartItem(mixedFileUpload: MixedFileUpload, ioChunkSize: Int = 10
 
 }
 
+/**
+ * コンパニオンオブジェクト。
+ */
 object MultiPartItem {
 
   /**
-   * リクエストから[[fileupload.MultiPartItem]]のマップを取得する。
+   * リクエストから[[org.sisioh.trinity.domain.fileupload.MultiPartItem]]のマップを取得する。
    *
-   * @param request [[com.twitter.finagle.http.Request]]
-   * @return [[fileupload.MultiPartItem]]のマップ
+   * @param request `com.twitter.finagle.http.Request`
+   * @return [[org.sisioh.trinity.domain.fileupload.MultiPartItem]]のマップ
    */
   def fromRequest(request: FinagleRequest): Map[String, MultiPartItem] = {
     val httpPostRequestDecoder = new HttpPostRequestDecoder(request)

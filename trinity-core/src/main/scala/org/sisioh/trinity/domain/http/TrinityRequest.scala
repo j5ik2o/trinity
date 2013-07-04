@@ -9,7 +9,14 @@ import org.sisioh.trinity.domain.fileupload.MultiPartItem
 import scala.collection.JavaConversions._
 import util.Sorting
 
-case class Request
+/**
+ * Trinity内で扱うリクエストを表す値オブジェクト。
+ *
+ * @param rawRequest
+ * @param routeParams
+ * @param error
+ */
+case class TrinityRequest
 (rawRequest: FinagleRequest,
  routeParams: Map[String, String] = Map.empty,
  error: Option[Throwable] = None)

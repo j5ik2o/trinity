@@ -5,12 +5,16 @@ import javax.activation.MimetypesFileTypeMap
 import org.sisioh.scala.toolbox.{EnumEntry, Enum}
 import org.sisioh.trinity.domain.resource.FileReadFilter
 
+/**
+ * コンテントタイプを表すトレイト。
+ */
 trait ContentType extends EnumEntry {
   val main: String
   val sub: String
 
   override def equals(obj: Any) = obj match {
-    case that: ContentType => main == that.main && sub == that.sub
+    case that: ContentType =>
+      main == that.main && sub == that.sub
     case _ => false
   }
 
@@ -18,6 +22,9 @@ trait ContentType extends EnumEntry {
 
 }
 
+/**
+ * コンパニオンオブジェクト。
+ */
 object ContentType extends Enum[ContentType] {
 
   def getContentType(str: String): String = {
@@ -27,7 +34,6 @@ object ContentType extends Enum[ContentType] {
   def getContentType(file: File): String = {
     extMap.getContentType(file)
   }
-
 
   private lazy val extMap = new MimetypesFileTypeMap(FileReadFilter.getClass.getResourceAsStream("/META-INF/mime.types"))
 

@@ -7,41 +7,41 @@ import org.jboss.netty.handler.codec.http.HttpVersion._
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponseStatus}
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.domain.http.{ResponseBuilder, Request}
+import org.sisioh.trinity.domain.http.{TrinityResponseImplicitSupport, TrinityResponseBuilder, TrinityRequest}
 import org.sisioh.trinity.domain.routing.{RouteId, Route}
 
 class ControllerService(application: TrinityApplication, globalSettingOpt: Option[GlobalSettings] = None)
-  extends Service[FinagleRequest, FinagleResponse] with LoggingEx {
+  extends Service[FinagleRequest, FinagleResponse] with LoggingEx with TrinityResponseImplicitSupport {
 
-  protected def notFoundHandler = {
-    request: Request =>
+  protected def notFoundHandler: (TrinityRequest) => Future[FinagleResponse] = {
+    request: TrinityRequest =>
       globalSettingOpt.map {
         globalSetting =>
           globalSetting.notFound(request)
       }.getOrElse {
         builder.
           withStatus(HttpResponseStatus.NOT_FOUND).
-          withPlain("Not Found").toFuture
+          withPlain("Not Found").toTrinityResponseFuture
       }
   }
 
-  protected def errorHandler = {
-    request: Request =>
+  protected def errorHandler : (TrinityRequest) => Future[FinagleResponse] = {
+    request: TrinityRequest =>
       globalSettingOpt.map {
         _.error(request)
       }.getOrElse {
         request.error match {
           case Some(ex) =>
-            builder.withStatus(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE).withPlain("No handler for this media type found").toFuture
+            builder.withStatus(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE).withPlain("No handler for this media type found").toTrinityResponseFuture
           case _ =>
-            builder.withStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR).withPlain("Something went wrong!").toFuture
+            builder.withStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR).withPlain("Something went wrong!").toTrinityResponseFuture
         }
       }
   }
 
-  def builder = new ResponseBuilder
+  def builder: TrinityResponseBuilder = new TrinityResponseBuilder
 
-  def dispatch(request: Request): Option[Future[FinagleResponse]] = {
+  def dispatch(request: TrinityRequest): Option[Future[FinagleResponse]] = {
     logger.info("%s %s".format(request.method, request.uri))
     dispatchRouteOrCallback(request, request.method, (request) => {
       // fallback to GET for 404'ed GET requests (curl -I support)
@@ -54,9 +54,9 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
   }
 
   private def dispatchRouteOrCallback
-  (request: Request,
+  (request: TrinityRequest,
    method: HttpMethod,
-   orCallback: Request => Option[Future[FinagleResponse]])
+   orCallback: TrinityRequest => Option[Future[FinagleResponse]])
   : Option[Future[FinagleResponse]] = {
     findRoute(request, method).map {
       case Route(RouteId(method, pattern), _, action) =>
@@ -71,7 +71,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
     }
   }
 
-  def findRoute(request: Request, method: HttpMethod): Option[Route] = {
+  def findRoute(request: TrinityRequest, method: HttpMethod): Option[Route] = {
     application.routeRepository.find {
       case Route(RouteId(m, p), controllerId, _) =>
         val hasController = application.controllerRepository.contains(controllerId)
@@ -80,20 +80,20 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
     }
   }
 
-  protected def attemptRequest(request: Request) = {
+  protected def attemptRequest(request: TrinityRequest): Future[FinagleResponse] = {
     dispatch(request).getOrElse {
       notFoundHandler(request)
     }
   }
 
-  protected def handleError(adaptedRequest: Request, throwable: Throwable) = {
+  protected def handleError(adaptedRequest: TrinityRequest, throwable: Throwable): Future[FinagleResponse] = {
     error("Internal Server Error", throwable)
     val newRequest = adaptedRequest.copy(error = Some(throwable))
     errorHandler(newRequest)
   }
 
   def apply(rawRequest: FinagleRequest): Future[FinagleResponse] = {
-    val adaptedRequest = Request(rawRequest)
+    val adaptedRequest = TrinityRequest(rawRequest)
     Try {
       attemptRequest(adaptedRequest).rescue {
         case throwable: Throwable =>
@@ -103,7 +103,8 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
       case throwable: Exception =>
         Try(handleError(adaptedRequest, throwable))
     }.getOrElse {
-      Future.value(FinagleResponse(HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR))
+      val response = FinagleResponse(HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR)
+      Future.value(response)
     }
   }
 

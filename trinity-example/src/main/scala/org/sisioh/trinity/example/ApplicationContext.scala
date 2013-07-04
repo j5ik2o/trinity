@@ -1,7 +1,7 @@
 package org.sisioh.trinity.example
 
 import org.sisioh.trinity.domain.controller.GlobalSettings
-import org.sisioh.trinity.domain.http.{ResponseBuilder, Request}
+import org.sisioh.trinity.domain.http.{TrinityResponseBuilder, TrinityRequest}
 import com.twitter.util.{FuturePool, Future}
 import com.twitter.finagle.http.Response
 import org.sisioh.trinity.domain.config.Config
@@ -19,21 +19,21 @@ class UnauthorizedException extends Exception
 trait ApplicationContext {
 
   val globalSettings = new GlobalSettings {
-    def error(request: Request): Future[Response] = {
+    def error(request: TrinityRequest): Future[Response] = {
       request.error match {
         case Some(e: ArithmeticException) =>
-          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("whoops, divide by zero!").toFuture
+          TrinityResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("whoops, divide by zero!").toFinagleResponseFuture
         case Some(e: UnauthorizedException) =>
-          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(401)).withPlain("Not Authorized!").toFuture
+          TrinityResponseBuilder().withStatus(HttpResponseStatus.valueOf(401)).withPlain("Not Authorized!").toFinagleResponseFuture
         case Some(e) =>
-          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(415)).withPlain("Unsupported Media Type!").toFuture
+          TrinityResponseBuilder().withStatus(HttpResponseStatus.valueOf(415)).withPlain("Unsupported Media Type!").toFinagleResponseFuture
         case _ =>
-          ResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("Something went wrong!").toFuture
+          TrinityResponseBuilder().withStatus(HttpResponseStatus.valueOf(500)).withPlain("Something went wrong!").toFinagleResponseFuture
       }
     }
 
-    def notFound(request: Request): Future[Response] = {
-      ResponseBuilder().withStatus(HttpResponseStatus.valueOf(404)).withPlain("not found yo").toFuture
+    def notFound(request: TrinityRequest): Future[Response] = {
+      TrinityResponseBuilder().withStatus(HttpResponseStatus.valueOf(404)).withPlain("not found yo").toFinagleResponseFuture
     }
 
   }

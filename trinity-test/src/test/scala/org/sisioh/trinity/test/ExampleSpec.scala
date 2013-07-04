@@ -5,11 +5,12 @@ import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
-import org.sisioh.trinity.domain.http.{ResponseBuilder, Request, ContentType}
+import org.sisioh.trinity.domain.http.{TrinityResponseBuilder, TrinityRequest, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.specs2.mutable.Specification
+import org.sisioh.trinity.application.TrinityApplication
 
-class ExampleSpec extends Specification with ControllerTestSupport {
+class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   class UnauthorizedException extends Exception
 
@@ -24,7 +25,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
      */
     get("/hello") {
       request =>
-        responseBuilder.withPlain("hello world").toFuture
+        responseBuilder.withPlain("hello world").toTrinityResponseFuture
     }
 
     /**
@@ -35,7 +36,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     get("/user/:username") {
       request =>
         val username = request.routeParams.getOrElse("username", "default_user")
-        responseBuilder.withPlain("hello " + username).toFuture
+        responseBuilder.withPlain("hello " + username).toTrinityResponseFuture
     }
 
     /**
@@ -45,7 +46,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
      */
     get("/headers") {
       request =>
-        responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").toFuture
+        responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").toTrinityResponseFuture
     }
 
     /**
@@ -56,7 +57,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     get("/data.json") {
       request =>
         import org.json4s.JsonDSL._
-        responseBuilder.withJson(Map("foo" -> "bar")).toFuture
+        responseBuilder.withJson(Map("foo" -> "bar")).toTrinityResponseFuture
     }
 
     /**
@@ -68,9 +69,9 @@ class ExampleSpec extends Specification with ControllerTestSupport {
       request =>
         request.params.get("q").map {
           q =>
-            responseBuilder.withPlain("no results for " + q).toFuture
+            responseBuilder.withPlain("no results for " + q).toFinagleResponseFuture
         }.getOrElse {
-          responseBuilder.withPlain("query param q needed").withStatus(500).toFuture
+          responseBuilder.withPlain("query param q needed").withStatus(500).toFinagleResponseFuture
         }
     }
 
@@ -86,14 +87,14 @@ class ExampleSpec extends Specification with ControllerTestSupport {
             println("content type is " + avatar.contentType)
             avatar.writeToFile("/tmp/avatar") //writes uploaded avatar to /tmp/avatar
         }
-        responseBuilder.withPlain("ok").toFuture
+        responseBuilder.withPlain("ok").toTrinityResponseFuture
     }
 
     get("/template") {
       request =>
         implicit val scalate = ScalateEngineContext()
         val view = ScalateRenderer("scalate.mustache", Map("message" -> "aaaa"))
-        responseBuilder.withBodyRenderer(view).toFuture
+        responseBuilder.withBodyRenderer(view).toTrinityResponseFuture
     }
 
 
@@ -105,7 +106,7 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     get("/error") {
       request =>
         1234 / 0
-        responseBuilder.withPlain("we never make it here").toFuture
+        responseBuilder.withPlain("we never make it here").toTrinityResponseFuture
     }
 
     /**
@@ -128,8 +129,8 @@ class ExampleSpec extends Specification with ControllerTestSupport {
       request =>
         import org.json4s.JsonDSL._
         respondTo(request) {
-          case ContentType.TextHtml => responseBuilder.withHtml("<h1>Hello</h1>").toFuture
-          case ContentType.AppJson => responseBuilder.withJson(Map("value" -> "hello")).toFuture
+          case ContentType.TextHtml => responseBuilder.withHtml("<h1>Hello</h1>").toTrinityResponseFuture
+          case ContentType.AppJson => responseBuilder.withJson(Map("value" -> "hello")).toTrinityResponseFuture
         }
     }
 
@@ -143,9 +144,9 @@ class ExampleSpec extends Specification with ControllerTestSupport {
     get("/another/page") {
       request =>
         respondTo(request) {
-          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toFuture
-          case ContentType.AppJson => responseBuilder.withPlain("an json response").toFuture
-          case ContentType.All => responseBuilder.withPlain("default fallback response").toFuture
+          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toTrinityResponseFuture
+          case ContentType.AppJson => responseBuilder.withPlain("an json response").toTrinityResponseFuture
+          case ContentType.All => responseBuilder.withPlain("default fallback response").toTrinityResponseFuture
         }
     }
 
@@ -166,29 +167,29 @@ class ExampleSpec extends Specification with ControllerTestSupport {
         Stats.time("slow_thing time") {
           Thread.sleep(100)
         }
-        responseBuilder.withPlain("slow").toFuture
+        responseBuilder.withPlain("slow").toTrinityResponseFuture
     }
 
   }
 
-  val getController = ExampleController
+  def getController(implicit application: TrinityApplication) = ExampleController
 
   override val getGlobalSettings = Some(new GlobalSettings with LoggingEx {
 
-    def notFound(request: Request): Future[Response] = {
-      ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
+    def notFound(request: TrinityRequest): Future[Response] = {
+      TrinityResponseBuilder().withStatus(404).withPlain("not found yo").toTrinityResponseFuture
     }
 
-    def error(request: Request): Future[Response] = withDebugScope(s"error(${request.error})") {
+    def error(request: TrinityRequest): Future[Response] = withDebugScope(s"error(${request.error})") {
       request.error match {
         case Some(e: ArithmeticException) =>
-          ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
+          TrinityResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toTrinityResponseFuture
         case Some(e: UnauthorizedException) =>
-          ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFuture
+          TrinityResponseBuilder().withStatus(401).withPlain("Not Authorized!").toTrinityResponseFuture
         case Some(ex) =>
-          ResponseBuilder().withStatus(415).withPlain(ex.toString).toFuture
+          TrinityResponseBuilder().withStatus(415).withPlain(ex.toString).toTrinityResponseFuture
         case _ =>
-          ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFuture
+          TrinityResponseBuilder().withStatus(500).withPlain("Something went wrong!").toTrinityResponseFuture
       }
     }
 

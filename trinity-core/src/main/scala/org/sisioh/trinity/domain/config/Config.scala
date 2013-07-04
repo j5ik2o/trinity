@@ -55,6 +55,7 @@ trait Config {
   ).mkString("Config(", ",", ")")
 }
 
+
 object Config {
 
   import scala.collection.mutable.Map

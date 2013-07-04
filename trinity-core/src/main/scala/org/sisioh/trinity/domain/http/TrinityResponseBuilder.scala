@@ -1,6 +1,6 @@
 package org.sisioh.trinity.domain.http
 
-import com.twitter.finagle.http.{Response => FinagleResponse, Request => FinagleRequest}
+import com.twitter.finagle.http.{Response => FinagleResponse, Request => FinagleRequest, Status}
 import org.jboss.netty.buffer.{ChannelBuffers, ChannelBuffer}
 import ChannelBuffers._
 import org.jboss.netty.handler.codec.http._
@@ -9,9 +9,18 @@ import org.json4s._
 import org.json4s.jackson.JsonMethods._
 import com.twitter.util.{Await, Future}
 import scala.collection.JavaConverters._
+import scala.language.implicitConversions
 
-case class Response
-(status: HttpResponseStatus = HttpResponseStatus.OK,
+/**
+ * Trinity内で扱うレスポンスを表す値オブジェクト。
+ *
+ * @param status
+ * @param headers
+ * @param cookies
+ * @param body
+ */
+case class TrintiyResponse
+(status: HttpResponseStatus = Status.Ok,
  headers: Map[String, AnyRef] = Map.empty,
  cookies: Seq[Cookie] = Seq.empty,
  body: Option[ChannelBuffer] = None) {
@@ -22,7 +31,9 @@ case class Response
            body: Option[ChannelBuffer]) =
     this(HttpResponseStatus.valueOf(status), headers, cookies, body)
 
-  def get: FinagleResponse = {
+  def bodyAsString: Option[String] = body.map(_.toString(UTF_8))
+
+  def toFinagleResponse: FinagleResponse = {
     val result = new DefaultHttpResponse(HttpVersion.HTTP_1_1, status)
     headers.foreach {
       case (k, v: Iterable[_]) =>
@@ -47,70 +58,75 @@ case class Response
 
 }
 
-
-case class ResponseBuilder(responseFuture: Future[Response] = Future(Response())) {
+/**
+ * [[org.sisioh.trinity.domain.http.TrinityResponseBuilder]]のためのビルダ。
+ *
+ * @param responseFuture `Future`にラップされた[[org.sisioh.trinity.domain.http.TrintiyResponse]]
+ */
+case class TrinityResponseBuilder
+(private val responseFuture: Future[TrintiyResponse] = Future(TrintiyResponse())) {
 
   def withStatus
-  (status: Int): ResponseBuilder = {
+  (status: Int): TrinityResponseBuilder = {
     withStatus(HttpResponseStatus.valueOf(status))
   }
 
   def withStatus
-  (status: HttpResponseStatus): ResponseBuilder = {
+  (status: HttpResponseStatus): TrinityResponseBuilder = {
     val newResposeFuture = responseFuture.map {
       response =>
         response.copy(status = status)
     }
-    ResponseBuilder(newResposeFuture)
+    TrinityResponseBuilder(newResposeFuture)
   }
 
   def withCookie
-  (tuple: (String, String)): ResponseBuilder = {
+  (tuple: (String, String)): TrinityResponseBuilder = {
     val newResposeFuture = responseFuture.map {
       response =>
         response.copy(cookies = response.cookies :+ new DefaultCookie(tuple._1, tuple._2))
     }
-    ResponseBuilder(newResposeFuture)
+    TrinityResponseBuilder(newResposeFuture)
   }
 
   def withCookie
-  (cookie: Cookie): ResponseBuilder = {
+  (cookie: Cookie): TrinityResponseBuilder = {
     val newResposeFuture = responseFuture.map {
       response =>
         response.copy(cookies = response.cookies :+ cookie)
     }
-    ResponseBuilder(newResposeFuture)
+    TrinityResponseBuilder(newResposeFuture)
   }
 
   def withHeader
-  (header: (String, String)): ResponseBuilder = {
+  (header: (String, String)): TrinityResponseBuilder = {
     val newResposeFuture = responseFuture.map {
       response =>
         response.copy(headers = response.headers + header)
     }
-    ResponseBuilder(newResposeFuture)
+    TrinityResponseBuilder(newResposeFuture)
   }
 
   def withBody
-  (body: Array[Byte]): ResponseBuilder = {
+  (body: Array[Byte]): TrinityResponseBuilder = {
     val newResposeFuture = responseFuture.map {
       response =>
         response.copy(body = Some(copiedBuffer(body)))
     }
-    ResponseBuilder(newResposeFuture)
+    TrinityResponseBuilder(newResposeFuture)
   }
 
   def withBody
-  (body: => String): ResponseBuilder = {
+  (body: => String): TrinityResponseBuilder = {
     val newResposeFuture = responseFuture.map {
       response =>
         response.copy(body = Some(copiedBuffer(body, UTF_8)))
     }
-    ResponseBuilder(newResposeFuture)
+    TrinityResponseBuilder(newResposeFuture)
   }
 
   def withBodyRenderer
-  (bodyRenderer: BodyRenderer): ResponseBuilder = {
+  (bodyRenderer: BodyRenderer): TrinityResponseBuilder = {
     val newResposeFuture = bodyRenderer.render.flatMap {
       body =>
         responseFuture.map {
@@ -118,11 +134,11 @@ case class ResponseBuilder(responseFuture: Future[Response] = Future(Response())
             response.copy(body = Some(copiedBuffer(body, UTF_8)))
         }
     }
-    ResponseBuilder(newResposeFuture)
+    TrinityResponseBuilder(newResposeFuture)
   }
 
   def withPlain
-  (body: => String): ResponseBuilder = {
+  (body: => String): TrinityResponseBuilder = {
     withHeader("Content-Type", "text/plain").withBody(body)
   }
 
@@ -131,7 +147,7 @@ case class ResponseBuilder(responseFuture: Future[Response] = Future(Response())
   }
 
 
-  def withJson(jValue: => JValue): ResponseBuilder = {
+  def withJson(jValue: => JValue): TrinityResponseBuilder = {
     withHeader("Content-Type", "application/json").withBody(compact(jValue))
   }
 
@@ -143,15 +159,43 @@ case class ResponseBuilder(responseFuture: Future[Response] = Future(Response())
 
   def withNotFound = withStatus(HttpResponseStatus.NOT_FOUND)
 
-  def toFuture = responseFuture.map(_.get)
+  /**
+   * `Future`にラップされた[[org.sisioh.trinity.domain.http.TrintiyResponse]]を返す。
+   *
+   * @return `Future`にラップされた[[org.sisioh.trinity.domain.http.TrintiyResponse]]
+   */
+  def toTrinityResponseFuture: Future[TrintiyResponse] = responseFuture
 
-  def getResultByAwait = Await.result(responseFuture)
+  /**
+   * [[org.sisioh.trinity.domain.http.TrintiyResponse]]を取得する。
+   *
+   * @return [[org.sisioh.trinity.domain.http.TrintiyResponse]]
+   */
+  def getTrinityResponse: TrintiyResponse = Await.result(responseFuture)
 
-  def getRawByAwait = Await.result(toFuture)
+  /**
+   * `Future`にラップされた `com.twitter.finagle.http.Response` を返す。
+   *
+   * @return `Future`にラップされた `com.twitter.finagle.http.Response`
+   */
+  def toFinagleResponseFuture: Future[FinagleResponse] = responseFuture.map(_.toFinagleResponse)
+
+  /**
+   * `com.twitter.finagle.http.Response` を取得する。
+   *
+   * @return `com.twitter.finagle.http.Response`
+   */
+  def getFinagleResponse: FinagleResponse = Await.result(toFinagleResponseFuture)
+
 
 }
 
-object ResponseBuilder {
+trait TrinityResponseImplicitSupport {
 
+  implicit def convertToFingaleResponse(res: TrintiyResponse) =
+    res.toFinagleResponse
+
+  implicit def convertToFutureFinagleResponse(res: Future[TrintiyResponse]) =
+    res.map(_.toFinagleResponse)
 
 }

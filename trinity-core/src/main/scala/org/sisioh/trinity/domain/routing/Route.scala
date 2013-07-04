@@ -5,7 +5,7 @@ import com.twitter.util.Future
 import java.util.UUID
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.dddbase.core.model.{Entity, EntityCloneable, Identity}
-import org.sisioh.trinity.domain.http.Request
+import org.sisioh.trinity.domain.http.TrinityRequest
 import scala.language.implicitConversions
 import org.sisioh.trinity.domain.controller.Controller
 
@@ -15,7 +15,8 @@ import org.sisioh.trinity.domain.controller.Controller
  * @param method
  * @param pathPattern
  */
-case class RouteId(method: HttpMethod, pathPattern: PathPattern) extends Identity[(HttpMethod, PathPattern)] {
+case class RouteId(method: HttpMethod, pathPattern: PathPattern)
+  extends Identity[(HttpMethod, PathPattern)] {
   def value: (HttpMethod, PathPattern) = (method, pathPattern)
 }
 
@@ -39,36 +40,56 @@ trait Route
     }
   }
 
+  /**
+   * コントローラID
+   */
   val controllerId: Identity[UUID]
 
+  /**
+   * アクション
+   */
   val action: Action
 
   /**
+   * アクションを実行する。
    *
-   * @param request
-   * @return
+   * @param request リクエスト
+   * @return `com.twitter.util.Future`
    */
-  def apply(request: Request): Future[Response] = action(request)
+  def apply(request: TrinityRequest): Future[Response] = action(request)
 
 }
 
 
+/**
+ * コンパニオンオブジェクト。
+ */
 object Route {
 
-  def apply(identity: RouteId, controllerId: Identity[UUID], action: Action): Route = new RouteImpl(identity, controllerId, action)
+  def apply(identity: RouteId, controllerId: Identity[UUID], action: Action): Route =
+    new RouteImpl(identity, controllerId, action)
 
-  def apply(identity: RouteId, controller: Controller, action: Action): Route = new RouteImpl(identity, controller.identity, action)
+  def apply(identity: RouteId, controller: Controller, action: Action): Route =
+    new RouteImpl(identity, controller.identity, action)
 
+  def apply(method: HttpMethod, pathPattern: PathPattern, controller: Controller, action: Action): Route =
+    apply(method, pathPattern, controller.identity, action)
 
-  def apply(method: HttpMethod, path: String, controllerId: Identity[UUID], action: Action)(implicit pathPatternParser: PathPatternParser): Route = {
-    val regex = pathPatternParser(path)
-    apply(RouteId(method, regex), controllerId, action)
+  def apply(method: HttpMethod, pathPattern: PathPattern, controllerId: Identity[UUID], action: Action): Route =
+    apply(RouteId(method, pathPattern), controllerId, action)
+
+  def apply(method: HttpMethod, path: String, controllerId: Identity[UUID], action: Action)
+           (implicit pathPatternParser: PathPatternParser): Route = {
+    val pathPattern = pathPatternParser(path)
+    apply(RouteId(method, pathPattern), controllerId, action)
   }
 
-  def apply(method: HttpMethod, path: String, controller: Controller, action: Action)(implicit pathPatternParser: PathPatternParser): Route =
+  def apply(method: HttpMethod, path: String, controller: Controller, action: Action)
+           (implicit pathPatternParser: PathPatternParser): Route =
     apply(method, path, controller.identity, action)
 
-  def unapply(route: Route): Option[(RouteId, Identity[UUID], Action)] = Some(route.identity, route.controllerId, route.action)
+  def unapply(route: Route): Option[(RouteId, Identity[UUID], Action)] =
+    Some(route.identity, route.controllerId, route.action)
 
 }
 
