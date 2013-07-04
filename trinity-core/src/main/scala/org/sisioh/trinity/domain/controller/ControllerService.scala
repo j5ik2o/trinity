@@ -25,7 +25,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
       }
   }
 
-  protected def errorHandler : (TrinityRequest) => Future[FinagleResponse] = {
+  protected def errorHandler: (TrinityRequest) => Future[FinagleResponse] = {
     request: TrinityRequest =>
       globalSettingOpt.map {
         _.error(request)
