@@ -197,7 +197,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /notfound" should {
     "respond 404" in {
-      testGet("/notfound") {
+      testGetByParams("/notfound") {
         response =>
           response.body must_== "not found yo"
           response.code must_== 404
@@ -207,7 +207,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /error" should {
     "respond 500" in {
-      testGet("/error") {
+      testGetByParams("/error") {
         response =>
           response.body must_== "whoops, divide by zero!"
           response.code must_== 500
@@ -217,7 +217,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /unauthorized" should {
     "respond 401" in {
-      testGet("/unauthorized") {
+      testGetByParams("/unauthorized") {
         response =>
           response.body must_== "Not Authorized!"
           response.code must_== 401
@@ -227,7 +227,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /hello" should {
     "respond with hello world" in {
-      testGet("/hello") {
+      testGetByParams("/hello") {
         response =>
           response.body must_== "hello world"
       }
@@ -236,7 +236,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /user/foo" should {
     "responsd with hello foo" in {
-      testGet("/user/foo") {
+      testGetByParams("/user/foo") {
         response =>
           response.body must_== "hello foo"
       }
@@ -245,7 +245,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /headers" should {
     "respond with Foo:Bar" in {
-      testGet("/headers") {
+      testGetByParams("/headers") {
         response =>
           response.getHeader("Foo") must_== "Bar"
       }
@@ -254,7 +254,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /data.json" should {
     """respond with {"foo":"bar"}""" in {
-      testGet("/data.json") {
+      testGetByParams("/data.json") {
         response =>
           response.body must_== """{"foo":"bar"}"""
       }
@@ -263,7 +263,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /search?q=foo" should {
     "respond with no results for foo" in {
-      testGet("/search?q=foo") {
+      testGetByParams("/search?q=foo") {
         response =>
           response.body must_== "no results for foo"
       }
@@ -272,7 +272,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /template" should {
     "respond with a rendered template" in {
-      testGet("/template") {
+      testGetByParams("/template") {
         response =>
           response.body.trim must_== ("aaaa")
       }
@@ -281,7 +281,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /blog/index.json" should {
     "should have json" in {
-      testGet("/blog/index.json") {
+      testGetByParams("/blog/index.json") {
         response =>
           response.body must_== ("""{"value":"hello"}""")
       }
@@ -290,7 +290,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /blog/index.html" should {
     "should have html" in {
-      testGet("/blog/index.html") {
+      testGetByParams("/blog/index.html") {
         response =>
           response.body must_== ("""<h1>Hello</h1>""")
       }
@@ -299,7 +299,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /blog/index.rss" should {
     "respond in a 415" in {
-      testGet("/blog/index.rss") {
+      testGetByParams("/blog/index.rss") {
         response =>
           response.code must_== (415)
       }
@@ -308,7 +308,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /another/page with html" should {
     "respond with html" in {
-      testGet("/another/page", Map.empty, Map("Accept" -> "text/html")) {
+      testGetByParams("/another/page", Map.empty, Map("Accept" -> "text/html")) {
         response =>
           response.body must_== ("an html response")
       }
@@ -317,7 +317,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /another/page with json" should {
     "respond with json" in {
-      testGet("/another/page", Map.empty, Map("Accept" -> "application/json")) {
+      testGetByParams("/another/page", Map.empty, Map("Accept" -> "application/json")) {
         response =>
           response.body must_== ("an json response")
       }
@@ -326,7 +326,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   "GET /another/page with unsupported type" should {
     "respond with catch all" in {
-      testGet("/another/page", Map.empty, Map("Accept" -> "foo/bar")) {
+      testGetByParams("/another/page", Map.empty, Map("Accept" -> "foo/bar")) {
         response =>
           response.body must_== ("default fallback response")
       }

@@ -9,22 +9,18 @@ import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 
 class TestController(implicit application: TrinityApplication) extends SimpleController {
 
-  get("/hey") {
+  get("/hey/hello") {
     request =>
-      responseBuilder.withPlain("hello").withOk.toTrinityResponseFuture
+      responseBuilder.withPlain("hello2").withOk.toTrinityResponseFuture
   }
 
-  //  class TestView extends MustacheView {
-  //    def template: String = "test_view.mustache"
-  //
-  //    val test_val = "aaaa"
-  //  }
+  get("/hey/:userId") {
+    request =>
+      responseBuilder.withPlain("hello1 = "+request.routeParams("userId")).withOk.toTrinityResponseFuture
+  }
 
 
-  //  get("/test") {
-  //    request =>
-  //      render.withView(new TestView).toFuture
-  //  }
+
 
   get("/scalate") {
     request =>
@@ -55,17 +51,17 @@ class TestController(implicit application: TrinityApplication) extends SimpleCon
 
 }
 
-class ServerSpec extends Specification {
-
-  val config = Config()
-
-  "app" should {
-    "register" in {
-      implicit val s = TrinityApplication(config)
-      val controller = new TestController
-      s.registerController(controller)
-      s.start()
-    }
-  }
-
-}
+//class ServerSpec extends Specification {
+//
+//  val config = Config()
+//
+//  "app" should {
+//    "register" in {
+//      implicit val s = TrinityApplication(config)
+////      val controller = new TestController
+////     s.registerController(controller)
+////      s.start()
+//    }
+//  }
+//
+//}

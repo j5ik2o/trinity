@@ -23,7 +23,32 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
   def createApplicationWithRandomPort =
     TrinityApplication(MockConfig(applicationPort = randomPort))
 
-  def buildRequest
+
+  def buildRequestByContent
+  (method: HttpMethod, path: String, content: Option[String], headers: Map[String, String])
+  (implicit application: TrinityApplication): MockResponse = {
+    val request = FinagleRequest(path)
+    request.httpRequest.setMethod(method)
+    headers.foreach {
+      header =>
+        request.httpRequest.setHeader(header._1, header._2)
+    }
+    content.foreach{
+      v =>
+        request.contentString = v
+    }
+    val address: SocketAddress = new InetSocketAddress(application.config.applicationPort.getOrElse(7070))
+    val client: Service[HttpRequest, HttpResponse] =
+      ClientBuilder()
+        .codec(Http())
+        .hosts(address)
+        .hostConnectionLimit(1)
+        .build()
+    val finagleResponse = Await.result(client(request))
+    new MockResponse(Response(finagleResponse))
+  }
+
+  def buildRequestByParams
   (method: HttpMethod,
    path: String,
    params: Map[String, String] = Map(),
@@ -57,6 +82,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
           block
         } finally {
           application.shutdown()
+          Thread.sleep(100)
         }
       }
     }
