@@ -18,7 +18,7 @@ object PlayLikeExample extends App with ApplicationContext {
      */
     def index = FuturePoolAction {
       request =>
-        responseBuilder.withOk.getResponse
+        responseBuilder.withOk.getTrinityResponse
     }
 
     /**
@@ -30,7 +30,7 @@ object PlayLikeExample extends App with ApplicationContext {
      */
     def getUser(name: String) = FutureAction {
       request =>
-        responseBuilder.withBody("name = " + name).toFinagleResponse
+        responseBuilder.withBody("name = " + name).toTrinityResponseFuture
     }
 
     /**
@@ -39,7 +39,7 @@ object PlayLikeExample extends App with ApplicationContext {
      */
     def getGroup(name: String) = ScalaFutureAction {
       request => future {
-        responseBuilder.withBody("group = " + name).getResponse
+        responseBuilder.withBody("group = " + name).getTrinityResponse
       }
     }
 

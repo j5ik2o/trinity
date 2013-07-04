@@ -9,14 +9,14 @@ class CookieTestController()(implicit application: TrinityApplication)
 
   get("/sendCookie") {
     request =>
-      responseBuilder.withPlain("get:path").withCookie("Foo", "Bar").toFinagleResponse
+      responseBuilder.withPlain("get:path").withCookie("Foo", "Bar").toFinagleResponseFuture
   }
 
   get("/sendAdvCookie") {
     val c = new DefaultCookie("Biz", "Baz")
     c.setSecure(true)
     request =>
-      responseBuilder.withPlain("get:path").withCookie(c).toFinagleResponse
+      responseBuilder.withPlain("get:path").withCookie(c).toFinagleResponseFuture
   }
 
 }

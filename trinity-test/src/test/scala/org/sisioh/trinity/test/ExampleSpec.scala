@@ -5,7 +5,7 @@ import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
-import org.sisioh.trinity.domain.http.{ResponseBuilder, Request, ContentType}
+import org.sisioh.trinity.domain.http.{TrinityResponseBuilder, TrinityRequest, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.specs2.mutable.Specification
 import org.sisioh.trinity.application.TrinityApplication
@@ -25,7 +25,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
      */
     get("/hello") {
       request =>
-        responseBuilder.withPlain("hello world").toFinagleResponse
+        responseBuilder.withPlain("hello world").toTrinityResponseFuture
     }
 
     /**
@@ -36,7 +36,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
     get("/user/:username") {
       request =>
         val username = request.routeParams.getOrElse("username", "default_user")
-        responseBuilder.withPlain("hello " + username).toFinagleResponse
+        responseBuilder.withPlain("hello " + username).toTrinityResponseFuture
     }
 
     /**
@@ -46,7 +46,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
      */
     get("/headers") {
       request =>
-        responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").toFinagleResponse
+        responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").toTrinityResponseFuture
     }
 
     /**
@@ -57,7 +57,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
     get("/data.json") {
       request =>
         import org.json4s.JsonDSL._
-        responseBuilder.withJson(Map("foo" -> "bar")).toFinagleResponse
+        responseBuilder.withJson(Map("foo" -> "bar")).toTrinityResponseFuture
     }
 
     /**
@@ -69,9 +69,9 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
       request =>
         request.params.get("q").map {
           q =>
-            responseBuilder.withPlain("no results for " + q).toFinagleResponse
+            responseBuilder.withPlain("no results for " + q).toFinagleResponseFuture
         }.getOrElse {
-          responseBuilder.withPlain("query param q needed").withStatus(500).toFinagleResponse
+          responseBuilder.withPlain("query param q needed").withStatus(500).toFinagleResponseFuture
         }
     }
 
@@ -87,14 +87,14 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
             println("content type is " + avatar.contentType)
             avatar.writeToFile("/tmp/avatar") //writes uploaded avatar to /tmp/avatar
         }
-        responseBuilder.withPlain("ok").toFinagleResponse
+        responseBuilder.withPlain("ok").toTrinityResponseFuture
     }
 
     get("/template") {
       request =>
         implicit val scalate = ScalateEngineContext()
         val view = ScalateRenderer("scalate.mustache", Map("message" -> "aaaa"))
-        responseBuilder.withBodyRenderer(view).toFinagleResponse
+        responseBuilder.withBodyRenderer(view).toTrinityResponseFuture
     }
 
 
@@ -106,7 +106,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
     get("/error") {
       request =>
         1234 / 0
-        responseBuilder.withPlain("we never make it here").toFinagleResponse
+        responseBuilder.withPlain("we never make it here").toTrinityResponseFuture
     }
 
     /**
@@ -129,8 +129,8 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
       request =>
         import org.json4s.JsonDSL._
         respondTo(request) {
-          case ContentType.TextHtml => responseBuilder.withHtml("<h1>Hello</h1>").toFinagleResponse
-          case ContentType.AppJson => responseBuilder.withJson(Map("value" -> "hello")).toFinagleResponse
+          case ContentType.TextHtml => responseBuilder.withHtml("<h1>Hello</h1>").toTrinityResponseFuture
+          case ContentType.AppJson => responseBuilder.withJson(Map("value" -> "hello")).toTrinityResponseFuture
         }
     }
 
@@ -144,9 +144,9 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
     get("/another/page") {
       request =>
         respondTo(request) {
-          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toFinagleResponse
-          case ContentType.AppJson => responseBuilder.withPlain("an json response").toFinagleResponse
-          case ContentType.All => responseBuilder.withPlain("default fallback response").toFinagleResponse
+          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toTrinityResponseFuture
+          case ContentType.AppJson => responseBuilder.withPlain("an json response").toTrinityResponseFuture
+          case ContentType.All => responseBuilder.withPlain("default fallback response").toTrinityResponseFuture
         }
     }
 
@@ -167,7 +167,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
         Stats.time("slow_thing time") {
           Thread.sleep(100)
         }
-        responseBuilder.withPlain("slow").toFinagleResponse
+        responseBuilder.withPlain("slow").toTrinityResponseFuture
     }
 
   }
@@ -176,20 +176,20 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
 
   override val getGlobalSettings = Some(new GlobalSettings with LoggingEx {
 
-    def notFound(request: Request): Future[Response] = {
-      ResponseBuilder().withStatus(404).withPlain("not found yo").toFinagleResponse
+    def notFound(request: TrinityRequest): Future[Response] = {
+      TrinityResponseBuilder().withStatus(404).withPlain("not found yo").toTrinityResponseFuture
     }
 
-    def error(request: Request): Future[Response] = withDebugScope(s"error(${request.error})") {
+    def error(request: TrinityRequest): Future[Response] = withDebugScope(s"error(${request.error})") {
       request.error match {
         case Some(e: ArithmeticException) =>
-          ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFinagleResponse
+          TrinityResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toTrinityResponseFuture
         case Some(e: UnauthorizedException) =>
-          ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFinagleResponse
+          TrinityResponseBuilder().withStatus(401).withPlain("Not Authorized!").toTrinityResponseFuture
         case Some(ex) =>
-          ResponseBuilder().withStatus(415).withPlain(ex.toString).toFinagleResponse
+          TrinityResponseBuilder().withStatus(415).withPlain(ex.toString).toTrinityResponseFuture
         case _ =>
-          ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFinagleResponse
+          TrinityResponseBuilder().withStatus(500).withPlain("Something went wrong!").toTrinityResponseFuture
       }
     }
 

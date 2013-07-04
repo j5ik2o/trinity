@@ -5,7 +5,7 @@ import com.twitter.util.Future
 import java.util.UUID
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.dddbase.core.model.{Entity, EntityCloneable, Identity}
-import org.sisioh.trinity.domain.http.Request
+import org.sisioh.trinity.domain.http.TrinityRequest
 import scala.language.implicitConversions
 import org.sisioh.trinity.domain.controller.Controller
 
@@ -56,7 +56,7 @@ trait Route
    * @param request リクエスト
    * @return `com.twitter.util.Future`
    */
-  def apply(request: Request): Future[Response] = action(request)
+  def apply(request: TrinityRequest): Future[Response] = action(request)
 
 }
 

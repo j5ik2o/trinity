@@ -4,7 +4,7 @@ import com.twitter.finagle.http.Response
 import com.twitter.util.Future
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.config.Config
-import org.sisioh.trinity.domain.http.{Request, ContentType}
+import org.sisioh.trinity.domain.http.{TrinityRequest, ContentType}
 import org.sisioh.trinity.domain.routing.{RouteRepositoryOnMemory, SinatraPathPatternParser, PathPatternParser}
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
@@ -23,11 +23,10 @@ abstract class AbstractController()(implicit val application: TrinityApplication
   (location: String, message: String = "moved"): Future[Response] = {
     responseBuilder.withPlain(message).
       withStatus(HttpResponseStatus.MOVED_PERMANENTLY).
-      withHeader("Location", location).
-      toFinagleResponse
+      withHeader("Location", location).toTrinityResponseFuture
   }
 
-  protected def respondTo(r: Request)(callback: PartialFunction[ContentType, Future[Response]]): Future[Response] = {
+  protected def respondTo(r: TrinityRequest)(callback: PartialFunction[ContentType, Future[Response]]): Future[Response] = {
     if (!r.routeParams.get("format").isEmpty) {
       val format = r.routeParams("format")
       val mime = ContentType.getContentType("." + format)

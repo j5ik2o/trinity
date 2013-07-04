@@ -5,7 +5,7 @@ import java.util.UUID
 import org.sisioh.dddbase.core.model.{EntityCloneable, Identity, Entity}
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.config.Config
-import org.sisioh.trinity.domain.http.{Response, ResponseBuilder}
+import org.sisioh.trinity.domain.http.{TrinityResponseImplicitSupport, TrinityResponseBuilder}
 import org.sisioh.trinity.domain.routing.{Routes, PathPatternParser}
 import scala.language.implicitConversions
 
@@ -16,7 +16,8 @@ trait Controller
   extends Entity[Identity[UUID]]
   with Routes
   with EntityCloneable[Identity[UUID], Controller]
-  with Ordered[Controller] {
+  with Ordered[Controller]
+  with TrinityResponseImplicitSupport {
 
   def compare(that: Controller): Int =
     identity.value.compareTo(that.identity.value)
@@ -33,9 +34,7 @@ trait Controller
 
   protected lazy val stats = statsReceiver.scope("Controller")
 
-  protected def responseBuilder = ResponseBuilder()
+  protected def responseBuilder = TrinityResponseBuilder()
 
-  implicit def convertToRaw(res: Response) =
-    res.toFinagleResponse
 
 }
