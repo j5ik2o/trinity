@@ -8,6 +8,7 @@ import org.sisioh.dddbase.core.model.{Entity, EntityCloneable, Identity}
 import org.sisioh.trinity.domain.http.TrinityRequest
 import scala.language.implicitConversions
 import org.sisioh.trinity.domain.controller.Controller
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * [[org.sisioh.trinity.domain.routing.Route]]のための識別子。
@@ -29,16 +30,10 @@ trait Route
   with Ordered[Route] {
 
   def compare(that: Route): Int = {
-    val v1 = identity.value._1.compareTo(that.identity.value._1)
-    if (v1 != 0) v1
-    else {
-      val v2 = identity.value._2.compareTo(that.identity.value._2)
-      if (v2 != 0) v2
-      else {
-        0
-      }
-    }
+    this.order compareTo that.order
   }
+
+  private val order = Route.orderGenerator.getAndIncrement
 
   /**
    * コントローラID
@@ -91,8 +86,11 @@ object Route {
   def unapply(route: Route): Option[(RouteId, Identity[UUID], Action)] =
     Some(route.identity, route.controllerId, route.action)
 
+  private val orderGenerator = new AtomicLong()
+
 }
 
 private[domain]
 class RouteImpl(val identity: RouteId, val controllerId: Identity[UUID], val action: Action) extends Route
+
 
