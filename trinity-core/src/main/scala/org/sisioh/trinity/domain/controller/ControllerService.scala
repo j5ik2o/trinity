@@ -21,7 +21,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
       }.getOrElse {
         builder.
           withStatus(HttpResponseStatus.NOT_FOUND).
-          withPlain("Not Found").toFuture
+          withPlain("Not Found").toFinagleResponse
       }
   }
 
@@ -32,9 +32,9 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
       }.getOrElse {
         request.error match {
           case Some(ex) =>
-            builder.withStatus(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE).withPlain("No handler for this media type found").toFuture
+            builder.withStatus(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE).withPlain("No handler for this media type found").toFinagleResponse
           case _ =>
-            builder.withStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR).withPlain("Something went wrong!").toFuture
+            builder.withStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR).withPlain("Something went wrong!").toFinagleResponse
         }
       }
   }

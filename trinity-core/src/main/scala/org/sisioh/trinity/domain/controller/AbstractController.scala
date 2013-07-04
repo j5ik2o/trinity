@@ -24,7 +24,7 @@ abstract class AbstractController()(implicit val application: TrinityApplication
     responseBuilder.withPlain(message).
       withStatus(HttpResponseStatus.MOVED_PERMANENTLY).
       withHeader("Location", location).
-      toFuture
+      toFinagleResponse
   }
 
   protected def respondTo(r: Request)(callback: PartialFunction[ContentType, Future[Response]]): Future[Response] = {

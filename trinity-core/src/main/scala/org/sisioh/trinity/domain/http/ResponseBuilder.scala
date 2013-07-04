@@ -22,7 +22,7 @@ case class Response
            body: Option[ChannelBuffer]) =
     this(HttpResponseStatus.valueOf(status), headers, cookies, body)
 
-  def get: FinagleResponse = {
+  def toFinagleResponse: FinagleResponse = {
     val result = new DefaultHttpResponse(HttpVersion.HTTP_1_1, status)
     headers.foreach {
       case (k, v: Iterable[_]) =>
@@ -143,11 +143,11 @@ case class ResponseBuilder(responseFuture: Future[Response] = Future(Response())
 
   def withNotFound = withStatus(HttpResponseStatus.NOT_FOUND)
 
-  def toFuture = responseFuture.map(_.get)
+  def toFinagleResponse = responseFuture.map(_.toFinagleResponse)
 
-  def getResultByAwait = Await.result(responseFuture)
+  def getResponse = Await.result(responseFuture)
 
-  def getRawByAwait = Await.result(toFuture)
+  def getFinagleResponse = Await.result(toFinagleResponse)
 
 }
 

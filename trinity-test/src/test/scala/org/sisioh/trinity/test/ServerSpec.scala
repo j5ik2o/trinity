@@ -11,7 +11,7 @@ class TestController(implicit application: TrinityApplication) extends SimpleCon
 
   get("/hey") {
     request =>
-      responseBuilder.withPlain("hello").withOk.toFuture
+      responseBuilder.withPlain("hello").withOk.toFinagleResponse
   }
 
   //  class TestView extends MustacheView {
@@ -33,7 +33,7 @@ class TestController(implicit application: TrinityApplication) extends SimpleCon
         "languages" -> List("Java", "Scala", "Clojure", "Groovy")
       )
       implicit val scalate = ScalateEngineContext()
-      responseBuilder.withBodyRenderer(ScalateRenderer("scalate_test.ssp", bindings)).toFuture
+      responseBuilder.withBodyRenderer(ScalateRenderer("scalate_test.ssp", bindings)).toFinagleResponse
   }
 
 
@@ -49,7 +49,7 @@ class TestController(implicit application: TrinityApplication) extends SimpleCon
           println("content type is " + avatar.contentType)
           avatar.writeToFile("/tmp/avatar") //writes uploaded avatar to /tmp/avatar
       }
-      responseBuilder.withPlain("ok").toFuture
+      responseBuilder.withPlain("ok").toFinagleResponse
   }
 
 

@@ -36,6 +36,6 @@ trait Controller
   protected def responseBuilder = ResponseBuilder()
 
   implicit def convertToRaw(res: Response) =
-    res.get
+    res.toFinagleResponse
 
 }

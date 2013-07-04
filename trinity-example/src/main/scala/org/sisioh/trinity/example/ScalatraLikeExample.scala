@@ -19,7 +19,7 @@ object ScalatraLikeExample extends App with ApplicationContext {
      */
     get("/") {
       request =>
-        responseBuilder.withPlain("hello world").toFuture
+        responseBuilder.withPlain("hello world").toFinagleResponse
     }
 
     /**
@@ -30,7 +30,7 @@ object ScalatraLikeExample extends App with ApplicationContext {
     get("/user/:username") {
       request =>
         val username = request.routeParams.getOrElse("username", "default_user")
-        responseBuilder.withPlain("hello " + username).toFuture
+        responseBuilder.withPlain("hello " + username).toFinagleResponse
     }
 
     /**
@@ -40,7 +40,7 @@ object ScalatraLikeExample extends App with ApplicationContext {
      */
     get("/headers") {
       request =>
-        responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").toFuture
+        responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").toFinagleResponse
     }
 
     /**
@@ -51,7 +51,7 @@ object ScalatraLikeExample extends App with ApplicationContext {
     get("/data.json") {
       request =>
         import org.json4s.JsonDSL._
-        responseBuilder.withJson(Map("foo" -> "bar")).toFuture
+        responseBuilder.withJson(Map("foo" -> "bar")).toFinagleResponse
     }
 
     /**
@@ -62,8 +62,8 @@ object ScalatraLikeExample extends App with ApplicationContext {
     get("/search") {
       request =>
         request.params.get("q") match {
-          case Some(q) => responseBuilder.withPlain("no results for " + q).toFuture
-          case None => responseBuilder.withPlain("query param q needed").withStatus(HttpResponseStatus.valueOf(500)).toFuture
+          case Some(q) => responseBuilder.withPlain("no results for " + q).toFinagleResponse
+          case None => responseBuilder.withPlain("query param q needed").withStatus(HttpResponseStatus.valueOf(500)).toFinagleResponse
         }
     }
 
@@ -79,28 +79,28 @@ object ScalatraLikeExample extends App with ApplicationContext {
             println("content type is " + avatar.contentType)
             avatar.writeToFile("/tmp/avatar") //writes uploaded avatar to /tmp/avatar
         }
-        responseBuilder.withPlain("ok").toFuture
+        responseBuilder.withPlain("ok").toFinagleResponse
     }
 
 
     get("/template1") {
       request =>
-        responseBuilder.withBodyRenderer(ScalateRenderer("scalate.mustache", Map("message" -> "hello"))).toFuture
+        responseBuilder.withBodyRenderer(ScalateRenderer("scalate.mustache", Map("message" -> "hello"))).toFinagleResponse
     }
 
     get("/template2") {
       request =>
-        responseBuilder.withBodyRenderer(ThymeleafRenderer("thymeleaf", Map("message" -> "hello"))).toFuture
+        responseBuilder.withBodyRenderer(ThymeleafRenderer("thymeleaf", Map("message" -> "hello"))).toFinagleResponse
     }
 
     get("/template3") {
       request =>
-        responseBuilder.withBodyRenderer(VelocityRenderer("velocity.vm", Map("message" -> "hello"))).toFuture
+        responseBuilder.withBodyRenderer(VelocityRenderer("velocity.vm", Map("message" -> "hello"))).toFinagleResponse
     }
 
     get("/template4") {
       request =>
-        responseBuilder.withBodyRenderer(FreeMarkerRenderer("freemarker.tpl", Map("message" -> "hello"))).toFuture
+        responseBuilder.withBodyRenderer(FreeMarkerRenderer("freemarker.tpl", Map("message" -> "hello"))).toFinagleResponse
     }
 
     /**
@@ -111,7 +111,7 @@ object ScalatraLikeExample extends App with ApplicationContext {
     get("/error") {
       request =>
         1234 / 0
-        responseBuilder.withPlain("we never make it here").toFuture
+        responseBuilder.withPlain("we never make it here").toFinagleResponse
     }
 
 
@@ -136,8 +136,8 @@ object ScalatraLikeExample extends App with ApplicationContext {
       request =>
         import org.json4s.JsonDSL._
         respondTo(request) {
-          case ContentType.TextHtml => responseBuilder.withHtml("<h1>Hello</h1>").toFuture
-          case ContentType.AppJson => responseBuilder.withJson(Map("value" -> "hello")).toFuture
+          case ContentType.TextHtml => responseBuilder.withHtml("<h1>Hello</h1>").toFinagleResponse
+          case ContentType.AppJson => responseBuilder.withJson(Map("value" -> "hello")).toFinagleResponse
         }
     }
 
@@ -151,9 +151,9 @@ object ScalatraLikeExample extends App with ApplicationContext {
     get("/another/page") {
       request =>
         respondTo(request) {
-          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toFuture
-          case ContentType.AppJson => responseBuilder.withPlain("an json response").toFuture
-          case ContentType.All => responseBuilder.withPlain("default fallback response").toFuture
+          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toFinagleResponse
+          case ContentType.AppJson => responseBuilder.withPlain("an json response").toFinagleResponse
+          case ContentType.All => responseBuilder.withPlain("default fallback response").toFinagleResponse
         }
     }
 
@@ -174,7 +174,7 @@ object ScalatraLikeExample extends App with ApplicationContext {
         stats.time("slow_thing time") {
           Thread.sleep(100)
         }
-        responseBuilder.withPlain("slow").toFuture
+        responseBuilder.withPlain("slow").toFinagleResponse
     }
   }
 

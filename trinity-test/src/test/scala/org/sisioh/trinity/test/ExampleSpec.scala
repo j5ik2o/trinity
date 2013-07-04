@@ -25,7 +25,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
      */
     get("/hello") {
       request =>
-        responseBuilder.withPlain("hello world").toFuture
+        responseBuilder.withPlain("hello world").toFinagleResponse
     }
 
     /**
@@ -36,7 +36,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
     get("/user/:username") {
       request =>
         val username = request.routeParams.getOrElse("username", "default_user")
-        responseBuilder.withPlain("hello " + username).toFuture
+        responseBuilder.withPlain("hello " + username).toFinagleResponse
     }
 
     /**
@@ -46,7 +46,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
      */
     get("/headers") {
       request =>
-        responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").toFuture
+        responseBuilder.withPlain("look at headers").withHeader("Foo", "Bar").toFinagleResponse
     }
 
     /**
@@ -57,7 +57,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
     get("/data.json") {
       request =>
         import org.json4s.JsonDSL._
-        responseBuilder.withJson(Map("foo" -> "bar")).toFuture
+        responseBuilder.withJson(Map("foo" -> "bar")).toFinagleResponse
     }
 
     /**
@@ -69,9 +69,9 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
       request =>
         request.params.get("q").map {
           q =>
-            responseBuilder.withPlain("no results for " + q).toFuture
+            responseBuilder.withPlain("no results for " + q).toFinagleResponse
         }.getOrElse {
-          responseBuilder.withPlain("query param q needed").withStatus(500).toFuture
+          responseBuilder.withPlain("query param q needed").withStatus(500).toFinagleResponse
         }
     }
 
@@ -87,14 +87,14 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
             println("content type is " + avatar.contentType)
             avatar.writeToFile("/tmp/avatar") //writes uploaded avatar to /tmp/avatar
         }
-        responseBuilder.withPlain("ok").toFuture
+        responseBuilder.withPlain("ok").toFinagleResponse
     }
 
     get("/template") {
       request =>
         implicit val scalate = ScalateEngineContext()
         val view = ScalateRenderer("scalate.mustache", Map("message" -> "aaaa"))
-        responseBuilder.withBodyRenderer(view).toFuture
+        responseBuilder.withBodyRenderer(view).toFinagleResponse
     }
 
 
@@ -106,7 +106,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
     get("/error") {
       request =>
         1234 / 0
-        responseBuilder.withPlain("we never make it here").toFuture
+        responseBuilder.withPlain("we never make it here").toFinagleResponse
     }
 
     /**
@@ -129,8 +129,8 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
       request =>
         import org.json4s.JsonDSL._
         respondTo(request) {
-          case ContentType.TextHtml => responseBuilder.withHtml("<h1>Hello</h1>").toFuture
-          case ContentType.AppJson => responseBuilder.withJson(Map("value" -> "hello")).toFuture
+          case ContentType.TextHtml => responseBuilder.withHtml("<h1>Hello</h1>").toFinagleResponse
+          case ContentType.AppJson => responseBuilder.withJson(Map("value" -> "hello")).toFinagleResponse
         }
     }
 
@@ -144,9 +144,9 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
     get("/another/page") {
       request =>
         respondTo(request) {
-          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toFuture
-          case ContentType.AppJson => responseBuilder.withPlain("an json response").toFuture
-          case ContentType.All => responseBuilder.withPlain("default fallback response").toFuture
+          case ContentType.TextHtml => responseBuilder.withPlain("an html response").toFinagleResponse
+          case ContentType.AppJson => responseBuilder.withPlain("an json response").toFinagleResponse
+          case ContentType.All => responseBuilder.withPlain("default fallback response").toFinagleResponse
         }
     }
 
@@ -167,7 +167,7 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
         Stats.time("slow_thing time") {
           Thread.sleep(100)
         }
-        responseBuilder.withPlain("slow").toFuture
+        responseBuilder.withPlain("slow").toFinagleResponse
     }
 
   }
@@ -177,19 +177,19 @@ class ExampleSpec extends Specification with ControllerUnitTestSupport {
   override val getGlobalSettings = Some(new GlobalSettings with LoggingEx {
 
     def notFound(request: Request): Future[Response] = {
-      ResponseBuilder().withStatus(404).withPlain("not found yo").toFuture
+      ResponseBuilder().withStatus(404).withPlain("not found yo").toFinagleResponse
     }
 
     def error(request: Request): Future[Response] = withDebugScope(s"error(${request.error})") {
       request.error match {
         case Some(e: ArithmeticException) =>
-          ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFuture
+          ResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toFinagleResponse
         case Some(e: UnauthorizedException) =>
-          ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFuture
+          ResponseBuilder().withStatus(401).withPlain("Not Authorized!").toFinagleResponse
         case Some(ex) =>
-          ResponseBuilder().withStatus(415).withPlain(ex.toString).toFuture
+          ResponseBuilder().withStatus(415).withPlain(ex.toString).toFinagleResponse
         case _ =>
-          ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFuture
+          ResponseBuilder().withStatus(500).withPlain("Something went wrong!").toFinagleResponse
       }
     }
 
