@@ -24,16 +24,54 @@ trait TrinityApplication extends Routes {
    */
   val statsReceiver: StatsReceiver
 
+  /**
+   * コントローラを登録する。
+   *
+   * @param controller コントローラ
+   */
   def registerController(controller: Controller): Unit
 
-  def registerFilter(filter: SimpleFilter[Request, Response])
+  /**
+   * コントローラの列を登録する。
+   *
+   * @param controllers コントローラの列
+   */
+  def registerControllers(controllers: Seq[Controller]): Unit =
+    controllers.foreach(registerController)
 
+  /**
+   * フィルターを登録する。
+   *
+   * @param filter フィルター
+   */
+  def registerFilter(filter: SimpleFilter[Request, Response]): Unit
+
+  /**
+   * フィルターの列を登録する。
+   *
+   * @param filters フィルターの列
+   */
+  def registerFilters(filters: Seq[SimpleFilter[Request, Response]]): Unit =
+    filters.foreach(registerFilter)
+
+  /**
+   * アプリケーションを開始する。
+   */
   def start(): Unit
 
+  /**
+   * アプリケーションを開始する。
+   *
+   * @param tracer トレーサ
+   * @param runtimeEnv 実行環境
+   */
   def start
   (tracer: Tracer = NullTracer,
    runtimeEnv: RuntimeEnvironment = new RuntimeEnvironment(this)): Unit
 
+  /**
+   * アプリケーションを終了する。
+   */
   def shutdown(): Unit
 
 }
