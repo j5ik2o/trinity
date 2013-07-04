@@ -2,11 +2,13 @@ package org.sisioh.trinity.test
 
 import org.specs2.mutable.Specification
 import org.sisioh.trinity.application.TrinityApplication
-import org.sisioh.trinity.domain.controller.{Controller, SimpleController}
+import org.sisioh.trinity.domain.controller.SimpleController
 
-class ControllerUnitTestSupportSpec extends Specification with ControllerUnitTestSupport {
+class ControllerUnitTestSupportSpec
+  extends Specification
+  with ControllerUnitTestSupport {
 
-  class CookieTestController()(implicit application: TrinityApplication)
+  case class CookieTestController()(implicit application: TrinityApplication)
     extends SimpleController {
 
     post("/") {
@@ -16,15 +18,13 @@ class ControllerUnitTestSupportSpec extends Specification with ControllerUnitTes
 
   }
 
-  def getController(implicit application: TrinityApplication): Controller =
-    new CookieTestController()
-
-  "" should {
-    "" in {
+  "controller" should {
+    "test post by content" in {
       implicit val application = MockApplication()
+      implicit val controller = CookieTestController()
+
       testPostByContent("/", Some("test")) {
         response =>
-          println("body = (" + response.body + ")")
           response.body must_== "content = test"
       }
 

@@ -1,18 +1,13 @@
 package org.sisioh.trinity.test.cookie
 
-import org.sisioh.trinity.application.TrinityApplication
 import org.specs2.mutable.Specification
 import org.sisioh.trinity.test.{MockApplication, ControllerUnitTestSupport}
 
-
 class CookieSpec extends Specification with ControllerUnitTestSupport {
-
-
-  def getController(implicit application: TrinityApplication) =
-    new CookieTestController()
 
   "basic k/v cookie" should {
     implicit val application = MockApplication()
+    implicit val controller = new CookieTestController()
     "have Foo:Bar" in {
       testGetByParams("/sendCookie") {
         response =>
@@ -23,6 +18,7 @@ class CookieSpec extends Specification with ControllerUnitTestSupport {
 
   "advanced Cookie" should {
     implicit val application = MockApplication()
+    implicit val controller = new CookieTestController()
     "have Biz:Baz&Secure=true" in {
       testGetByParams("/sendAdvCookie") {
         response =>
