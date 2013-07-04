@@ -18,7 +18,8 @@ object PlayLikeExample extends App with ApplicationContext {
      */
     def index = FuturePoolAction {
       request =>
-        responseBuilder.withOk.getTrinityResponse
+        val path = request.routeParams("path")
+        responseBuilder.withPlain("index = "+path).getTrinityResponse
     }
 
     /**
@@ -47,7 +48,18 @@ object PlayLikeExample extends App with ApplicationContext {
 
   implicit val pathParser = new SinatraPathPatternParser()
 
-  application.addRoute(HttpMethod.GET, "/", PlayLikeController, PlayLikeController.index)
+  val route = Route(
+    identity = RouteId(
+      HttpMethod.GET,
+      PathPattern( """/(abc)""".r, List("path"))
+    ),
+    controller = PlayLikeController,
+    action = PlayLikeController.index
+  )
+
+  application.addRoute(route)
+
+  //application.addRoute(HttpMethod.GET, "/", PlayLikeController, PlayLikeController.index)
   application.addRoute(Route(HttpMethod.GET, "/user/:name", PlayLikeController, FutureAction {
     request =>
       PlayLikeController.getUser(request.routeParams("name"))(request)

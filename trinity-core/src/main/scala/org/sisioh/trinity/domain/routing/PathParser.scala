@@ -68,6 +68,7 @@ trait RegexPathPatternParser extends PathPatternParser with RegexParsers {
  * A Sinatra-compatible route path pattern parser.
  */
 class SinatraPathPatternParser extends RegexPathPatternParser {
+
   def apply(pattern: String): PathPattern =
     parseAll(pathPattern, pattern) match {
       case Success(pathPattern, _) =>

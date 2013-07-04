@@ -15,6 +15,10 @@ trait Routes {
 
   implicit def convert(action: TrinityRequest => Future[Response]) = FutureAction(action)
 
+  def addRoute(method: HttpMethod, pathPattern: PathPattern, controller: Controller, action: Action): Unit = {
+    addRoute(Route(method, pathPattern, controller, action))
+  }
+
   def addRoute(method: HttpMethod, path: String, controller: Controller, action: Action)(implicit pathPatternParser: PathPatternParser) {
     addRoute(Route(method, path, controller.identity, action))
   }

@@ -16,6 +16,8 @@ import org.sisioh.trinity.domain.routing.{FutureAction, Route}
 abstract class SimpleController(implicit application: TrinityApplication)
   extends AbstractController with LoggingEx {
 
+  // TODO PathPatternを渡せるようにする。
+
   protected def get(path: String)(callback: TrinityRequest => Future[Response]) {
     addRoute(HttpMethod.GET, path)(callback)
   }

@@ -72,10 +72,16 @@ object Route {
   def apply(identity: RouteId, controller: Controller, action: Action): Route =
     new RouteImpl(identity, controller.identity, action)
 
+  def apply(method: HttpMethod, pathPattern: PathPattern, controller: Controller, action: Action): Route =
+    apply(method, pathPattern, controller.identity, action)
+
+  def apply(method: HttpMethod, pathPattern: PathPattern, controllerId: Identity[UUID], action: Action): Route =
+    apply(RouteId(method, pathPattern), controllerId, action)
+
   def apply(method: HttpMethod, path: String, controllerId: Identity[UUID], action: Action)
            (implicit pathPatternParser: PathPatternParser): Route = {
-    val regex = pathPatternParser(path)
-    apply(RouteId(method, regex), controllerId, action)
+    val pathPattern = pathPatternParser(path)
+    apply(RouteId(method, pathPattern), controllerId, action)
   }
 
   def apply(method: HttpMethod, path: String, controller: Controller, action: Action)
