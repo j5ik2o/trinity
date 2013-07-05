@@ -2,11 +2,15 @@
 
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 
-Trinityは `Finagle`ベースのMVCフレームワークです。
+Trinityは `Finagle`ベースの軽量MVCフレームワークです。
+
+## コンセプト
+- FinagleでMVCアプリケーションを実装するために不足している機能を補う。
+- CoCを前提としない設計思想で、ドメイン駆動設計(モデル駆動設計)を支援する。
 
 ## 特徴
- - `Finagle`サービスをコントローラ上のアクションとして記述できる。
- - `Scalate`などのテンプレートエンジンと組み合わせて利用できる。
+- `Finagle`サービスをコントローラ上のアクションとして記述できる。
+- `Scalate`などのテンプレートエンジンと組み合わせて利用できる。
 
 ## 機能
 ### サポートする機能
