@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 
 `Trinity`は`Scala`で記述できる`Finagle`ベースの軽量MVCフレームワークです。
-(`Finagle`とはTwitter社が開発したRPCフレームワークです)
+(`Finagle`とは`Twitter`社が開発したRPCフレームワークです)
 
 ## コンセプト
 - `Finagle`でMVCアプリケーションを実装するために不足している機能を補う。
