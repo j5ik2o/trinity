@@ -2,8 +2,7 @@ package org.sisioh.trinity.domain.controller
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
-import com.twitter.util.{Try, Future}
-import org.jboss.netty.handler.codec.http.HttpVersion._
+import com.twitter.util.{Return, Try, Future}
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponseStatus}
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
@@ -19,9 +18,13 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
         globalSetting =>
           globalSetting.notFound(request)
       }.getOrElse {
-        builder.
-          withStatus(HttpResponseStatus.NOT_FOUND).
-          withPlain("Not Found").toTrinityResponseFuture
+        if (application.config.isRecoveryActionNotFound) {
+          builder.
+            withStatus(HttpResponseStatus.NOT_FOUND).
+            withPlain("Not Found").toTrinityResponseFuture
+        } else {
+          Future.exception(ActionNotFoundException(Some(request.toString())))
+        }
       }
   }
 
@@ -32,9 +35,13 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
       }.getOrElse {
         request.error match {
           case Some(ex) =>
-            builder.withStatus(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE).withPlain("No handler for this media type found").toTrinityResponseFuture
+            if (application.config.isRecoveryError) {
+              builder.withStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR).withPlain("Internal Server Error").toTrinityResponseFuture
+            } else {
+              Future.exception(TrinityException(Some(s"Error at $request"), Some(ex)))
+            }
           case _ =>
-            builder.withStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR).withPlain("Something went wrong!").toTrinityResponseFuture
+            builder.withStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR).withPlain("Internal Server Error").toTrinityResponseFuture
         }
       }
   }
@@ -102,9 +109,11 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
     }.rescue {
       case throwable: Exception =>
         Try(handleError(adaptedRequest, throwable))
+    }.rescue {
+      case throwable: Exception =>
+        Return(Future.exception(throwable))
     }.getOrElse {
-      val response = FinagleResponse(HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR)
-      Future.value(response)
+      Future.exception(TrinityException(Some("Other Exception")))
     }
   }
 

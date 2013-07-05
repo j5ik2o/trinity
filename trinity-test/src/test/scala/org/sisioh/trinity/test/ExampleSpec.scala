@@ -1,13 +1,13 @@
 package org.sisioh.trinity.test
 
-import com.twitter.finagle.http.Response
 import com.twitter.ostrich.stats.Stats
-import com.twitter.util.Future
-import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
-import org.sisioh.trinity.domain.http.{TrinityResponseBuilder, TrinityRequest, ContentType}
+import org.sisioh.trinity.domain.http.{TrinityRequest, TrinityResponseBuilder, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.specs2.mutable.Specification
+import org.sisioh.scala.toolbox.LoggingEx
+import com.twitter.util.Future
+import com.twitter.finagle.http.Response
 
 class ExampleSpec
   extends Specification
@@ -15,7 +15,13 @@ class ExampleSpec
 
   class UnauthorizedException extends Exception
 
-  implicit val application = MockApplication(MockConfig(localDocumentRoot = "trinity-test/src/test/resources"))
+  implicit val application = MockApplication(
+    MockConfig(
+      localDocumentRoot = "trinity-test/src/test/resources",
+      isRecoveryError = true,
+      isRecoveryActionNotFound = true
+    )
+  )
 
   implicit object ExampleController extends SimpleController {
 

@@ -37,6 +37,10 @@ trait Config {
 
   val requestTimeout: Option[Int]
 
+  val isRecoveryError: Boolean
+
+  val isRecoveryActionNotFound: Boolean
+
   override def toString = Seq(
     s"environment = $environment",
     s"applicationName = $applicationName",

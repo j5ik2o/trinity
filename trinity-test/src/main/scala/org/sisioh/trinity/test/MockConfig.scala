@@ -18,4 +18,8 @@ case class MockConfig
  maxConcurrentRequests: Option[Int] = None,
  hostConnectionMaxIdleTime: Option[Duration] = None,
  hostConnectionMaxLifeTime: Option[Duration] = None,
- requestTimeout: Option[Int] = None) extends Config
+ requestTimeout: Option[Int] = None,
+ isRecoveryError: Boolean = true,
+ isRecoveryActionNotFound: Boolean = true
+  ) extends Config{
+}
