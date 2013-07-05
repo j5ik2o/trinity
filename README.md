@@ -1,87 +1,33 @@
-trinity
-=======
+# Trinity
 
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 
-MVC framework by Finagle based
+Trinityは `Finagle`ベースのMVCフレームワークです。
 
-- FinagleをベースにしたMVCフレームワーク
-- コントローラのアクションは基本的にFutureを返す前提。
-  - com.twitter.util.Future, scala.concurrnet.Futureの両方が使える。
-  - FuturePoolを使ったブロッキング前提のアクションも記述可能。
-- Scalatraのようにコントローラにルート情報を記述する方法と、Play2のようにルート情報をまとめて記述する方法の、二通りが可能。
+## 特徴
+ - `Finagle`サービスをコントローラ上のアクションとして記述できる。
+ - `Scalate`などのテンプレートエンジンと組み合わせて利用できる。
 
-```scala
-object ScalatraLikeController extends SimpleController {
+## 機能
+### サポートする機能
+- コントローラ上のアクションへのルーティング機能 
+- Finagleリクエスト/レスポンスの拡張
+  - マルチパート形式のファイルアップロード
+  - JSON形式のレスポンス
+  - ファイルリソース形式のレスポンス
+- テンプレートエンジンとの連携
+  - [Scalate](http://scalate.fusesource.org/)
+  - [Velocity](http://velocity.apache.org/)
+  - [FreeMarker](http://freemarker.org/)
+  - [Thymeleaf](http://www.thymeleaf.org/)
+- テスト機能
+  - 単体テスト
+  - 結合テスト
 
-    get("/user/:username") {
-      request =>
-        val username = request.routeParams.getOrElse("username", "default_user")
-        responseBuilder.withPlain("hello " + username).toFuture
-    }
+### サポートしない機能
+- フォーム機能
+- バリデーション機能
+- RDBMSやNoSQLなどの永続化機能
 
-}
-```
-
-```scala
-object PlayLikeController extends AbstractController {
-
-    // Play2のようなアクション。
-    // ブロッキングする処理を書いてもブロッキングしない(スレッドプールの範囲内で)
-    def index = FuturePoolAction {
-      request =>
-        responseBuilder.withOk.getResultByAwait
-    }
-
-    // com.twitter.util.Future前提のアクション
-    def getUser(name: String) = FutureAction {
-      request =>
-        responseBuilder.withBody("name = " + name).toFuture
-    }
-
-    // scala.concurrent.Futureにアダプトするアクション
-    def getGroup(name: String) = ScalaFutureAction {
-      request => future {
-        responseBuilder.withBody("group = " + name).getResultByAwait
-      }
-    }
-
-}
-
-// ルーティング情報をまとめることができる。
-application.addRoute(HttpMethod.GET, "/", PlayLikeController, PlayLikeController.index)
-application.addRoute(HttpMethod.GET, "/user/:name", PlayLikeController) {
-    request =>
-      PlayLikeController.getUser(request.routeParams("name"))(request)
-}
-application.addRoute(HttpMethod.GET, "/group/:name", PlayLikeController) {
-    request =>
-      PlayLikeController.getGroup(request.routeParams("name"))(request)
-}
-```
-- テンプレートエンジンは、Scalate, Thymeleaf, Velocity, FreeMarkerに対応。
-  - Scalateはすべてのテンプレートに対応。
-
-```scala
-// ...
-   get("/template1") {
-      request =>
-        responseBuilder.withBodyRenderer(ScalateRenderer("scalate.mustache", Map("message" -> "hello"))).toFuture
-    }
-
-    get("/template2") {
-      request =>
-        responseBuilder.withBodyRenderer(ThymeleafRenderer("thymeleaf", Map("message" -> "hello"))).toFuture
-    }
-
-    get("/template3") {
-      request =>
-        responseBuilder.withBodyRenderer(VelocityRenderer("velocity.vm", Map("message" -> "hello"))).toFuture
-    }
-
-    get("/template4") {
-      request =>
-        responseBuilder.withBodyRenderer(FreeMarkerRenderer("freemarker.tpl", Map("message" -> "hello"))).toFuture
-    }
-// ...
-```
+## ライセンス
+[Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
