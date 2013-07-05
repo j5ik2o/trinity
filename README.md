@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 
-Trinityは `Finagle`ベースの軽量MVCフレームワークです。
+Trinityは `Finagle` ベースの軽量MVCフレームワークです。
+(FinagleとはTwitter社が開発したRPCフレームワークです)
 
 ## コンセプト
 - FinagleでMVCアプリケーションを実装するために不足している機能を補う。
