@@ -37,9 +37,9 @@ Trinityは `Finagle`ベースの軽量MVCフレームワークです。
   - 導入方法はこちらを参考にしてください。https://gist.github.com/j5ik2o/5660744
 
 ### サポートしない機能
-- フォーム機能
-- バリデーション機能
+- フォーム/バリデーション機能
 - RDBMSやNoSQLなどの永続化機能
+  - 特に制限はないので自由に組み合わせ可能。
 
 ## ライセンス
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
