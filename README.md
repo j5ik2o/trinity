@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 
-Trinityは `Finagle` ベースの軽量MVCフレームワークです。
-(FinagleとはTwitter社が開発したRPCフレームワークです)
+`Trinity`は`Scala`で記述できる`Finagle`ベースの軽量MVCフレームワークです。
+(`Finagle`とはTwitter社が開発したRPCフレームワークです)
 
 ## コンセプト
-- FinagleでMVCアプリケーションを実装するために不足している機能を補う。
+- `Finagle`でMVCアプリケーションを実装するために不足している機能を補う。
 - CoCを前提としない設計思想で、ドメイン駆動設計(モデル駆動設計)を支援する。
 
 ## 特徴
@@ -34,7 +34,7 @@ Trinityは `Finagle` ベースの軽量MVCフレームワークです。
   - 単体テスト
   - 結合テスト
 - JRebel
-  - Trinity側で特別な実装はしていませんが、JRebelのホットリローディングが利用できます。
+  - `Trinity`側で特別な実装はしていませんが、JRebelによるホットリローディングが利用できます。
   - 導入方法はこちらを参考にしてください。https://gist.github.com/j5ik2o/5660744
 
 ### サポートしない機能
