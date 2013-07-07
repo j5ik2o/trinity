@@ -2,12 +2,11 @@ package org.sisioh.trinity.test
 
 import com.twitter.ostrich.stats.Stats
 import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
-import org.sisioh.trinity.domain.http.{TrinityRequest, TrinityResponseBuilder, ContentType}
+import org.sisioh.trinity.domain.http.{TrinityResponseBuilder, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.specs2.mutable.Specification
 import org.sisioh.scala.toolbox.LoggingEx
-import com.twitter.util.Future
-import com.twitter.finagle.http.Response
+import org.sisioh.trinity.domain.routing.FutureAction
 
 class ExampleSpec
   extends Specification
@@ -183,26 +182,33 @@ class ExampleSpec
   }
 
 
-  override val getGlobalSettings = Some(new GlobalSettings with LoggingEx {
+  override val getGlobalSettings = Some(
+    new GlobalSettings with LoggingEx {
 
-    def notFound(request: TrinityRequest): Future[Response] = {
-      TrinityResponseBuilder().withStatus(404).withPlain("not found yo").toTrinityResponseFuture
+      override def notFound = Some(
+        FutureAction {
+          request =>
+            TrinityResponseBuilder().withStatus(404).withPlain("not found yo").toTrinityResponseFuture
+        }
+      )
+
+      override def error = Some(
+        FutureAction {
+          request =>
+            request.error match {
+              case Some(e: ArithmeticException) =>
+                TrinityResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toTrinityResponseFuture
+              case Some(e: UnauthorizedException) =>
+                TrinityResponseBuilder().withStatus(401).withPlain("Not Authorized!").toTrinityResponseFuture
+              case Some(ex) =>
+                TrinityResponseBuilder().withStatus(415).withPlain(ex.toString).toTrinityResponseFuture
+              case _ =>
+                TrinityResponseBuilder().withStatus(500).withPlain("Something went wrong!").toTrinityResponseFuture
+            }
+        }
+      )
     }
-
-    def error(request: TrinityRequest): Future[Response] = withDebugScope(s"error(${request.error})") {
-      request.error match {
-        case Some(e: ArithmeticException) =>
-          TrinityResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toTrinityResponseFuture
-        case Some(e: UnauthorizedException) =>
-          TrinityResponseBuilder().withStatus(401).withPlain("Not Authorized!").toTrinityResponseFuture
-        case Some(ex) =>
-          TrinityResponseBuilder().withStatus(415).withPlain(ex.toString).toTrinityResponseFuture
-        case _ =>
-          TrinityResponseBuilder().withStatus(500).withPlain("Something went wrong!").toTrinityResponseFuture
-      }
-    }
-
-  })
+  )
 
   "GET /notfound" should {
     "respond 404" in {
