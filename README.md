@@ -17,13 +17,13 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
 ## Functions
 ### Supported Functions
 - Routing request to action
-- `com.twitter.util.Future`を前提としたブロッキングしない非同期型アクションの記述
-  - `com.twitter.util.FuturePool`を使った同期型アクションも記述可能
-  - `scala.concurrent.Future`のためのアダプタ機能もある
+  - A action can be described as async process by using `com.twitter.util.Future`.
+  - Or, You can also select action as sync process by using com.twitter.util.FuturePool.
+  - We support a action adaptor for a process which returns `scala.concurrent.Future`.
 - Finagle's Request/Response Enhance
-  - マルチパート形式のファイルアップロード
-  - JSON形式のレスポンス
-  - ファイルリソース形式のレスポンス
+  - multi-part file upload
+  - json format reponse
+  - file resouce support
 - Binding to Template Engine
   - [Scalate](http://scalate.fusesource.org/)
   - [Velocity](http://velocity.apache.org/)
@@ -33,8 +33,7 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
   - Unit Testing
   - Integration Testing
 - JRebel support
-  - Trinity側で特別な実装はしていませんが、JRebelによるホットリローディングが利用できます。
-  - 導入方法はこちらを参考にしてください。https://gist.github.com/j5ik2o/5660744
+  - see this gist for installation. https://gist.github.com/j5ik2o/5660744
 
 ### Unsupported Functions
 - Functions for Form, Validation 
