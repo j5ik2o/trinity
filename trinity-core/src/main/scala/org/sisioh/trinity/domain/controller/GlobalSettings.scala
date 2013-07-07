@@ -4,6 +4,7 @@ import com.twitter.finagle.http.{Response => FinagleResponse}
 import com.twitter.util.Future
 import org.sisioh.trinity.domain.http.{TrinityResponseImplicitSupport, TrinityRequest}
 import org.sisioh.trinity.application.TrinityApplication
+import org.sisioh.trinity.domain.routing.Action
 
 /**
  * グローバル設定を表すトレイト。
@@ -11,20 +12,18 @@ import org.sisioh.trinity.application.TrinityApplication
 trait GlobalSettings extends TrinityResponseImplicitSupport {
 
   /**
-   * リクエストに対するリソースが見つからなかった場合に呼ばれるハンドラ。
+   * リクエストに対するリソースが見つからなかった場合に呼ばれる`Action`。
    *
-   * @param request リクエスト
-   * @return `Future[Response]`
+   * @return [[org.sisioh.trinity.domain.routing.Action]]
    */
-  def notFound(request: TrinityRequest): Future[FinagleResponse]
+  def notFound: Option[Action] = None
 
   /**
-   * エラーが発生した場合に呼ばれるハンドラ。
+   * エラーが発生した場合に呼ばれる`Action`。
    *
-   * @param request リクエスト
-   * @return `Future[Response]`
+   * @return [[org.sisioh.trinity.domain.routing.Action]]
    */
-  def error(request: TrinityRequest): Future[FinagleResponse]
+  def error: Option[Action] = None
 
   /**
    * アプリケーションが起動した際に呼ばれるハンドラ。

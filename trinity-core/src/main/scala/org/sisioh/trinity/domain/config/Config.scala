@@ -3,6 +3,8 @@ package org.sisioh.trinity.domain.config
 import com.twitter.util.Eval
 import java.io.File
 import scala.concurrent.duration.Duration
+import org.sisioh.trinity.domain.routing.Action
+import org.sisioh.trinity.domain.controller.NotFoundHandleAction
 
 /**
  * [[org.sisioh.trinity.application.TrinityApplication]]のための設定情報を表す値オブジェクト。
@@ -36,10 +38,6 @@ trait Config {
   val hostConnectionMaxLifeTime: Option[Duration]
 
   val requestTimeout: Option[Int]
-
-  val isRecoveryError: Boolean
-
-  val isRecoveryActionNotFound: Boolean
 
   override def toString = Seq(
     s"environment = $environment",

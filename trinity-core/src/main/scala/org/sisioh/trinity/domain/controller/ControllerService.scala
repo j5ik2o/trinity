@@ -3,7 +3,7 @@ package org.sisioh.trinity.domain.controller
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
 import com.twitter.util.{Return, Try, Future}
-import org.jboss.netty.handler.codec.http.{HttpMethod, HttpResponseStatus}
+import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.http.{TrinityResponseImplicitSupport, TrinityResponseBuilder, TrinityRequest}
@@ -15,40 +15,26 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
   protected def notFoundHandler: (TrinityRequest) => Future[FinagleResponse] = {
     request: TrinityRequest =>
       globalSettingOpt.map {
-        globalSetting =>
-          globalSetting.notFound(request)
+        _.notFound.map(_(request)).
+          getOrElse(NotFoundHandleAction(request))
       }.getOrElse {
-        if (application.config.isRecoveryActionNotFound) {
-          builder.
-            withStatus(HttpResponseStatus.NOT_FOUND).
-            withPlain("Not Found").toTrinityResponseFuture
-        } else {
-          Future.exception(ActionNotFoundException(Some(request.toString())))
-        }
+        NotFoundHandleAction(request)
       }
   }
 
   protected def errorHandler: (TrinityRequest) => Future[FinagleResponse] = {
     request: TrinityRequest =>
       globalSettingOpt.map {
-        _.error(request)
+        _.error.map(_(request)).
+          getOrElse(ErrorHandleAction(request))
       }.getOrElse {
-        request.error match {
-          case Some(ex) =>
-            if (application.config.isRecoveryError) {
-              builder.withStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR).withPlain("Internal Server Error").toTrinityResponseFuture
-            } else {
-              Future.exception(TrinityException(Some(s"Error at $request"), Some(ex)))
-            }
-          case _ =>
-            builder.withStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR).withPlain("Internal Server Error").toTrinityResponseFuture
-        }
+        ErrorHandleAction(request)
       }
   }
 
-  def builder: TrinityResponseBuilder = new TrinityResponseBuilder
+  protected def builder: TrinityResponseBuilder = TrinityResponseBuilder()
 
-  def dispatch(request: TrinityRequest): Option[Future[FinagleResponse]] = {
+  protected def dispatch(request: TrinityRequest): Option[Future[FinagleResponse]] = {
     logger.info("%s %s".format(request.method, request.uri))
     dispatchRouteOrCallback(request, request.method, (request) => {
       // fallback to GET for 404'ed GET requests (curl -I support)
@@ -60,7 +46,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
     })
   }
 
-  private def dispatchRouteOrCallback
+  protected def dispatchRouteOrCallback
   (request: TrinityRequest,
    method: HttpMethod,
    orCallback: TrinityRequest => Option[Future[FinagleResponse]])
@@ -78,7 +64,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
     }
   }
 
-  def findRoute(request: TrinityRequest, method: HttpMethod): Option[Route] = {
+  private def findRoute(request: TrinityRequest, method: HttpMethod): Option[Route] = {
     application.routeRepository.find {
       case Route(RouteId(m, p), controllerId, _) =>
         val hasController = application.controllerRepository.contains(controllerId)
