@@ -8,38 +8,37 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
 - We provide functions about MVC which does not supported by finagle.
 - We support Domain Driven-Design by non CoC(Convention over Configuration).
 
-## 特徴
-- Finagleサービスをコントローラ上のアクションとして記述できる。(RESTful APIサーバなどが簡単に実装できる)
-  - Scalatraのように、コントローラ上のアクションにルーティング情報を記述できる。
-  - Play2のように、コントローラの外部にルーティング情報を集約した記述ができる。
-- Scalateなどのテンプレートエンジンと組み合わせてビューのあるアプリケーションも実装できる。
+## Features
+- You can describe Actions over a Controller as a Finagle Service.
+  - A routing information can described to action methods, like Scalatra.
+  - Or, The Routing informations can be aggregated on the outside of the controller, like Play2.
+- You can use Template Engine (such as Scalatra) with Trinity.
 
-## 機能
-### サポートする機能
-- コントローラ上のアクションへのルーティング機能
+## Functions
+### Supported Functions
+- Routing request to action
 - `com.twitter.util.Future`を前提としたブロッキングしない非同期型アクションの記述
   - `com.twitter.util.FuturePool`を使った同期型アクションも記述可能
   - `scala.concurrent.Future`のためのアダプタ機能もある
-- Finagleリクエスト/レスポンスの拡張
+- Finagle's Request/Response Enhance
   - マルチパート形式のファイルアップロード
   - JSON形式のレスポンス
   - ファイルリソース形式のレスポンス
-- テンプレートエンジンとの連携
+- Binding to Template Engine
   - [Scalate](http://scalate.fusesource.org/)
   - [Velocity](http://velocity.apache.org/)
   - [FreeMarker](http://freemarker.org/)
   - [Thymeleaf](http://www.thymeleaf.org/)
-- テスト機能
-  - 単体テスト
-  - 結合テスト
-- JRebel
+- Testing
+  - Unit Testing
+  - Integration Testing
+- JRebel support
   - Trinity側で特別な実装はしていませんが、JRebelによるホットリローディングが利用できます。
   - 導入方法はこちらを参考にしてください。https://gist.github.com/j5ik2o/5660744
 
-### サポートしない機能
-- フォーム/バリデーション機能
-- RDBMSやNoSQLなどの永続化機能
-  - 特に制限はないので自由に組み合わせ可能。
+### Unsupported Functions
+- Functions for Form, Validation 
+- Functions for Persitence(sush as RDBMS/NoSQL)
 
-## ライセンス
+## License
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
