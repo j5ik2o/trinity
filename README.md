@@ -2,13 +2,11 @@
 
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 
-TrinityはScalaで記述できるFinagleベースの軽量MVCフレームワークです。
-
 Trinity is a lightweight MVC framework based on Finagle, which can be described in Scala.
 
-## コンセプト
-- FinagleでMVCアプリケーションを実装するために不足している機能(特にVC関連)を補う。
-- CoCを前提としない設計思想で、ドメイン駆動設計(モデル駆動設計)を支援する。
+## Concepts
+- We provide functions about MVC which does not supported by finagle.
+- We support Domain Driven-Design by non CoC(Convention over Configuration).
 
 ## 特徴
 - Finagleサービスをコントローラ上のアクションとして記述できる。(RESTful APIサーバなどが簡単に実装できる)
