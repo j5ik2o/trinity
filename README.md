@@ -4,7 +4,7 @@
 
 TrinityはScalaで記述できるFinagleベースの軽量MVCフレームワークです。
 
-(FinagleとはTwitter社が開発したRPCフレームワークです)
+Trinity is a lightweight MVC framework based on Finagle, which can be described in Scala.
 
 ## コンセプト
 - FinagleでMVCアプリケーションを実装するために不足している機能(特にVC関連)を補う。
