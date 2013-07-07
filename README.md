@@ -18,7 +18,7 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
 ### Supported Functions
 - Routing request to action
   - A action can be described as async process by using `com.twitter.util.Future`.
-  - Or, You can also select action as sync process by using com.twitter.util.FuturePool.
+  - Or, You can also select action as sync process by using `com.twitter.util.FuturePool`.
   - We support a action adaptor for a process which returns `scala.concurrent.Future`.
 - Finagle's Request/Response Enhance
   - multi-part file upload
