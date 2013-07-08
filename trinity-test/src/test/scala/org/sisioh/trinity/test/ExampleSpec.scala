@@ -1,13 +1,12 @@
 package org.sisioh.trinity.test
 
-import com.twitter.finagle.http.Response
 import com.twitter.ostrich.stats.Stats
-import com.twitter.util.Future
-import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
-import org.sisioh.trinity.domain.http.{TrinityResponseBuilder, TrinityRequest, ContentType}
+import org.sisioh.trinity.domain.http.{TrinityResponseBuilder, ContentType}
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.specs2.mutable.Specification
+import org.sisioh.scala.toolbox.LoggingEx
+import org.sisioh.trinity.domain.routing.FutureAction
 
 class ExampleSpec
   extends Specification
@@ -15,7 +14,11 @@ class ExampleSpec
 
   class UnauthorizedException extends Exception
 
-  implicit val application = MockApplication(MockConfig(localDocumentRoot = "trinity-test/src/test/resources"))
+  implicit val application = MockApplication(
+    MockConfig(
+      localDocumentRoot = "trinity-test/src/test/resources"
+    )
+  )
 
   implicit object ExampleController extends SimpleController {
 
@@ -177,30 +180,37 @@ class ExampleSpec
   }
 
 
-  override val getGlobalSettings = Some(new GlobalSettings with LoggingEx {
+  override val getGlobalSettings = Some(
+    new GlobalSettings with LoggingEx {
 
-    def notFound(request: TrinityRequest): Future[Response] = {
-      TrinityResponseBuilder().withStatus(404).withPlain("not found yo").toTrinityResponseFuture
+      override def notFound = Some(
+        FutureAction {
+          request =>
+            TrinityResponseBuilder().withStatus(404).withPlain("not found yo").toTrinityResponseFuture
+        }
+      )
+
+      override def error = Some(
+        FutureAction {
+          request =>
+            request.error match {
+              case Some(e: ArithmeticException) =>
+                TrinityResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toTrinityResponseFuture
+              case Some(e: UnauthorizedException) =>
+                TrinityResponseBuilder().withStatus(401).withPlain("Not Authorized!").toTrinityResponseFuture
+              case Some(ex) =>
+                TrinityResponseBuilder().withStatus(415).withPlain(ex.toString).toTrinityResponseFuture
+              case _ =>
+                TrinityResponseBuilder().withStatus(500).withPlain("Something went wrong!").toTrinityResponseFuture
+            }
+        }
+      )
     }
-
-    def error(request: TrinityRequest): Future[Response] = withDebugScope(s"error(${request.error})") {
-      request.error match {
-        case Some(e: ArithmeticException) =>
-          TrinityResponseBuilder().withStatus(500).withPlain("whoops, divide by zero!").toTrinityResponseFuture
-        case Some(e: UnauthorizedException) =>
-          TrinityResponseBuilder().withStatus(401).withPlain("Not Authorized!").toTrinityResponseFuture
-        case Some(ex) =>
-          TrinityResponseBuilder().withStatus(415).withPlain(ex.toString).toTrinityResponseFuture
-        case _ =>
-          TrinityResponseBuilder().withStatus(500).withPlain("Something went wrong!").toTrinityResponseFuture
-      }
-    }
-
-  })
+  )
 
   "GET /notfound" should {
     "respond 404" in {
-      testGetByParams("/notfound") {
+      testGet("/notfound") {
         response =>
           response.body must_== "not found yo"
           response.code must_== 404
@@ -210,7 +220,7 @@ class ExampleSpec
 
   "GET /error" should {
     "respond 500" in {
-      testGetByParams("/error") {
+      testGet("/error") {
         response =>
           response.body must_== "whoops, divide by zero!"
           response.code must_== 500
@@ -220,7 +230,7 @@ class ExampleSpec
 
   "GET /unauthorized" should {
     "respond 401" in {
-      testGetByParams("/unauthorized") {
+      testGet("/unauthorized") {
         response =>
           response.body must_== "Not Authorized!"
           response.code must_== 401
@@ -230,7 +240,7 @@ class ExampleSpec
 
   "GET /hello" should {
     "respond with hello world" in {
-      testGetByParams("/hello") {
+      testGet("/hello") {
         response =>
           response.body must_== "hello world"
       }
@@ -239,7 +249,7 @@ class ExampleSpec
 
   "GET /user/foo" should {
     "responsd with hello foo" in {
-      testGetByParams("/user/foo") {
+      testGet("/user/foo") {
         response =>
           response.body must_== "hello foo"
       }
@@ -248,7 +258,7 @@ class ExampleSpec
 
   "GET /headers" should {
     "respond with Foo:Bar" in {
-      testGetByParams("/headers") {
+      testGet("/headers") {
         response =>
           response.getHeader("Foo") must_== "Bar"
       }
@@ -257,7 +267,7 @@ class ExampleSpec
 
   "GET /data.json" should {
     """respond with {"foo":"bar"}""" in {
-      testGetByParams("/data.json") {
+      testGet("/data.json") {
         response =>
           response.body must_== """{"foo":"bar"}"""
       }
@@ -266,7 +276,7 @@ class ExampleSpec
 
   "GET /search?q=foo" should {
     "respond with no results for foo" in {
-      testGetByParams("/search?q=foo") {
+      testGet("/search?q=foo") {
         response =>
           response.body must_== "no results for foo"
       }
@@ -275,7 +285,7 @@ class ExampleSpec
 
   "GET /template" should {
     "respond with a rendered template" in {
-      testGetByParams("/template") {
+      testGet("/template") {
         response =>
           response.body.trim must_== ("aaaa")
       }
@@ -284,7 +294,7 @@ class ExampleSpec
 
   "GET /blog/index.json" should {
     "should have json" in {
-      testGetByParams("/blog/index.json") {
+      testGet("/blog/index.json") {
         response =>
           response.body must_== ("""{"value":"hello"}""")
       }
@@ -293,7 +303,7 @@ class ExampleSpec
 
   "GET /blog/index.html" should {
     "should have html" in {
-      testGetByParams("/blog/index.html") {
+      testGet("/blog/index.html") {
         response =>
           response.body must_== ("""<h1>Hello</h1>""")
       }
@@ -302,7 +312,7 @@ class ExampleSpec
 
   "GET /blog/index.rss" should {
     "respond in a 415" in {
-      testGetByParams("/blog/index.rss") {
+      testGet("/blog/index.rss") {
         response =>
           response.code must_== (415)
       }
@@ -311,7 +321,7 @@ class ExampleSpec
 
   "GET /another/page with html" should {
     "respond with html" in {
-      testGetByParams("/another/page", Map.empty, Map("Accept" -> "text/html")) {
+      testGet("/another/page", None, Map("Accept" -> "text/html")) {
         response =>
           response.body must_== ("an html response")
       }
@@ -320,7 +330,7 @@ class ExampleSpec
 
   "GET /another/page with json" should {
     "respond with json" in {
-      testGetByParams("/another/page", Map.empty, Map("Accept" -> "application/json")) {
+      testGet("/another/page", None, Map("Accept" -> "application/json")) {
         response =>
           response.body must_== ("an json response")
       }
@@ -329,7 +339,7 @@ class ExampleSpec
 
   "GET /another/page with unsupported type" should {
     "respond with catch all" in {
-      testGetByParams("/another/page", Map.empty, Map("Accept" -> "foo/bar")) {
+      testGet("/another/page", None, Map("Accept" -> "foo/bar")) {
         response =>
           response.body must_== ("default fallback response")
       }
