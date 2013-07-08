@@ -9,7 +9,7 @@ class CookieSpec extends Specification with ControllerUnitTestSupport {
     implicit val application = MockApplication()
     implicit val controller = new CookieTestController()
     "have Foo:Bar" in {
-      testGetByParams("/sendCookie") {
+      testGet("/sendCookie") {
         response =>
           response.getHeader("Set-Cookie") must_== "Foo=Bar"
       }
@@ -20,7 +20,7 @@ class CookieSpec extends Specification with ControllerUnitTestSupport {
     implicit val application = MockApplication()
     implicit val controller = new CookieTestController()
     "have Biz:Baz&Secure=true" in {
-      testGetByParams("/sendAdvCookie") {
+      testGet("/sendAdvCookie") {
         response =>
           response.getHeader("Set-Cookie") must_== "Biz=Baz; Secure"
       }
