@@ -24,6 +24,12 @@ import org.sisioh.trinity.domain.resource.FileReadFilter
 import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
 import org.sisioh.trinity.infrastructure.DurationUtil
 
+/**
+ * [[org.sisioh.trinity.application.TrinityApplication]]のデフォルト実装。
+ *
+ * @param config [[org.sisioh.trinity.domain.config.Config]]
+ * @param globalSetting
+ */
 private[application]
 class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSettings] = None)
   extends TrinityApplication with LoggingEx with OstrichService {

@@ -1,9 +1,27 @@
 package org.sisioh.trinity.test
 
-import org.sisioh.trinity.domain.config.{Config, Environment}
 import java.io.File
+import org.sisioh.trinity.domain.config.{Config, Environment}
 import scala.concurrent.duration.Duration
 
+/**
+ * モック用の[[org.sisioh.trinity.domain.config.Config]]。
+ *
+ * @param environment
+ * @param applicationName
+ * @param applicationPort
+ * @param statsEnabled
+ * @param statsPort
+ * @param templateWorkDir
+ * @param templatePath
+ * @param localDocumentRoot
+ * @param maxRequestSize
+ * @param maxResponseSize
+ * @param maxConcurrentRequests
+ * @param hostConnectionMaxIdleTime
+ * @param hostConnectionMaxLifeTime
+ * @param requestTimeout
+ */
 case class MockConfig
 (environment: Environment.Value = Environment.Development,
  applicationName: String = "TestApplication",
@@ -18,4 +36,5 @@ case class MockConfig
  maxConcurrentRequests: Option[Int] = None,
  hostConnectionMaxIdleTime: Option[Duration] = None,
  hostConnectionMaxLifeTime: Option[Duration] = None,
- requestTimeout: Option[Int] = None) extends Config
+ requestTimeout: Option[Int] = None)
+  extends Config

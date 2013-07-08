@@ -12,8 +12,8 @@ class CookieIntegrationSpec
   "basic k/v cookie" should {
     implicit val application = createApplicationWithRandomPort
     implicit val controller = new CookieTestController()
-    "have Foo:Bar" in new WithServer(application, controller) {
-      testGetByParams("/sendCookie") {
+    "have Foo:Bar" in new WithServer {
+      testGet("/sendCookie") {
         response =>
           response.getHeader("Set-Cookie") must_== "Foo=Bar"
       }
@@ -23,11 +23,11 @@ class CookieIntegrationSpec
   "advanced Cookie" should {
     implicit val application = createApplicationWithRandomPort
     implicit val controller = new CookieTestController()
-    "have Biz:Baz&Secure=true" in new WithServer(application, controller) {
-      testGetByParams("/sendAdvCookie") {
+    "have Biz:Baz&Secure=true" in new WithServer {
+      testGet("/sendAdvCookie") {
         response =>
           response.getHeader("Set-Cookie") must_== "Biz=Baz; Secure"
       }
     }
   }
-
+}

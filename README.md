@@ -1,87 +1,43 @@
-trinity
-=======
+# Trinity
 
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 
-MVC framework by Finagle based
+Trinity is a lightweight MVC framework based on Finagle, which can be described in Scala.
 
-- FinagleをベースにしたMVCフレームワーク
-- コントローラのアクションは基本的にFutureを返す前提。
-  - com.twitter.util.Future, scala.concurrnet.Futureの両方が使える。
-  - FuturePoolを使ったブロッキング前提のアクションも記述可能。
-- Scalatraのようにコントローラにルート情報を記述する方法と、Play2のようにルート情報をまとめて記述する方法の、二通りが可能。
+## Concepts
+- We provide functions about MVC which does not supported by finagle.
+- We support Domain Driven-Design by non CoC(Convention over Configuration).
 
-```scala
-object ScalatraLikeController extends SimpleController {
+## Features
+- You can describe Actions over a Controller as a Finagle Service.
+  - A routing information can described to action methods, like Scalatra.
+  - Or, The Routing informations can be aggregated on the outside of the controller, like Play2.
+- You can use Template Engine (such as Scalatra) with Trinity.
 
-    get("/user/:username") {
-      request =>
-        val username = request.routeParams.getOrElse("username", "default_user")
-        responseBuilder.withPlain("hello " + username).toFuture
-    }
+## Functions
+### Supported Functions
+- Routing request to action
+  - A action can be described as async process by using `com.twitter.util.Future`.
+  - Or, You can also select action as sync process by using `com.twitter.util.FuturePool`.
+  - We support a action adaptor for a process which returns `scala.concurrent.Future`.
+- Finagle's Request/Response Enhance
+  - multi-part file upload
+  - json format reponse
+  - file resouce support
+- Binding to Template Engine
+  - [Scalate](http://scalate.fusesource.org/)
+  - [Velocity](http://velocity.apache.org/)
+  - [FreeMarker](http://freemarker.org/)
+  - [Thymeleaf](http://www.thymeleaf.org/)
+- Testing
+  - Unit Testing
+  - Integration Testing
+- JRebel support
+  - see this gist for installation. https://gist.github.com/j5ik2o/5660744
 
-}
-```
+### Unsupported Functions
+- Functions for Form, Validation 
+- Functions for Persitence(sush as RDBMS/NoSQL)
 
-```scala
-object PlayLikeController extends AbstractController {
-
-    // Play2のようなアクション。
-    // ブロッキングする処理を書いてもブロッキングしない(スレッドプールの範囲内で)
-    def index = FuturePoolAction {
-      request =>
-        responseBuilder.withOk.getResultByAwait
-    }
-
-    // com.twitter.util.Future前提のアクション
-    def getUser(name: String) = FutureAction {
-      request =>
-        responseBuilder.withBody("name = " + name).toFuture
-    }
-
-    // scala.concurrent.Futureにアダプトするアクション
-    def getGroup(name: String) = ScalaFutureAction {
-      request => future {
-        responseBuilder.withBody("group = " + name).getResultByAwait
-      }
-    }
-
-}
-
-// ルーティング情報をまとめることができる。
-application.addRoute(HttpMethod.GET, "/", PlayLikeController, PlayLikeController.index)
-application.addRoute(HttpMethod.GET, "/user/:name", PlayLikeController) {
-    request =>
-      PlayLikeController.getUser(request.routeParams("name"))(request)
-}
-application.addRoute(HttpMethod.GET, "/group/:name", PlayLikeController) {
-    request =>
-      PlayLikeController.getGroup(request.routeParams("name"))(request)
-}
-```
-- テンプレートエンジンは、Scalate, Thymeleaf, Velocity, FreeMarkerに対応。
-  - Scalateはすべてのテンプレートに対応。
-
-```scala
-// ...
-   get("/template1") {
-      request =>
-        responseBuilder.withBodyRenderer(ScalateRenderer("scalate.mustache", Map("message" -> "hello"))).toFuture
-    }
-
-    get("/template2") {
-      request =>
-        responseBuilder.withBodyRenderer(ThymeleafRenderer("thymeleaf", Map("message" -> "hello"))).toFuture
-    }
-
-    get("/template3") {
-      request =>
-        responseBuilder.withBodyRenderer(VelocityRenderer("velocity.vm", Map("message" -> "hello"))).toFuture
-    }
-
-    get("/template4") {
-      request =>
-        responseBuilder.withBodyRenderer(FreeMarkerRenderer("freemarker.tpl", Map("message" -> "hello"))).toFuture
-    }
-// ...
-```
+## License
+[Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)

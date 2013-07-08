@@ -34,7 +34,7 @@ abstract class AbstractController()(implicit val application: TrinityApplication
       if (callback.isDefinedAt(contentType)) {
         callback(contentType)
       } else {
-        throw new CallbackNotFoundException
+        Future.exception(new RespondNotFoundException)
       }
     } else {
       r.accepts.find {
@@ -44,7 +44,7 @@ abstract class AbstractController()(implicit val application: TrinityApplication
         contentType =>
           callback(contentType)
       }.getOrElse {
-        throw new CallbackNotFoundException
+        Future.exception(new RespondNotFoundException)
       }
     }
   }

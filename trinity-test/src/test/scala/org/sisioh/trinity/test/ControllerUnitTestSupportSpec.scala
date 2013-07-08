@@ -11,9 +11,14 @@ class ControllerUnitTestSupportSpec
   case class CookieTestController()(implicit application: TrinityApplication)
     extends SimpleController {
 
-    post("/") {
+    post("/test1") {
       request =>
         responseBuilder.withPlain("content = " + request.contentString).toFinagleResponseFuture
+    }
+
+    post("/test2") {
+      request =>
+        responseBuilder.withPlain("content = " + request.params("test")).toFinagleResponseFuture
     }
 
   }
@@ -23,7 +28,12 @@ class ControllerUnitTestSupportSpec
       implicit val application = MockApplication()
       implicit val controller = CookieTestController()
 
-      testPostByContent("/", Some("test")) {
+      testPost("/test1", Some(StringContent("test"))) {
+        response =>
+          response.body must_== "content = test"
+      }
+
+      testPost("/test2", Some(MapContent(Map("test" -> "test")))) {
         response =>
           response.body must_== "content = test"
       }

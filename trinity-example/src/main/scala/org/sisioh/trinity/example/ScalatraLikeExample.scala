@@ -1,12 +1,12 @@
 package org.sisioh.trinity.example
 
+import org.jboss.netty.handler.codec.http.HttpResponseStatus
 import org.sisioh.trinity.domain.controller.SimpleController
 import org.sisioh.trinity.domain.http.ContentType
-import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
-import org.sisioh.trinity.view.thymeleaf.{ThymeleafEngineContext, ThymeleafRenderer}
-import org.sisioh.trinity.view.velocity.VelocityRenderer
 import org.sisioh.trinity.view.freemarker.FreeMarkerRenderer
-import org.jboss.netty.handler.codec.http.{HttpResponseStatus, HttpResponse}
+import org.sisioh.trinity.view.scalate.ScalateRenderer
+import org.sisioh.trinity.view.thymeleaf.ThymeleafRenderer
+import org.sisioh.trinity.view.velocity.VelocityRenderer
 
 object ScalatraLikeExample extends App with ApplicationContext {
 
