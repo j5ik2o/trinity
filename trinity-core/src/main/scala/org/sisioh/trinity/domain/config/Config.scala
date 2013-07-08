@@ -3,7 +3,6 @@ package org.sisioh.trinity.domain.config
 import com.twitter.util.Eval
 import java.io.File
 import scala.concurrent.duration.Duration
-import org.sisioh.trinity.domain.config.Environment
 
 /**
  * [[org.sisioh.trinity.application.TrinityApplication]]のための設定情報を表す値オブジェクト。
@@ -113,7 +112,7 @@ object Config {
    * @param configFilePath 設定ファイルへのパス
    * @return [[com.twitter.util.Config]]
    */
-  def apply(configFilePath: String = "trinity.conf"): Config = {
+  def fromFile(configFilePath: String = "trinity.conf"): Config = {
     instances.getOrElse(configFilePath, new Eval().apply[Config](new File(configFilePath)))
   }
 
