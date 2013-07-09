@@ -5,7 +5,7 @@
 Trinity is a lightweight MVC framework based on Finagle, which can be described in Scala.
 
 ## Concepts
-- We provide functions about MVC which does not support finagle.
+- We provide functions about MVC which does not support Finagle.
 - We support Domain Driven-Design by non CoC(Convention over Configuration).
 
 ## Features
