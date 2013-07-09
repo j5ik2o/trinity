@@ -106,6 +106,7 @@ Please add codes for routing in following to bootstrap.
 ```scala
 // ...
 implicit val application = TrinityApplication(config)
+
 val greetingController = new GreetingController
 application.addRoute(Method.Get, "/hello", greetingController, greetingController.hello)
 
