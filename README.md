@@ -76,7 +76,7 @@ application.start()
 ### Controller code
 
 ```scala
-class GreetingController(implicit application: TrinityController) extends SimpleController {
+class GreetingController(implicit application: TrinityApplication) extends SimpleController {
 
     get("/hello") {
       request =>
