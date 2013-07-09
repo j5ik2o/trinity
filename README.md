@@ -66,7 +66,7 @@ Please add configuration in following to Build.scala.
 ### Bootstrap code
 
 ```scala
-implicit val config = Config.fromFile()
+val config = Config.fromFile()
 implicit val application = TrinityApplication(config)
 
 application.registerController(new GreetingController)
