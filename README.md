@@ -30,8 +30,8 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
   - [FreeMarker](http://freemarker.org/)
   - [Thymeleaf](http://www.thymeleaf.org/)
 - Testing
-  - Unit Testing
-  - Integration Testing
+  - Unit testing
+  - Integration testing
 - JRebel support
   - see this gist for installation. https://gist.github.com/j5ik2o/5660744
 
