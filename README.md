@@ -81,7 +81,7 @@ application.start()
 
 ### Controller code
 
-Scalatra like controller
+#### Scalatra like controller
 
 ```scala
 class GreetingController(implicit application: TrinityApplication) extends SimpleController {
@@ -94,7 +94,7 @@ class GreetingController(implicit application: TrinityApplication) extends Simpl
 }
 ```
 
-Play2 like controller
+#### Play2 like controller
 
 ```scala
 class GreetingController(implicit application: TrinityApplication) extends AbstractController {
