@@ -41,3 +41,27 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
 
 ## License
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
+
+## Setup
+
+Please add configuration in following to Build.scala.
+
+```scala
+  settings = Default.settings ++ Seq(
+    resolvers ++= Seq(
+      // ...
+      "Sisioh Trinity Release Repository" at "http://sisioh.github.io/trinity/repos/release/",
+      // ...
+    ),
+    libraryDependencies ++= Seq(
+      // ...
+      "org.sisioh" %% "trinity" % "0.0.7",
+      // ...
+    )
+  )
+```
+
+```sh
+$ sbt clean compile
+```
+
