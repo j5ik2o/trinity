@@ -37,7 +37,7 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
 
 ### Unsupported Functions
 - Functions for Form, Validation 
-- Functions for Persitence(sush as RDBMS/NoSQL)
+- Functions for Persistence(sush as RDBMS/NoSQL)
 
 ## License
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
