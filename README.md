@@ -107,7 +107,7 @@ class GreetingController(implicit application: TrinityApplication) extends Abstr
 }
 ```
 
-Please add codes for routing in following to bootstrap.
+Please modify codes for routing in following to bootstrap.
 
 ```scala
 // ...
