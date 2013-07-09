@@ -5,12 +5,12 @@
 Trinity is a lightweight MVC framework based on Finagle, which can be described in Scala.
 
 ## Concepts
-- We provide functions about MVC which does not supported by finagle.
+- We provide functions about MVC which does not support finagle.
 - We support Domain Driven-Design by non CoC(Convention over Configuration).
 
 ## Features
 - You can describe Actions over a Controller as a Finagle Service.
-  - A routing information can described to action methods, like Scalatra.
+  - Routing information can described to action methods, like Scalatra.
   - Or, The Routing informations can be aggregated on the outside of the controller, like Play2.
 - You can use Template Engine (such as Scalatra) with Trinity.
 
@@ -19,7 +19,7 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
 - Routing request to action
   - A action can be described as async process by using `com.twitter.util.Future`.
   - Or, You can also select action as sync process by using `com.twitter.util.FuturePool`.
-  - We support a action adaptor for a process which returns `scala.concurrent.Future`.
+  - We support an action adaptor for a process which returns `scala.concurrent.Future`.
 - Finagle's Request/Response Enhance
   - multi-part file upload
   - json format reponse
