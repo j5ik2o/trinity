@@ -116,7 +116,7 @@ implicit val application = TrinityApplication(config)
 val greetingController = new GreetingController
 application.addRoute(Method.Get, "/hello", greetingController, greetingController.hello)
 
-application.registerController(new GreetingController)
+application.registerController(greetingController)
 // ...
 ```
 
