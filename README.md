@@ -98,4 +98,11 @@ $ sbt clean compile
 $ sbt run
 ```
 
+### Test
+
+```sh
+$ curl -X GET http://localhost:7070/hello
+Hello!
+```
+
 
