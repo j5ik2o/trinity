@@ -44,6 +44,8 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
 
 ## Setup
 
+## Build Configuration
+
 Please add configuration in following to Build.scala.
 
 ```scala
@@ -60,6 +62,21 @@ Please add configuration in following to Build.scala.
     )
   )
 ```
+
+## Bootstrap code
+
+```scala
+implicit val config = Config.fromFile()
+implicit val application = TrinityApplication(config)
+
+application.registerController(new GreetingController)
+application.start()   
+```
+
+## Controller code
+
+
+## Build 
 
 ```sh
 $ sbt clean compile
