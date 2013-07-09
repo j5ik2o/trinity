@@ -53,7 +53,7 @@ object AppBuild extends Build {
   val root = Project(
     id = "app",
     base = file("."),
-    settings = Default.settings ++ Seq(
+    settings = Project.defaultSettings ++ Seq(
       resolvers ++= Seq(
         // ...
         "Sisioh Trinity Release Repository" at "http://sisioh.github.io/trinity/repos/release/",
