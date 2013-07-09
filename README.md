@@ -75,10 +75,27 @@ application.start()
 
 ## Controller code
 
+```scala
+class GreetingController(implicit application: TrinityController) extends SimpleController {
+
+    post("/hello") {
+      request =>
+        responseBuilder.withPlain("Hello!").toFinagleResponseFuture
+    }
+    
+}
+```
 
 ## Build 
 
 ```sh
 $ sbt clean compile
 ```
+
+## Run
+
+```sh
+$ sbt run
+```
+
 
