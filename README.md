@@ -49,18 +49,24 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
 Please add configuration in following to Build.scala.
 
 ```scala
-  settings = Default.settings ++ Seq(
-    resolvers ++= Seq(
-      // ...
-      "Sisioh Trinity Release Repository" at "http://sisioh.github.io/trinity/repos/release/",
-      // ...
-    ),
-    libraryDependencies ++= Seq(
-      // ...
-      "org.sisioh" %% "trinity" % "0.0.7",
-      // ...
+object AppBuild extends Build {
+  val root = Project(
+    id = "app",
+    base = file("."),
+    settings = Default.settings ++ Seq(
+      resolvers ++= Seq(
+        // ...
+        "Sisioh Trinity Release Repository" at "http://sisioh.github.io/trinity/repos/release/",
+       // ...
+      ),
+      libraryDependencies ++= Seq(
+        // ...
+        "org.sisioh" %% "trinity" % "0.0.7",
+        // ...
+      )
     )
   )
+}
 ```
 
 ### Bootstrap code
