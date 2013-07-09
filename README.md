@@ -104,8 +104,13 @@ class GreetingController(implicit application: TrinityApplication) extends Abstr
 Please add codes for routing in following to bootstrap.
 
 ```scala
+// ...
+implicit val application = TrinityApplication(config)
 val greetingController = new GreetingController
 application.addRoute(Method.Get, "/hello", greetingController, greetingController.hello)
+
+application.registerController(new GreetingController)
+// ...
 ```
 
 ### Build 
