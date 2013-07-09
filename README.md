@@ -75,6 +75,8 @@ application.start()
 
 ### Controller code
 
+Scalatra like controller
+
 ```scala
 class GreetingController(implicit application: TrinityApplication) extends SimpleController {
 
@@ -84,6 +86,26 @@ class GreetingController(implicit application: TrinityApplication) extends Simpl
     }
     
 }
+```
+
+Play2 like controller
+
+```scala
+class GreetingController(implicit application: TrinityApplication) extends AbstractController {
+
+    def hello = FutureAction {
+      request =>
+        responseBuilder.withPlain("Hello!").toFinagleResponseFuture
+    }
+
+}
+```
+
+Please add codes for routing in following to bootstrap.
+
+```scala
+val greetingController = new GreetingController
+application.addRoute(Method.Get, "/hello", greetingController, greetingController.hello)
 ```
 
 ### Build 
