@@ -107,7 +107,7 @@ class GreetingController(implicit application: TrinityApplication) extends Abstr
 }
 ```
 
-Please modify codes for routing in following to bootstrap.
+Please modify bootstrap for routing to Play2 like controler.
 
 ```scala
 // ...
