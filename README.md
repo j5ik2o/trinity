@@ -2,28 +2,28 @@
 
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 
-Trinity is a lightweight MVC framework based on Finagle, which can be described in Scala.
+Trinity is a lightweight MVC framework based on Finagle, written in Scala.
 
 ## Concepts
-- We provide functions about MVC which does not support Finagle.
-- We support Domain Driven-Design by non CoC(Convention over Configuration).
+- Provide MVC functions not supported by Finagle.
+- Support Domain Driven-Design by non CoC(Convention over Configuration).
 
 ## Features
-- You can describe Actions over a Controller as a Finagle Service.
-  - Routing information can described to action methods, like Scalatra.
-  - Or, The Routing information can be aggregated on the outside of Controller, like Play2.
-- You can use Template Engine (such as Scalatra) with Trinity.
+- You can deine Actions as Controller of Finagle Service.
+  - URL can be mapped to action methods, like Scalatra.
+  - Otherwise, The Routing information can be outside of Controller, like Play2.
+- You can use Template Engine (e.g. Scalatra) with Trinity.
 
 ## Functions
 ### Supported Functions
 - Routing request to action
-  - A action can be described as asynchronous process by using `com.twitter.util.Future`.
-  - Or, You can also select action as synchronous process by using `com.twitter.util.FuturePool`.
-  - We support an action adaptor for a process which returns `scala.concurrent.Future`.
+  - Action can be defined as asynchronous process by using `com.twitter.util.Future`.
+  - Action van be defined as synchronous process by using `com.twitter.util.FuturePool`.
+  - Support an action adaptor for a process which returns `scala.concurrent.Future`.
 - Finagle's Request/Response Enhance
-  - multi-part file upload
-  - json format reponse
-  - file resouce support
+  - Multi-part file upload
+  - JSON format reponse
+  - File resouce support
 - Binding to Template Engine
   - [Scalate](http://scalate.fusesource.org/)
   - [Velocity](http://velocity.apache.org/)
@@ -36,8 +36,9 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
   - see this gist for installation. https://gist.github.com/j5ik2o/5660744
 
 ### Unsupported Functions
-- Functions for Form, Validation 
-- Functions for Persistence(sush as RDBMS/NoSQL)
+- Form
+- Validation 
+- Persistence(e.g. RDBMS/NoSQL)
 
 ## License
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
@@ -46,7 +47,7 @@ Trinity is a lightweight MVC framework based on Finagle, which can be described 
 
 ### Build Configuration
 
-Please add configuration in following to Build.scala.
+Please add the following configuration to Build.scala.
 
 ```scala
 object AppBuild extends Build {
