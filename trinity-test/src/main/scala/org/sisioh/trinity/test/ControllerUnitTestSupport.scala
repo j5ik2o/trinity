@@ -4,6 +4,7 @@ import com.twitter.util.Await
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.controller.{Controller, ControllerService}
+import scala.util.Try
 
 /**
  * 単体テストをサポートするためのトレイト。
@@ -15,12 +16,14 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
    path: String,
    content: Option[Content],
    headers: Map[String, String])
-  (implicit application: TrinityApplication, controller: Controller): MockResponse = {
+  (implicit application: TrinityApplication, controller: Controller): Try[MockResponse] = {
     val request = newRequest(method, path, content, headers)
     application.registerController(controller)
     val service = new ControllerService(application, getGlobalSettings)
-    val finagleResponse = Await.result(service(request))
-    new MockResponse(finagleResponse)
+    Try {
+      val finagleResponse = Await.result(service(request))
+      new MockResponse(finagleResponse)
+    }
   }
 
 

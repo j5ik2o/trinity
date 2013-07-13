@@ -14,7 +14,7 @@ object TrinityBuild extends Build {
 
   val commonSettings = Project.defaultSettings ++ Seq(
     organization := "org.sisioh",
-    version := "0.0.7",
+    version := "0.0.8",
     scalaVersion := "2.10.2",
     scalacOptions ++= Seq("-encoding", "UTF-8", "-feature", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-encoding", "UTF-8", "-deprecation"),
@@ -33,7 +33,7 @@ object TrinityBuild extends Build {
       "junit" % "junit" % "4.8.1" % "test",
       "org.hamcrest" % "hamcrest-all" % "1.3" % "test",
       "org.mockito" % "mockito-core" % "1.9.5" % "test",
-      "org.specs2" %% "specs2" % "1.14" % "test",
+      "org.specs2" %% "specs2" % "2.0" % "test",
       "org.seasar.util" % "s2util" % "0.0.1"
     ),
     publish
