@@ -11,7 +11,7 @@ import org.sisioh.trinity.domain.controller.Controller
 import org.specs2.execute.{Result, AsResult}
 import org.specs2.mutable.Around
 import org.specs2.specification.Scope
-import scala.util.Random
+import scala.util.{Try, Random}
 
 /**
  * インテグレーションテストをサポートするためのトレイト。
@@ -30,7 +30,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
   protected def buildRequest
   (method: HttpMethod, path: String, content: Option[Content], headers: Map[String, String])
-  (implicit application: TrinityApplication, controller: Controller): MockResponse = {
+  (implicit application: TrinityApplication, controller: Controller): Try[MockResponse] = {
     val request = newRequest(method, path, content, headers)
     val address: SocketAddress = new InetSocketAddress(application.config.applicationPort.getOrElse(7070))
     val client: Service[HttpRequest, HttpResponse] =
@@ -39,8 +39,10 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
         .hosts(address)
         .hostConnectionLimit(1)
         .build()
-    val finagleResponse = Await.result(client(request))
-    new MockResponse(Response(finagleResponse))
+    Try {
+      val finagleResponse = Await.result(client(request))
+      new MockResponse(Response(finagleResponse))
+    }
   }
 
   protected class WithServer(implicit application: TrinityApplication, controller: Controller)
