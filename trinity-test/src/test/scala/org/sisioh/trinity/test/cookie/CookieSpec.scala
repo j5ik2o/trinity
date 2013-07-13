@@ -2,6 +2,7 @@ package org.sisioh.trinity.test.cookie
 
 import org.specs2.mutable.Specification
 import org.sisioh.trinity.test.{MockApplication, ControllerUnitTestSupport}
+import scala.util.Success
 
 class CookieSpec extends Specification with ControllerUnitTestSupport {
 
@@ -10,8 +11,11 @@ class CookieSpec extends Specification with ControllerUnitTestSupport {
     implicit val controller = new CookieTestController()
     "have Foo:Bar" in {
       testGet("/sendCookie") {
-        response =>
-          response.getHeader("Set-Cookie") must_== "Foo=Bar"
+        responseTry =>
+        responseTry must beSuccessfulTry.like {
+          case response =>
+            response.getHeader("Set-Cookie") must_== "Foo=Bar"
+        }
       }
     }
   }
@@ -21,8 +25,11 @@ class CookieSpec extends Specification with ControllerUnitTestSupport {
     implicit val controller = new CookieTestController()
     "have Biz:Baz&Secure=true" in {
       testGet("/sendAdvCookie") {
-        response =>
-          response.getHeader("Set-Cookie") must_== "Biz=Baz; Secure"
+        responseTry =>
+        responseTry must beSuccessfulTry.like {
+          case response =>
+            response.getHeader("Set-Cookie") must_== "Biz=Baz; Secure"
+        }
       }
     }
   }

@@ -1,12 +1,12 @@
 package org.sisioh.trinity.test
 
 import com.twitter.ostrich.stats.Stats
+import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.controller.{GlobalSettings, SimpleController}
 import org.sisioh.trinity.domain.http.{TrinityResponseBuilder, ContentType}
+import org.sisioh.trinity.domain.routing.FutureAction
 import org.sisioh.trinity.view.scalate.{ScalateEngineContext, ScalateRenderer}
 import org.specs2.mutable.Specification
-import org.sisioh.scala.toolbox.LoggingEx
-import org.sisioh.trinity.domain.routing.FutureAction
 
 class ExampleSpec
   extends Specification
@@ -211,9 +211,12 @@ class ExampleSpec
   "GET /notfound" should {
     "respond 404" in {
       testGet("/notfound") {
-        response =>
-          response.body must_== "not found yo"
-          response.code must_== 404
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== "not found yo"
+              response.code must_== 404
+          }
       }
     }
   }
@@ -221,9 +224,12 @@ class ExampleSpec
   "GET /error" should {
     "respond 500" in {
       testGet("/error") {
-        response =>
-          response.body must_== "whoops, divide by zero!"
-          response.code must_== 500
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== "whoops, divide by zero!"
+              response.code must_== 500
+          }
       }
     }
   }
@@ -231,9 +237,12 @@ class ExampleSpec
   "GET /unauthorized" should {
     "respond 401" in {
       testGet("/unauthorized") {
-        response =>
-          response.body must_== "Not Authorized!"
-          response.code must_== 401
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== "Not Authorized!"
+              response.code must_== 401
+          }
       }
     }
   }
@@ -241,8 +250,11 @@ class ExampleSpec
   "GET /hello" should {
     "respond with hello world" in {
       testGet("/hello") {
-        response =>
-          response.body must_== "hello world"
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== "hello world"
+          }
       }
     }
   }
@@ -250,8 +262,11 @@ class ExampleSpec
   "GET /user/foo" should {
     "responsd with hello foo" in {
       testGet("/user/foo") {
-        response =>
-          response.body must_== "hello foo"
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== "hello foo"
+          }
       }
     }
   }
@@ -259,8 +274,11 @@ class ExampleSpec
   "GET /headers" should {
     "respond with Foo:Bar" in {
       testGet("/headers") {
-        response =>
-          response.getHeader("Foo") must_== "Bar"
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.getHeader("Foo") must_== "Bar"
+          }
       }
     }
   }
@@ -268,8 +286,11 @@ class ExampleSpec
   "GET /data.json" should {
     """respond with {"foo":"bar"}""" in {
       testGet("/data.json") {
-        response =>
-          response.body must_== """{"foo":"bar"}"""
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== """{"foo":"bar"}"""
+          }
       }
     }
   }
@@ -277,8 +298,11 @@ class ExampleSpec
   "GET /search?q=foo" should {
     "respond with no results for foo" in {
       testGet("/search?q=foo") {
-        response =>
-          response.body must_== "no results for foo"
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== "no results for foo"
+          }
       }
     }
   }
@@ -286,8 +310,11 @@ class ExampleSpec
   "GET /template" should {
     "respond with a rendered template" in {
       testGet("/template") {
-        response =>
-          response.body.trim must_== ("aaaa")
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body.trim must_== "aaaa"
+          }
       }
     }
   }
@@ -295,8 +322,11 @@ class ExampleSpec
   "GET /blog/index.json" should {
     "should have json" in {
       testGet("/blog/index.json") {
-        response =>
-          response.body must_== ("""{"value":"hello"}""")
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== """{"value":"hello"}"""
+          }
       }
     }
   }
@@ -304,8 +334,11 @@ class ExampleSpec
   "GET /blog/index.html" should {
     "should have html" in {
       testGet("/blog/index.html") {
-        response =>
-          response.body must_== ("""<h1>Hello</h1>""")
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== """<h1>Hello</h1>"""
+          }
       }
     }
   }
@@ -313,8 +346,11 @@ class ExampleSpec
   "GET /blog/index.rss" should {
     "respond in a 415" in {
       testGet("/blog/index.rss") {
-        response =>
-          response.code must_== (415)
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.code must_== 415
+          }
       }
     }
   }
@@ -322,8 +358,11 @@ class ExampleSpec
   "GET /another/page with html" should {
     "respond with html" in {
       testGet("/another/page", None, Map("Accept" -> "text/html")) {
-        response =>
-          response.body must_== ("an html response")
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== "an html response"
+          }
       }
     }
   }
@@ -331,8 +370,11 @@ class ExampleSpec
   "GET /another/page with json" should {
     "respond with json" in {
       testGet("/another/page", None, Map("Accept" -> "application/json")) {
-        response =>
-          response.body must_== ("an json response")
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== "an json response"
+          }
       }
     }
   }
@@ -340,8 +382,11 @@ class ExampleSpec
   "GET /another/page with unsupported type" should {
     "respond with catch all" in {
       testGet("/another/page", None, Map("Accept" -> "foo/bar")) {
-        response =>
-          response.body must_== ("default fallback response")
+        responseTry =>
+          responseTry must beSuccessfulTry.like {
+            case response =>
+              response.body must_== "default fallback response"
+          }
       }
     }
   }

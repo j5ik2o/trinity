@@ -3,6 +3,7 @@ package org.sisioh.trinity.test
 import org.specs2.mutable.Specification
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.controller.SimpleController
+import scala.util.Success
 
 class ControllerUnitTestSupportSpec
   extends Specification
@@ -29,13 +30,19 @@ class ControllerUnitTestSupportSpec
       implicit val controller = CookieTestController()
 
       testPost("/test1", Some(StringContent("test"))) {
-        response =>
-          response.body must_== "content = test"
+        responseTry =>
+        responseTry must beSuccessfulTry.like {
+          case response =>
+            response.body must_== "content = test"
+        }
       }
 
       testPost("/test2", Some(MapContent(Map("test" -> "test")))) {
-        response =>
-          response.body must_== "content = test"
+        responseTry =>
+        responseTry must beSuccessfulTry.like {
+          case response =>
+            response.body must_== "content = test"
+        }
       }
 
     }
