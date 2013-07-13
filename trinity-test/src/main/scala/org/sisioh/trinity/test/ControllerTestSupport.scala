@@ -6,6 +6,7 @@ import org.jboss.netty.handler.codec.http.multipart.{HttpPostRequestEncoder, Def
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.controller.{GlobalSettings, Controller}
+import scala.util.Try
 
 trait ControllerTestSupport extends LoggingEx {
 
@@ -74,7 +75,7 @@ trait ControllerTestSupport extends LoggingEx {
    path: String,
    content: Option[Content],
    headers: Map[String, String])
-  (implicit application: TrinityApplication, controller: Controller): MockResponse
+  (implicit application: TrinityApplication, controller: Controller): Try[MockResponse]
 
   /**
    * GETメソッドをテストする。
@@ -89,7 +90,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testGet[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
-                          (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller): T = {
+                          (f: Try[MockResponse] => T)(implicit application: TrinityApplication, controller: Controller): T = {
     f(buildRequest(Method.Get, path, content, headers))
   }
 
@@ -106,7 +107,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testPost[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
-                           (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller): T = {
+                           (f: Try[MockResponse] => T)(implicit application: TrinityApplication, controller: Controller): T = {
     f(buildRequest(Method.Post, path, content, headers))
   }
 
@@ -123,7 +124,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testPut[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
-                          (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller): T = {
+                          (f: Try[MockResponse] => T)(implicit application: TrinityApplication, controller: Controller): T = {
     f(buildRequest(Method.Put, path, content, headers))
   }
 
@@ -140,7 +141,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testDelete[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
-                             (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller): T = {
+                             (f: Try[MockResponse] => T)(implicit application: TrinityApplication, controller: Controller): T = {
     f(buildRequest(Method.Delete, path, content, headers))
   }
 
@@ -157,12 +158,12 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testHead[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
-                           (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller): T = {
+                           (f: Try[MockResponse] => T)(implicit application: TrinityApplication, controller: Controller): T = {
     f(buildRequest(Method.Head, path, content, headers))
   }
 
   protected def testPatch[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
-                            (f: MockResponse => T)(implicit application: TrinityApplication, controller: Controller): T = {
+                            (f: Try[MockResponse] => T)(implicit application: TrinityApplication, controller: Controller): T = {
     f(buildRequest(Method.Patch, path, content, headers))
   }
 
