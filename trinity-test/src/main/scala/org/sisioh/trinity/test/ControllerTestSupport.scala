@@ -34,8 +34,8 @@ trait ControllerTestSupport extends LoggingEx {
         case Some(MapContent(v)) if method == Method.Post =>
           val result = FinagleRequest(path)
           result.httpRequest.setMethod(method)
-          val dataFactory = new DefaultHttpDataFactory(false) // we don't use disk
-        val encoder = new HttpPostRequestEncoder(dataFactory, result, false)
+          val dataFactory = new DefaultHttpDataFactory(false)
+          val encoder = new HttpPostRequestEncoder(dataFactory, result, false)
           v.toList.foreach {
             case (k, v) =>
               encoder.addBodyAttribute(k, v)
