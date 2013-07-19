@@ -1,7 +1,9 @@
 package org.sisioh.trinity.domain.routing
 
-import org.sisioh.dddbase.core.lifecycle.{EntityReaderByIterable, Repository}
+import org.sisioh.dddbase.core.lifecycle.sync.{SyncEntityReadableByIterable, SyncRepository}
 
-trait RouteRepository extends Repository[RouteRepository, RouteId, Route] with EntityReaderByIterable[RouteId, Route]
+trait RouteRepository
+  extends SyncRepository[RouteId, Route]
+  with SyncEntityReadableByIterable[RouteId, Route]
 
 
