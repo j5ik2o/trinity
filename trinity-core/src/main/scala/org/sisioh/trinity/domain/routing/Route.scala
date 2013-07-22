@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010 TRICREO, Inc. (http://tricreo.jp/)
+ * Copyright 2013 Sisioh Project and others. (http://sisioh.org/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 package org.sisioh.trinity.domain.routing
 
 import com.twitter.finagle.http.Response
@@ -61,28 +77,88 @@ trait Route
  */
 object Route {
 
+  /**
+   * ファクトリメソッド。
+   *
+   * @param identity [[org.sisioh.trinity.domain.routing.RouteId]]
+   * @param controllerId コントローラID
+   * @param action [[org.sisioh.trinity.domain.routing.Action]]
+   * @return [[org.sisioh.trinity.domain.routing.Route]]
+   */
   def apply(identity: RouteId, controllerId: Identity[UUID], action: Action): Route =
     new RouteImpl(identity, controllerId, action)
 
+  /**
+   * ファクトリメソッド。
+   *
+   * @param identity [[org.sisioh.trinity.domain.routing.RouteId]]
+   * @param controller コントローラ
+   * @param action [[org.sisioh.trinity.domain.routing.Action]]
+   * @return [[org.sisioh.trinity.domain.routing.Route]]
+   */
   def apply(identity: RouteId, controller: Controller, action: Action): Route =
     new RouteImpl(identity, controller.identity, action)
 
+  /**
+   * ファクトリメソッド。
+   *
+   * @param method メソッド
+   * @param pathPattern [[org.sisioh.trinity.domain.routing.PathPattern]]
+   * @param controller [[org.sisioh.trinity.domain.controller.Controller]]
+   * @param action [[org.sisioh.trinity.domain.routing.Action]]
+   * @return [[org.sisioh.trinity.domain.routing.Action]]
+   */
   def apply(method: HttpMethod, pathPattern: PathPattern, controller: Controller, action: Action): Route =
     apply(method, pathPattern, controller.identity, action)
 
+  /**
+   * ファクトリメソッド。
+   *
+   * @param method メソッド
+   * @param pathPattern [[org.sisioh.trinity.domain.routing.PathPattern]]
+   * @param controllerId コントローラID
+   * @param action [[org.sisioh.trinity.domain.routing.Action]]
+   * @return [[org.sisioh.trinity.domain.routing.Route]]
+   */
   def apply(method: HttpMethod, pathPattern: PathPattern, controllerId: Identity[UUID], action: Action): Route =
     apply(RouteId(method, pathPattern), controllerId, action)
 
+  /**
+   * ファクトリメソッド。
+   *
+   * @param method メソッド
+   * @param path パス
+   * @param controllerId コントローラID
+   * @param action [[org.sisioh.trinity.domain.routing.Action]]
+   * @param pathPatternParser [[org.sisioh.trinity.domain.routing.PathPatternParser]]
+   * @return [[org.sisioh.trinity.domain.routing.Route]]
+   */
   def apply(method: HttpMethod, path: String, controllerId: Identity[UUID], action: Action)
            (implicit pathPatternParser: PathPatternParser): Route = {
     val pathPattern = pathPatternParser(path)
     apply(RouteId(method, pathPattern), controllerId, action)
   }
 
+  /**
+   * ファクトリメソッド。
+   *
+   * @param method メソッド
+   * @param path パス
+   * @param controller コントローラ
+   * @param action [[org.sisioh.trinity.domain.routing.Action]]
+   * @param pathPatternParser [[org.sisioh.trinity.domain.routing.PathPatternParser]]
+   * @return [[org.sisioh.trinity.domain.routing.Route]]
+   */
   def apply(method: HttpMethod, path: String, controller: Controller, action: Action)
            (implicit pathPatternParser: PathPatternParser): Route =
     apply(method, path, controller.identity, action)
 
+  /**
+   * エクストラクタメソッド。
+   *
+   * @param route [[org.sisioh.trinity.domain.routing.Route]]
+   * @return 構成要素
+   */
   def unapply(route: Route): Option[(RouteId, Identity[UUID], Action)] =
     Some(route.identity, route.controllerId, route.action)
 
