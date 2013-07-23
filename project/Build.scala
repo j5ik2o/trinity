@@ -36,6 +36,7 @@ object TrinityBuild extends Build {
       "org.specs2" %% "specs2" % "2.0" % "test",
       "org.seasar.util" % "s2util" % "0.0.1"
     ),
+    publishMavenStyle := true,
     publish
   )
 
@@ -46,7 +47,7 @@ object TrinityBuild extends Build {
       name := "trinity-core",
       libraryDependencies ++= Seq(
         "org.json4s" %% "json4s-jackson" % "3.2.2",
-        "org.sisioh" %% "scala-dddbase-core" % "0.1.17",
+        "org.sisioh" %% "scala-dddbase-core" % "0.1.19",
         "org.sisioh" %% "scala-toolbox" % "0.0.6",
         "org.slf4j" % "slf4j-api" % "1.6.6",
         "org.slf4j" % "log4j-over-slf4j" % "1.6.6",
