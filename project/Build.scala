@@ -21,10 +21,7 @@ object TrinityBuild extends Build {
     resolvers ++= Seq(
       "Twitter Repository" at "http://maven.twttr.com/",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-      "Sisioh DDD Maven Release Repository" at "http://sisioh.github.com/scala-dddbase/repos/release/",
-      "Sisioh DDD Maven Snapshot Repository" at "http://sisioh.github.com/scala-dddbase/repos/snapshot/",
-      "Sisioh BaseUnits Mave Release Repository" at "http://sisioh.github.com/baseunits-scala/repos/release/",
-      "Sisioh Scala Toolbox Release Repository" at "http://sisioh.github.io/scala-toolbox/repos/release/",
+      "Sonatype Snapshot Repository" at "https://oss.sonatype.org/content/repositories/snapshots/",
       "Seasar Repository" at "http://maven.seasar.org/maven2/"
 
     ),
@@ -37,7 +34,39 @@ object TrinityBuild extends Build {
       "org.seasar.util" % "s2util" % "0.0.1"
     ),
     publishMavenStyle := true,
-    publish
+    publishArtifact in Test := false,
+    pomIncludeRepository := {
+      _ => false
+    },
+    publishTo <<= version {
+      (v: String) =>
+      val nexus = "https://oss.sonatype.org/"
+      if (v.trim.endsWith("SNAPSHOT"))
+        Some("snapshots" at nexus + "content/repositories/snapshots")
+      else
+        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+    },
+    pomExtra := (
+      <url>https://github.com/sisioh/trinity</url>
+      <licenses>
+        <license>
+          <name>Apache License Version 2.0</name>
+          <url>http://www.apache.org/licenses/</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+      <scm>
+        <url>git@github.com:sisioh/sisioh-trinity.git</url>
+        <connection>scm:git:git@github.com:sisioh/sisioh-trinity.git</connection>
+      </scm>
+      <developers>
+        <developer>
+          <id>j5ik2o</id>
+          <name>Junichi Kato</name>
+          <url>http://j5ik2o.me</url>
+        </developer>
+      </developers>
+    )
   )
 
   lazy val core = Project(
@@ -47,8 +76,8 @@ object TrinityBuild extends Build {
       name := "trinity-core",
       libraryDependencies ++= Seq(
         "org.json4s" %% "json4s-jackson" % "3.2.2",
-        "org.sisioh" %% "scala-dddbase-core" % "0.1.20",
-        "org.sisioh" %% "scala-toolbox" % "0.0.6",
+        "org.sisioh" %% "scala-dddbase-core" % "0.1.21-SNAPSHOT",
+        "org.sisioh" %% "scala-toolbox" % "0.0.7-SNAPSHOT",
         "org.slf4j" % "slf4j-api" % "1.6.6",
         "org.slf4j" % "log4j-over-slf4j" % "1.6.6",
         "org.slf4j" % "jul-to-slf4j" % "1.6.6",
