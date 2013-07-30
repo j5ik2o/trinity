@@ -3,18 +3,9 @@ import sbt._
 
 object TrinityBuild extends Build {
 
-  def publish = publishTo <<= (version) {
-    version: String =>
-      if (version.trim.endsWith("SNAPSHOT")) {
-        Some(Resolver.file("snaphost", new File("./repos/snapshot")))
-      } else {
-        Some(Resolver.file("release", new File("./repos/release")))
-      }
-  }
-
   val commonSettings = Project.defaultSettings ++ Seq(
     organization := "org.sisioh",
-    version := "0.0.12",
+    version := "0.0.13-SNAPSHOT",
     scalaVersion := "2.10.2",
     scalacOptions ++= Seq("-encoding", "UTF-8", "-feature", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-encoding", "UTF-8", "-deprecation"),
@@ -23,7 +14,6 @@ object TrinityBuild extends Build {
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
       "Sonatype Snapshot Repository" at "https://oss.sonatype.org/content/repositories/snapshots/",
       "Seasar Repository" at "http://maven.seasar.org/maven2/"
-
     ),
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-reflect" % "2.10.2",
