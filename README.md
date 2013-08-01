@@ -10,8 +10,8 @@ Trinity is a lightweight MVC framework based on Finagle, written in Scala.
 
 ## Features
 - You can deine Actions as Controller of Finagle Service.
-  - URL can be mapped to action methods, like Scalatra.
-  - Otherwise, The Routing information can be outside of Controller, like Play2.
+  - URLs can be mapped to action methods, like Scalatra.
+  - Otherwise, The Routing information can be outside of the Controller, like Play2.
 - You can use Template Engine (e.g. Scalatra) with Trinity.
 
 ## Functions
