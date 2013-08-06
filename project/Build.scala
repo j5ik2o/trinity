@@ -47,8 +47,8 @@ object TrinityBuild extends Build {
         </license>
       </licenses>
       <scm>
-        <url>git@github.com:sisioh/sisioh-trinity.git</url>
-        <connection>scm:git:git@github.com:sisioh/sisioh-trinity.git</connection>
+        <url>git@github.com:sisioh/trinity.git</url>
+        <connection>scm:git:git@github.com:sisioh/trinity.git</connection>
       </scm>
       <developers>
         <developer>
