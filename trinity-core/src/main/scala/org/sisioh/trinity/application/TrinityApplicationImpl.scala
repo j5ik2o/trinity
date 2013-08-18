@@ -39,6 +39,7 @@ import org.sisioh.trinity.domain.controller.{ControllerRepositoryOnMemory, Globa
 import org.sisioh.trinity.domain.resource.FileReadFilter
 import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
 import org.sisioh.trinity.infrastructure.DurationUtil
+import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 
 /**
  * [[org.sisioh.trinity.application.TrinityApplication]]のデフォルト実装。
@@ -59,6 +60,8 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
   val routeRepository = new RouteRepositoryOnMemory
 
   val controllerRepository = new ControllerRepositoryOnMemory
+
+  private implicit val entityIOContext = SyncEntityIOContext
 
   private var filters: Seq[SimpleFilter[FinagleRequest, FinagleResponse]] = Seq.empty
 
