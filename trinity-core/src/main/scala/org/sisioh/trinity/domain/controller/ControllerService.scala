@@ -18,11 +18,12 @@ package org.sisioh.trinity.domain.controller
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
-import com.twitter.util.{Return, Try, Future}
+import com.twitter.util.{Try, Future}
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.http.{TrinityResponseImplicitSupport, TrinityResponseBuilder, TrinityRequest}
 import org.sisioh.trinity.domain.routing.{RouteId, Route}
+import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 
 /**
  * アクションにリクエストをディスパッチするためのFinagleサービス。
@@ -32,6 +33,8 @@ import org.sisioh.trinity.domain.routing.{RouteId, Route}
  */
 class ControllerService(application: TrinityApplication, globalSettingOpt: Option[GlobalSettings] = None)
   extends Service[FinagleRequest, FinagleResponse] with LoggingEx with TrinityResponseImplicitSupport {
+
+  private implicit val entityIOContext = SyncEntityIOContext
 
   /**
    * アクションが見つからない場合のリカバリを行うためのハンドラ。
@@ -111,7 +114,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
       }
     }.rescue {
       case throwable: Exception =>
-        warn("occurred error" , throwable)
+        warn("occurred error", throwable)
         Try(errorHandler(adaptedRequest, throwable))
     }.getOrElse {
       error("occurred other error")

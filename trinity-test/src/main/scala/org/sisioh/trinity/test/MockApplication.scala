@@ -9,6 +9,7 @@ import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.controller.{Controller, ControllerRepositoryOnMemory, ControllerRepository}
 import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
+import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 
 /**
  * モック用[[org.sisioh.trinity.application.TrinityApplication]]。
@@ -24,6 +25,8 @@ case class MockApplication
  controllerRepository: ControllerRepository = new ControllerRepositoryOnMemory,
  statsReceiver: StatsReceiver = NullStatsReceiver)
   extends TrinityApplication {
+
+  private implicit val entityIOContext = SyncEntityIOContext
 
   def registerController(controller: Controller) = synchronized {
     controllerRepository.store(controller)

@@ -22,6 +22,7 @@ import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity.domain.controller.{Controller, ControllerRepository}
 import org.sisioh.trinity.domain.http.TrinityRequest
 import scala.language.implicitConversions
+import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 
 trait Routes {
 
@@ -30,6 +31,8 @@ trait Routes {
   val controllerRepository: ControllerRepository
 
   implicit def convert(action: TrinityRequest => Future[Response]) = FutureAction(action)
+
+  private implicit val entityIOContext = SyncEntityIOContext
 
   def addRoute(method: HttpMethod, pathPattern: PathPattern, controller: Controller, action: Action): Unit = {
     addRoute(Route(method, pathPattern, controller, action))

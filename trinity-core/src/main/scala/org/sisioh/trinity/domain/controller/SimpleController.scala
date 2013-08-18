@@ -23,6 +23,7 @@ import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.http.TrinityRequest
 import org.sisioh.trinity.domain.routing.{FutureAction, Route}
+import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 
 /**
  * シンプルなコントローラ。
@@ -31,6 +32,8 @@ import org.sisioh.trinity.domain.routing.{FutureAction, Route}
  */
 abstract class SimpleController(implicit application: TrinityApplication)
   extends AbstractController with LoggingEx {
+
+  private implicit val entityIOContext = SyncEntityIOContext
 
   // TODO PathPatternを渡せるようにする。
 
