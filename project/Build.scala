@@ -5,7 +5,7 @@ object TrinityBuild extends Build {
 
   val commonSettings = Project.defaultSettings ++ Seq(
     organization := "org.sisioh",
-    version := "0.0.15",
+    version := "0.0.16",
     scalaVersion := "2.10.2",
     scalacOptions ++= Seq("-encoding", "UTF-8", "-feature", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-encoding", "UTF-8", "-deprecation"),
