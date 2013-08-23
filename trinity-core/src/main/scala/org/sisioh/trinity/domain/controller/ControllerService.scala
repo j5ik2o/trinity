@@ -83,7 +83,7 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
     withDebugScope(s"dispatchRequest($request)") {
       application.routeRepository.find {
         case Route(RouteId(m, pattern), controllerId, _) =>
-          val hasController = application.controllerRepository.contains(controllerId)
+          val hasController = application.controllerRepository.containsByIdentity(controllerId)
           val routeParamsOpt = pattern(request.path.split('?').head)
           if (hasController.toOption.get && routeParamsOpt.isDefined && m == request.method)
             true
