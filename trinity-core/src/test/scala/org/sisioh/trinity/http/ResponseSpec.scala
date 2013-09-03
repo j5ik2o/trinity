@@ -4,11 +4,14 @@ import org.jboss.netty.util.CharsetUtil.UTF_8
 import org.specs2.mutable.Specification
 import org.sisioh.trinity.domain.http.TrinityResponseBuilder
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
+import org.sisioh.trinity.domain.config.Config
 
 
 class ResponseSpec extends Specification {
 
   sequential
+
+  implicit val config = Config.fromFile()
 
   def responseBuilder = new TrinityResponseBuilder
 

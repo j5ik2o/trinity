@@ -20,8 +20,9 @@ import org.sisioh.trinity.domain.routing.Action
 import org.sisioh.trinity.domain.http.{TrinityResponseBuilder, TrinityRequest}
 import com.twitter.util.Future
 import com.twitter.finagle.http.{Status, Response}
+import org.sisioh.trinity.domain.config.Config
 
-case object NotFoundHandleAction extends Action {
+case class NotFoundHandleAction(implicit config: Config) extends Action {
 
   def apply(request: TrinityRequest): Future[Response] = {
     TrinityResponseBuilder().

@@ -26,6 +26,8 @@ import org.json4s.jackson.JsonMethods._
 import com.twitter.util.{Await, Future}
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
+import org.sisioh.trinity.domain.config.Config
+import org.sisioh.trinity.infrastructure.DurationUtil._
 
 /**
  * Trinity内で扱うレスポンスを表す値オブジェクト。
@@ -80,7 +82,8 @@ case class TrintiyResponse
  * @param responseFuture `Future`にラップされた[[org.sisioh.trinity.domain.http.TrintiyResponse]]
  */
 case class TrinityResponseBuilder
-(private val responseFuture: Future[TrintiyResponse] = Future(TrintiyResponse())) {
+(private val responseFuture: Future[TrintiyResponse] = Future(TrintiyResponse()))
+(implicit config: Config){
 
   def withStatus
   (status: Int): TrinityResponseBuilder = {
@@ -187,7 +190,7 @@ case class TrinityResponseBuilder
    *
    * @return [[org.sisioh.trinity.domain.http.TrintiyResponse]]
    */
-  def getTrinityResponse: TrintiyResponse = Await.result(responseFuture)
+  def getTrinityResponse: TrintiyResponse = Await.result(responseFuture, config.awaitDuration.toTwitter)
 
   /**
    * `Future`にラップされた `com.twitter.finagle.http.Response` を返す。
@@ -201,7 +204,7 @@ case class TrinityResponseBuilder
    *
    * @return `com.twitter.finagle.http.Response`
    */
-  def getFinagleResponse: FinagleResponse = Await.result(toFinagleResponseFuture)
+  def getFinagleResponse: FinagleResponse = Await.result(toFinagleResponseFuture, config.awaitDuration.toTwitter)
 
 
 }

@@ -20,6 +20,8 @@ class ExampleSpec
     )
   )
 
+  implicit val config = application.config
+
   implicit object ExampleController extends SimpleController {
 
     /**

@@ -38,7 +38,7 @@ import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.controller.{ControllerRepositoryOnMemory, GlobalSettings, ControllerService, Controller}
 import org.sisioh.trinity.domain.resource.FileReadFilter
 import org.sisioh.trinity.domain.routing.RouteRepositoryOnMemory
-import org.sisioh.trinity.infrastructure.DurationUtil
+import org.sisioh.trinity.infrastructure.DurationUtil._
 import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 
 /**
@@ -99,7 +99,7 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
 
   def shutdown() = synchronized {
     if (opened) {
-      Await.ready(server.close())
+      Await.ready(server.close(), config.awaitDuration.toTwitter)
       info("shutting down")
       globalSetting.foreach(_.onStop(this))
       opened = false
@@ -156,7 +156,6 @@ class TrinityApplicationImpl(val config: Config, globalSetting: Option[GlobalSet
     }
     config.hostConnectionMaxIdleTime.foreach {
       v =>
-        import DurationUtil._
         serverBuilder.hostConnectionMaxIdleTime(v.toTwitter)
     }
 

@@ -3,6 +3,7 @@ package org.sisioh.trinity.test
 import java.io.File
 import org.sisioh.trinity.domain.config.{Config, Environment}
 import scala.concurrent.duration.Duration
+import java.util.concurrent.TimeUnit
 
 /**
  * モック用の[[org.sisioh.trinity.domain.config.Config]]。
@@ -31,6 +32,7 @@ case class MockConfig
  templateWorkDir: File = new File("./temp"),
  templatePath: String = "/",
  localDocumentRoot: String = "src/test/resources",
+ awaitDuration: Duration = Duration(5, TimeUnit.SECONDS),
  maxRequestSize: Option[Int] = None,
  maxResponseSize: Option[Int] = None,
  maxConcurrentRequests: Option[Int] = None,
