@@ -19,13 +19,12 @@ package org.sisioh.trinity.domain.resource
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.util.Future
-import java.io.{FileInputStream, File, InputStream}
-import org.apache.commons.io.IOUtils
 import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.sisioh.scala.toolbox.LoggingEx
-import org.sisioh.trinity.domain.config.{Environment, Config}
+import org.sisioh.trinity.domain.config.Config
 import org.sisioh.trinity.domain.http.ContentType
+import org.apache.commons.io.IOUtils
 
 object FileReadFilter {
 

@@ -19,6 +19,7 @@ package org.sisioh.trinity.domain.config
 import com.twitter.util.Eval
 import java.io.File
 import scala.concurrent.duration.Duration
+import java.util.concurrent.TimeUnit
 
 /**
  * [[org.sisioh.trinity.application.TrinityApplication]]のための設定情報を表す値オブジェクト。
@@ -66,6 +67,11 @@ trait Config {
   val localDocumentRoot: String
 
   /**
+   * Awaitの待ち時間。
+   */
+  val awaitDuration: Duration
+
+  /**
    * 最大リクエストサイズ
    */
   val maxRequestSize: Option[Int]
@@ -104,6 +110,7 @@ trait Config {
     s"templateWorkDir = $templateWorkDir",
     s"templatePath = $templatePath",
     s"localDocumentRoot = $localDocumentRoot",
+    s"awaitDuration = $awaitDuration",
     s"maxRequestSize = $maxRequestSize",
     s"maxResponseSize = $maxResponseSize",
     s"maxConcurrentRequests = $maxConcurrentRequests",
@@ -143,6 +150,7 @@ object Config {
    * @param templateWorkDir
    * @param templatePath
    * @param localDocumentRoot
+   * @param awaitDuration
    * @param maxRequestSize
    * @param maxResponseSize
    * @param maxConcurrentRequests
@@ -160,6 +168,7 @@ object Config {
    templateWorkDir: File = new File("./temp"),
    templatePath: String = "/",
    localDocumentRoot: String = "src/main/resources",
+   awaitDuration: Duration = Duration(5, TimeUnit.SECONDS),
    maxRequestSize: Option[Int] = None,
    maxResponseSize: Option[Int] = None,
    maxConcurrentRequests: Option[Int] = None,
@@ -174,6 +183,7 @@ object Config {
     templateWorkDir,
     templatePath,
     localDocumentRoot,
+    awaitDuration,
     maxRequestSize,
     maxResponseSize,
     maxConcurrentRequests,
@@ -194,6 +204,7 @@ case class ConfigImpl
  templateWorkDir: File = new File("./temp"),
  templatePath: String = "/",
  localDocumentRoot: String = "src/main/resources",
+ awaitDuration: Duration = Duration(5, TimeUnit.SECONDS),
  maxRequestSize: Option[Int] = None,
  maxResponseSize: Option[Int] = None,
  maxConcurrentRequests: Option[Int] = None,

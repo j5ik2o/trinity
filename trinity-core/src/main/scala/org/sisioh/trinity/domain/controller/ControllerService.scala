@@ -36,6 +36,8 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
 
   private implicit val entityIOContext = SyncEntityIOContext
 
+  private implicit val config = application.config
+
   /**
    * アクションが見つからない場合のリカバリを行うためのハンドラ。
    *
@@ -44,9 +46,9 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
   protected def notFoundHandler(request: TrinityRequest): Future[FinagleResponse] = {
     globalSettingOpt.map {
       _.notFound.map(_(request)).
-        getOrElse(NotFoundHandleAction(request))
+        getOrElse(NotFoundHandleAction().apply(request))
     }.getOrElse {
-      NotFoundHandleAction(request)
+      NotFoundHandleAction().apply(request)
     }
   }
 
@@ -59,9 +61,9 @@ class ControllerService(application: TrinityApplication, globalSettingOpt: Optio
     val newRequest = request.copy(error = Some(throwable))
     globalSettingOpt.map {
       _.error.map(_(newRequest)).
-        getOrElse(ErrorHandleAction(newRequest))
+        getOrElse(ErrorHandleAction().apply(newRequest))
     }.getOrElse {
-      ErrorHandleAction(request)
+      ErrorHandleAction().apply(request)
     }
   }
 

@@ -18,6 +18,8 @@ class UnauthorizedException extends Exception
 
 trait ApplicationContext {
 
+  implicit val config = Config.fromFile()
+
   val globalSettings = new GlobalSettings {
     override def error = Some {
       FutureAction {
@@ -44,7 +46,6 @@ trait ApplicationContext {
 
   }
 
-  implicit val config = Config.fromFile()
   implicit val application = TrinityApplication(config, Some(globalSettings))
 
   // Thread Pool
