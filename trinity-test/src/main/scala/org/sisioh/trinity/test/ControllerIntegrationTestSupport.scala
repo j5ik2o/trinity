@@ -13,6 +13,8 @@ import org.specs2.mutable.Around
 import org.specs2.specification.Scope
 import scala.util.{Try, Random}
 
+import org.sisioh.trinity.infrastructure.DurationUtil._
+
 /**
  * インテグレーションテストをサポートするためのトレイト。
  */
@@ -40,7 +42,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
         .hostConnectionLimit(1)
         .build()
     Try {
-      val finagleResponse = Await.result(client(request))
+      val finagleResponse = Await.result(client(request), awaitDuration.toTwitter)
       new MockResponse(Response(finagleResponse))
     }
   }

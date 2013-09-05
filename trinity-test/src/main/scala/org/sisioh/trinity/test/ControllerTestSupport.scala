@@ -7,8 +7,12 @@ import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.controller.{GlobalSettings, Controller}
 import scala.util.Try
+import scala.concurrent.duration.Duration
+import java.util.concurrent.TimeUnit
 
 trait ControllerTestSupport extends LoggingEx {
+
+  val awaitDuration: Duration = Duration(5, TimeUnit.SECONDS)
 
   /**
    * HTTPリクエストを生成する。

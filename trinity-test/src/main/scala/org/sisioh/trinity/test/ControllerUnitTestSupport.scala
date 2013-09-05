@@ -4,6 +4,7 @@ import com.twitter.util.Await
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity.application.TrinityApplication
 import org.sisioh.trinity.domain.controller.{Controller, ControllerService}
+import org.sisioh.trinity.infrastructure.DurationUtil._
 import scala.util.Try
 
 /**
@@ -21,7 +22,7 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
     application.registerController(controller)
     val service = new ControllerService(application, getGlobalSettings)
     Try {
-      val finagleResponse = Await.result(service(request))
+      val finagleResponse = Await.result(service(request), awaitDuration.toTwitter)
       new MockResponse(finagleResponse)
     }
   }
