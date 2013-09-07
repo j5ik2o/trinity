@@ -63,7 +63,9 @@ object AppBuild extends Build {
       ),
       libraryDependencies ++= Seq(
         // ...
-        "org.sisioh" %% "trinity" % "0.0.18",
+        "org.sisioh" %% "trinity-core" % "0.0.18",
+        "org.sisioh" %% "trinity-view-scalate" % "0.0.18", // optional
+        
         // ...
       )
     )
