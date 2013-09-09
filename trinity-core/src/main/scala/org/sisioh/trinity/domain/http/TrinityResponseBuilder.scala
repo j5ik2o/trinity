@@ -37,7 +37,7 @@ import org.sisioh.trinity.infrastructure.DurationUtil._
  * @param cookies
  * @param body
  */
-case class TrintiyResponse
+case class TrinityResponse
 (status: HttpResponseStatus = Status.Ok,
  headers: Map[String, AnyRef] = Map.empty,
  cookies: Seq[Cookie] = Seq.empty,
@@ -79,10 +79,10 @@ case class TrintiyResponse
 /**
  * [[org.sisioh.trinity.domain.http.TrinityResponseBuilder]]のためのビルダ。
  *
- * @param responseFuture `Future`にラップされた[[org.sisioh.trinity.domain.http.TrintiyResponse]]
+ * @param responseFuture `Future`にラップされた[[org.sisioh.trinity.domain.http.TrinityResponse]]
  */
 case class TrinityResponseBuilder
-(private val responseFuture: Future[TrintiyResponse] = Future(TrintiyResponse()))
+(private val responseFuture: Future[TrinityResponse] = Future(TrinityResponse()))
 (implicit config: Config){
 
   def withStatus
@@ -179,18 +179,18 @@ case class TrinityResponseBuilder
   def withNotFound = withStatus(HttpResponseStatus.NOT_FOUND)
 
   /**
-   * `Future`にラップされた[[org.sisioh.trinity.domain.http.TrintiyResponse]]を返す。
+   * `Future`にラップされた[[org.sisioh.trinity.domain.http.TrinityResponse]]を返す。
    *
-   * @return `Future`にラップされた[[org.sisioh.trinity.domain.http.TrintiyResponse]]
+   * @return `Future`にラップされた[[org.sisioh.trinity.domain.http.TrinityResponse]]
    */
-  def toTrinityResponseFuture: Future[TrintiyResponse] = responseFuture
+  def toTrinityResponseFuture: Future[TrinityResponse] = responseFuture
 
   /**
-   * [[org.sisioh.trinity.domain.http.TrintiyResponse]]を取得する。
+   * [[org.sisioh.trinity.domain.http.TrinityResponse]]を取得する。
    *
-   * @return [[org.sisioh.trinity.domain.http.TrintiyResponse]]
+   * @return [[org.sisioh.trinity.domain.http.TrinityResponse]]
    */
-  def getTrinityResponse: TrintiyResponse = Await.result(responseFuture, config.awaitDuration.toTwitter)
+  def getTrinityResponse: TrinityResponse = Await.result(responseFuture, config.awaitDuration.toTwitter)
 
   /**
    * `Future`にラップされた `com.twitter.finagle.http.Response` を返す。
@@ -211,10 +211,10 @@ case class TrinityResponseBuilder
 
 trait TrinityResponseImplicitSupport {
 
-  implicit def convertToFingaleResponse(res: TrintiyResponse) =
+  implicit def convertToFingaleResponse(res: TrinityResponse) =
     res.toFinagleResponse
 
-  implicit def convertToFutureFinagleResponse(res: Future[TrintiyResponse]) =
+  implicit def convertToFutureFinagleResponse(res: Future[TrinityResponse]) =
     res.map(_.toFinagleResponse)
 
 }

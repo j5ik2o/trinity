@@ -57,12 +57,15 @@ object AppBuild extends Build {
     settings = Project.defaultSettings ++ Seq(
       resolvers ++= Seq(
         // ...
-        "Sisioh Trinity Release Repository" at "http://sisioh.github.io/trinity/repos/release/",
+        "Sonatype Snapshot Repository" at "http://oss.sonatype.org/content/repositories/snapshots/",
+        "Sonatype Release Repository" at "http://oss.sonatype.org/content/repositories/releases/",
        // ...
       ),
       libraryDependencies ++= Seq(
         // ...
-        "org.sisioh" %% "trinity" % "0.0.7",
+        "org.sisioh" %% "trinity-core" % "0.0.18",
+        "org.sisioh" %% "trinity-view-scalate" % "0.0.18", // optional
+        
         // ...
       )
     )
