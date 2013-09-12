@@ -31,33 +31,33 @@ object TrinityBuild extends Build {
     },
     publishTo <<= version {
       (v: String) =>
-      val nexus = "https://oss.sonatype.org/"
-      if (v.trim.endsWith("SNAPSHOT"))
-        Some("snapshots" at nexus + "content/repositories/snapshots")
-      else
-        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+        val nexus = "https://oss.sonatype.org/"
+        if (v.trim.endsWith("SNAPSHOT"))
+          Some("snapshots" at nexus + "content/repositories/snapshots")
+        else
+          Some("releases" at nexus + "service/local/staging/deploy/maven2")
     },
     pomExtra := (
       <url>https://github.com/sisioh/trinity</url>
-      <licenses>
-        <license>
-          <name>Apache License Version 2.0</name>
-          <url>http://www.apache.org/licenses/</url>
-          <distribution>repo</distribution>
-        </license>
-      </licenses>
-      <scm>
-        <url>git@github.com:sisioh/trinity.git</url>
-        <connection>scm:git:git@github.com:sisioh/trinity.git</connection>
-      </scm>
-      <developers>
-        <developer>
-          <id>j5ik2o</id>
-          <name>Junichi Kato</name>
-          <url>http://j5ik2o.me</url>
-        </developer>
-      </developers>
-    )
+        <licenses>
+          <license>
+            <name>Apache License Version 2.0</name>
+            <url>http://www.apache.org/licenses/</url>
+            <distribution>repo</distribution>
+          </license>
+        </licenses>
+        <scm>
+          <url>git@github.com:sisioh/trinity.git</url>
+          <connection>scm:git:git@github.com:sisioh/trinity.git</connection>
+        </scm>
+        <developers>
+          <developer>
+            <id>j5ik2o</id>
+            <name>Junichi Kato</name>
+            <url>http://j5ik2o.me</url>
+          </developer>
+        </developers>
+      )
   )
 
   lazy val core = Project(
@@ -74,7 +74,14 @@ object TrinityBuild extends Build {
         "org.slf4j" % "jul-to-slf4j" % "1.6.6",
         "ch.qos.logback" % "logback-core" % "1.0.7" exclude("org.slf4j", "slf4j-api"),
         "ch.qos.logback" % "logback-classic" % "1.0.7",
-        "commons-io" % "commons-io" % "1.3.2"
+        "commons-io" % "commons-io" % "1.3.2",
+        "io.netty" % "netty" % "3.6.6.Final",
+        "com.twitter" % "finagle-core" % "6.6.0" excludeAll(
+          ExclusionRule(organization = "log4j", name = "log4j"),
+          ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
+          ExclusionRule(organization = "org.slf4j", name = "slf4j-jdk14"),
+          ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
+          )
       )
     )
   )
