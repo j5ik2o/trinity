@@ -15,7 +15,7 @@ private[trinity] case class ResponseImpl(override val underlying: NettyResponse)
     cloned
   }
 
-  def getStatus: HttpResponseStatus = underlying.getStatus
+  val status: HttpResponseStatus = underlying.getStatus
 
   def withStatus(status: HttpResponseStatus): Response = mutateAsResponse {
     _.setStatus(status)

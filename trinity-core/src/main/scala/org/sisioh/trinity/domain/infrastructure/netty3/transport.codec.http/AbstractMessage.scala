@@ -22,21 +22,21 @@ abstract class AbstractMessage(val underlying: NettyMessage) extends Message {
 
   def getHeaders(name: String): Seq[String] = underlying.getHeaders(name).toSeq
 
-  def getHeaders: Seq[(String, String)] = underlying.getHeaders.map {
+  val headers: Seq[(String, String)] = underlying.getHeaders.map {
     e => (e.getKey, e.getValue)
   }.toSeq
 
   def containsHeader(name: String): Boolean = underlying.containsHeader(name)
 
-  def getHeaderNames: Set[String] = underlying.getHeaderNames.toSet
+  val headerNames: Set[String] = underlying.getHeaderNames.toSet
 
-  def getProtocolVersion: HttpVersion = underlying.getProtocolVersion
+  val protocolVersion: HttpVersion = underlying.getProtocolVersion
 
   def withProtocolVersion(version: HttpVersion): Message = mutate {
     _.setProtocolVersion(version)
   }
 
-  def getContent: ChannelBuffer = ChannelBuffer.from(underlying.getContent)
+  val content: ChannelBuffer = ChannelBuffer.from(underlying.getContent)
 
   def withContent(content: ChannelBuffer): Message = mutate {
     _.setContent(content)
@@ -58,7 +58,7 @@ abstract class AbstractMessage(val underlying: NettyMessage) extends Message {
     _.clearHeaders()
   }
 
-  def isChunked: Boolean = underlying.isChunked
+  val isChunked: Boolean = underlying.isChunked
 
   def withChunked(chunked: Boolean): Message = mutate {
     _.setChunked(chunked)

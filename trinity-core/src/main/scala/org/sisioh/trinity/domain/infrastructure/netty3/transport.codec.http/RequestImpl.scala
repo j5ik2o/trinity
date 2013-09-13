@@ -15,13 +15,13 @@ private[trinity] case class RequestImpl(override val underlying: NettyRequest)
     cloned
   }
 
-  def getMethod: HttpMethod = underlying.getMethod
+  val method: HttpMethod = underlying.getMethod
 
   def withMethod(method: HttpMethod): Request = mutateAsRequest {
     _.setMethod(method)
   }
 
-  def getUri: String = underlying.getUri
+  val uri: String = underlying.getUri
 
   def withUri(uri: String): Request = mutateAsRequest {
     _.setUri(uri)

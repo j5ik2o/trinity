@@ -12,17 +12,17 @@ trait Message {
 
   def getHeaders(name: String): Seq[String]
 
-  def getHeaders: Seq[(String, String)]
+  val headers: Seq[(String, String)]
 
   def containsHeader(name: String): Boolean
 
-  def getHeaderNames: Set[String]
+  val headerNames: Set[String]
 
-  def getProtocolVersion: HttpVersion
+  val protocolVersion: HttpVersion
 
   def withProtocolVersion(version: HttpVersion): Message
 
-  def getContent: ChannelBuffer
+  val content: ChannelBuffer
 
   def withContent(content: ChannelBuffer): Message
 
@@ -34,7 +34,7 @@ trait Message {
 
   def withoutAllHeaders: Message
 
-  def isChunked: Boolean
+  val isChunked: Boolean
 
   def withChunked(chunked: Boolean): Message
 
