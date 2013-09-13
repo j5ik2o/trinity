@@ -8,6 +8,7 @@ import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer, ChannelBuffe
 import org.sisioh.trinity.domain.buffer.{ChannelBufferFactory, ChannelBuffer}
 import scala.util.Try
 
+private[trinity]
 case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = false) extends ChannelBuffer {
 
   private def mutateAsThis(f: (NettyChannelBuffer) => Unit): ChannelBuffer = {

@@ -5,6 +5,7 @@ import java.nio.{ByteBuffer, ByteOrder}
 import org.jboss.netty.buffer.{ChannelBuffers => NettyChannelBuffers, ChannelBuffer => NettyChannelBuffer, ChannelBufferFactory => NettyChannelBufferFactory}
 import org.sisioh.trinity.domain.buffer.{ChannelBufferFactory, ChannelBuffer, ChannelBuffers}
 
+private[trinity]
 object ChannelBuffersImpl extends ChannelBuffers {
 
   implicit def toUnderlying(target: ChannelBuffer): NettyChannelBuffer = target match {

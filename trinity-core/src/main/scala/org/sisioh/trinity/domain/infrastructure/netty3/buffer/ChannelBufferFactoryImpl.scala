@@ -4,6 +4,7 @@ import org.sisioh.trinity.domain.buffer.{ChannelBuffer, ChannelBufferFactory}
 import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
 import java.nio.{ByteBuffer, ByteOrder}
 
+private[trinity]
 case class ChannelBufferFactoryImpl(underlying: NettyChannelBufferFactory)
   extends ChannelBufferFactory {
 

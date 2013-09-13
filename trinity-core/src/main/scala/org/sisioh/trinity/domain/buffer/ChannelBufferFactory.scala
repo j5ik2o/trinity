@@ -25,7 +25,7 @@ trait ChannelBufferFactory {
 
 object ChannelBufferFactory {
 
-  def from(underlying: NettyChannelBufferFactory): ChannelBufferFactory =
+  private[trinity] def from(underlying: NettyChannelBufferFactory): ChannelBufferFactory =
     ChannelBufferFactoryImpl(underlying)
 
 }

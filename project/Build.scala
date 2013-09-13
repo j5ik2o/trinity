@@ -81,6 +81,12 @@ object TrinityBuild extends Build {
           ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-jdk14"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
+          ),
+        "com.twitter" % "finagle-http" % "6.6.0" excludeAll(
+          ExclusionRule(organization = "log4j", name = "log4j"),
+          ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
+          ExclusionRule(organization = "org.slf4j", name = "slf4j-jdk14"),
+          ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
           )
       )
     )

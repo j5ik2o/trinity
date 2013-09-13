@@ -249,6 +249,6 @@ trait ChannelBuffer {
 
 object ChannelBuffer {
 
-  def from(underlying: NettyChannelBuffer): ChannelBuffer = ChannelBufferImpl(underlying)
+  private[trinity] def from(underlying: NettyChannelBuffer): ChannelBuffer = ChannelBufferImpl(underlying)
 
 }
