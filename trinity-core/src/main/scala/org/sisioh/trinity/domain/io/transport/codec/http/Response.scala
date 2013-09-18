@@ -7,7 +7,7 @@ import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.Response
 
 trait Response extends Message {
 
-  val status: ResponseStatus.Value
+  def status: ResponseStatus.Value
 
   def withStatus(status: ResponseStatus.Value): this.type
 
@@ -27,7 +27,7 @@ object Response {
   implicit def toTrinity(underlying: NettyResponse): Response =
     ResponseImpl(underlying)
 
-  def apply(version: HttpVersion, status: ResponseStatus.Value): Response =
+  def apply(version: Version.Value, status: ResponseStatus.Value): Response =
     new ResponseImpl(version, status)
 
 }

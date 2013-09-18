@@ -4,10 +4,10 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 trait MessageProxy extends Message with Proxy {
 
-  protected def createMessage(message: this.type): this.type
+  protected def createInstance(message: this.type): this.type
 
   protected def mutate(f: (this.type) => Unit): this.type = {
-    val cloned = createMessage(this)
+    val cloned = createInstance(this)
     f(cloned)
     cloned
   }
@@ -20,7 +20,7 @@ trait MessageProxy extends Message with Proxy {
 
   def getHeaders(name: String): Seq[String] = underlying.getHeaders(name)
 
-  val headers: Seq[(String, String)] = underlying.headers
+  val headers: Seq[(String, Any)] = underlying.headers
 
   def containsHeader(name: String): Boolean = underlying.containsHeader(name)
 

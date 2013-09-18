@@ -1,7 +1,9 @@
 package org.sisioh.trinity.domain.io.transport.codec.http
 
-import org.jboss.netty.handler.codec.http.CookieEncoder
+import org.jboss.netty.handler.codec.http.{CookieDecoder, CookieEncoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
+import org.sisioh.trinity.domain.io.transport.codec.http.Cookie._
+import scala.collection.JavaConverters._
 
 /**
  * HTTPのメッセージを表すトレイト。
@@ -12,17 +14,17 @@ trait Message {
 
   def getHeaders(name: String): Seq[String]
 
-  val headers: Seq[(String, String)]
+  def headers: Seq[(String, Any)]
 
   def containsHeader(name: String): Boolean
 
-  val headerNames: Set[String]
+  def headerNames: Set[String]
 
-  val protocolVersion: Version.Value
+  def protocolVersion: Version.Value
 
   def withProtocolVersion(version: Version.Value): this.type
 
-  val content: ChannelBuffer
+  def content: ChannelBuffer
 
   def withContent(content: ChannelBuffer): this.type
 
@@ -30,21 +32,34 @@ trait Message {
 
   def withHeader(name: String, values: Seq[_]): this.type
 
+  def withHeaders(headers: Seq[(String, Any)]): this.type = {
+    headers.foldLeft(this) {
+      (l, r) =>
+        l.withHeader(r._1, r._2)
+    }.asInstanceOf[this.type]
+  }
+
   def withoutHeader(name: String): this.type
 
   def withoutAllHeaders: this.type
 
-  val isChunked: Boolean
+  def isChunked: Boolean
 
   def withChunked(chunked: Boolean): this.type
 
-  def withCookie(cookies: Seq[Cookie]): this.type = {
+  def withCookies(cookies: Seq[Cookie]): this.type = {
     val cookieEncoder = new CookieEncoder(true)
     cookies.foreach {
       xs =>
         cookieEncoder.addCookie(xs)
     }
     withHeader("Set-Cookie", cookieEncoder.encode)
+  }
+
+  def cookies: Seq[Cookie] = {
+    val decoder = new CookieDecoder()
+    val header = getHeader("Set-Cookie")
+    decoder.decode(header).asScala.map(toTrinity).toSeq
   }
 
 }

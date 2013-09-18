@@ -20,21 +20,21 @@ abstract class AbstractMessage(val underlying: NettyMessage) extends Message {
 
   def getHeaders(name: String): Seq[String] = underlying.getHeaders(name).toSeq
 
-  val headers: Seq[(String, String)] = underlying.getHeaders.map {
+  def headers: Seq[(String, Any)] = underlying.getHeaders.map {
     e => (e.getKey, e.getValue)
   }.toSeq
 
   def containsHeader(name: String): Boolean = underlying.containsHeader(name)
 
-  val headerNames: Set[String] = underlying.getHeaderNames.toSet
+  def headerNames: Set[String] = underlying.getHeaderNames.toSet
 
-  val protocolVersion: Version.Value = underlying.getProtocolVersion
+  def protocolVersion: Version.Value = underlying.getProtocolVersion
 
   def withProtocolVersion(version: Version.Value) = mutate {
     _.setProtocolVersion(version)
   }
 
-  val content: ChannelBuffer = underlying.getContent
+  def content: ChannelBuffer = underlying.getContent
 
   def withContent(content: ChannelBuffer) = mutate {
     _.setContent(content)
@@ -56,7 +56,7 @@ abstract class AbstractMessage(val underlying: NettyMessage) extends Message {
     _.clearHeaders()
   }
 
-  val isChunked: Boolean = underlying.isChunked
+  def isChunked: Boolean = underlying.isChunked
 
   def withChunked(chunked: Boolean) = mutate {
     _.setChunked(chunked)
