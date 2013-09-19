@@ -2,12 +2,15 @@ package org.sisioh.trinity.domain.mvc
 
 import com.google.common.base.Splitter
 import org.sisioh.trinity.domain.io.transport.codec.http.{AcceptOrdering, ContentType, RequestProxy}
+import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest}
 import scala.collection.JavaConversions._
 import scala.util.Sorting
 
 trait Request extends RequestProxy {
 
   val routeParams: Map[String, String]
+
+  def withRouteParams(routeParams: Map[String, String]): this.type
 
   val multiParams: Map[String, MultiPartItem]
 
@@ -24,5 +27,17 @@ trait Request extends RequestProxy {
         }.toSeq
     }.getOrElse(Seq.empty[ContentType])
   }
+
+  def path: String
+
+  def error: Option[Throwable]
+
+  def withError(error: Throwable): this.type
+
+}
+
+object Request {
+
+  def apply(underlying: IORequest, routeParams: Map[String, String] = Map.empty): Request = new RequestImpl(underlying, routeParams)
 
 }
