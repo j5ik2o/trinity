@@ -22,9 +22,9 @@ case class ControllerServiceImpl
   protected def notFoundHandler(request: Request): Future[Response] = {
     globalSettingsOpt.map {
       _.notFound.map(_(request)).
-        getOrElse(NotFoundHandleAction().apply(request))
+        getOrElse(NotFoundHandleAction(request))
     }.getOrElse {
-      NotFoundHandleAction().apply(request)
+      NotFoundHandleAction(request)
     }
   }
 
@@ -37,9 +37,9 @@ case class ControllerServiceImpl
     val newRequest = request.withError(throwable)
     globalSettingsOpt.map {
       _.error.map(_(newRequest)).
-        getOrElse(ErrorHandleAction().apply(newRequest))
+        getOrElse(ErrorHandleAction(newRequest))
     }.getOrElse {
-      ErrorHandleAction().apply(request)
+      ErrorHandleAction(request)
     }
   }
 

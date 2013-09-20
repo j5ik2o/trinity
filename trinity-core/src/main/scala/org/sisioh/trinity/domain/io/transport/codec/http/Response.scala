@@ -28,6 +28,6 @@ object Response {
     ResponseImpl(underlying)
 
   def apply(version: Version.Value, status: ResponseStatus.Value): Response =
-    new ResponseImpl(version, status)
+    new ResponseImpl(status, version = version)
 
 }

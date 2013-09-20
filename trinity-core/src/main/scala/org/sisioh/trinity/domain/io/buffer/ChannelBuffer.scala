@@ -8,7 +8,7 @@ import java.nio.charset.Charset
 import scala.language.implicitConversions
 import scala.util.Try
 
-import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
+import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer, ChannelBuffers => NettyChannelBuffers}
 import org.sisioh.trinity.domain.io.infrastructure.buffer.ChannelBufferImpl
 
 trait ChannelBuffer {
@@ -251,6 +251,8 @@ trait ChannelBuffer {
 
 
 object ChannelBuffer {
+
+  val empty: ChannelBuffer = NettyChannelBuffers.EMPTY_BUFFER
 
   implicit def toNetty(target: ChannelBuffer): NettyChannelBuffer =
     target match {

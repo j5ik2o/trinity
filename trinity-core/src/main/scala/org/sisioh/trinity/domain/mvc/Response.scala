@@ -15,8 +15,8 @@ trait Response extends ResponseProxy {
 
 object Response {
 
-  def apply(underlying: http.Response): Response = ResponseImpl(underlying)
+  def apply(underlying: http.Response): Response = new ResponseImpl(underlying)
 
-  def apply(version: Version.Value, status: ResponseStatus.Value): Response = apply(IOResponse(version, status))
+  def apply(version: Version.Value, status: ResponseStatus.Value): Response = new ResponseImpl(version, status)
 
 }

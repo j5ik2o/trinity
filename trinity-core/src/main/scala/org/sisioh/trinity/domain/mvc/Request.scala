@@ -1,8 +1,7 @@
 package org.sisioh.trinity.domain.mvc
 
 import com.google.common.base.Splitter
-import org.sisioh.trinity.domain.io.transport.codec.http.{AcceptOrdering, ContentType, RequestProxy}
-import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest}
+import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest, _}
 import scala.collection.JavaConversions._
 import scala.util.Sorting
 
@@ -38,6 +37,13 @@ trait Request extends RequestProxy {
 
 object Request {
 
-  def apply(underlying: IORequest, routeParams: Map[String, String] = Map.empty): Request = new RequestImpl(underlying, routeParams)
+  def apply(underlying: IORequest): Request =
+    new RequestImpl(underlying)
+
+  def apply(version: Version.Value,
+            method: Method.Value,
+            uri: String,
+            routeParams: Map[String, String] = Map.empty): Request =
+    new RequestImpl(version, method, uri, routeParams)
 
 }

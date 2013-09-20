@@ -2,13 +2,20 @@ package org.sisioh.trinity.domain.mvc
 
 import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.AbstractRequestProxy
 import org.sisioh.trinity.domain.io.transport.codec.http
-import org.sisioh.trinity.domain.io.transport.codec.http.Method
+import org.sisioh.trinity.domain.io.transport.codec.http.{Version, Method}
 
 class RequestImpl
 (underlying: http.Request,
  val routeParams: Map[String, String] = Map.empty,
  val errorOpt: Option[Throwable] = None)
   extends AbstractRequestProxy(underlying) with Request {
+
+  def this(httpVersion: Version.Value,
+           method: Method.Value,
+           uri: String,
+           routeParams: Map[String, String] = Map.empty,
+           errorOpt: Option[Throwable] = None) =
+    this(http.Request(httpVersion, method, uri), routeParams, errorOpt)
 
   val multiParams: Map[String, MultiPartItem] =
     if (method == Method.Post) {

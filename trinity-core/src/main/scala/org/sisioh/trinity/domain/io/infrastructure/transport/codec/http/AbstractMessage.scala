@@ -1,17 +1,42 @@
 package org.sisioh.trinity.domain.io.infrastructure.transport.codec.http
 
-import org.jboss.netty.handler.codec.http.{HttpMessage => NettyMessage}
+import org.jboss.netty.handler.codec.http.{HttpMessage => NettyMessage, CookieEncoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.transport.codec.http.{Version, Message}
+import org.sisioh.trinity.domain.io.transport.codec.http.{Cookie, Version, Message}
 import scala.collection.JavaConversions._
 
 private[trinity]
 abstract class AbstractMessage(val underlying: NettyMessage) extends Message {
 
-  protected def createMessage(message: AbstractMessage): this.type
+  protected def createInstance(message: AbstractMessage): this.type
+
+  protected def setHeaders(headers: Seq[(String, Any)]) {
+    headers.foreach {
+      case (key, value) =>
+        value match {
+          case values: Iterable[_] => underlying.setHeader(key, values)
+          case _ => underlying.setHeader(key, value)
+        }
+    }
+  }
+
+  protected def setCookies(cookies: Seq[Cookie]) {
+    if (cookies.size > 0) {
+      val encoder = new CookieEncoder(true)
+      cookies.foreach {
+        cookie =>
+          encoder.addCookie(cookie)
+      }
+      underlying.setHeader("Set-Cookie", encoder.encode())
+    }
+  }
+
+  protected def setContent(content: ChannelBuffer) {
+    underlying.setContent(content)
+  }
 
   protected def mutate(f: (NettyMessage) => Unit): this.type = {
-    val cloned = createMessage(this)
+    val cloned = createInstance(this)
     f(cloned.underlying)
     cloned
   }

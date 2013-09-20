@@ -5,14 +5,15 @@ import org.sisioh.trinity.domain.io.transport.codec.http.{Response => IOResponse
 import org.sisioh.trinity.domain.io.{Filter => IOFilter, Service}
 import scala.concurrent.{ExecutionContext, Future}
 
-class MVCFilter[-ReqIn <: IORequest, +RepOut <: IOResponse, +ReqOut <: Request, RepIn <: Response](implicit exector: ExecutionContext)
-  extends IOFilter[ReqIn, RepOut, ReqOut, RepIn] {
+case class IOtoMVCFilter
+(implicit exector: ExecutionContext)
+  extends IOFilter[IORequest, IOResponse, Request, Response] {
 
-  def apply(request: ReqIn, service: Service[ReqOut, RepIn]): Future[RepOut] = {
+  def apply(request: IORequest, service: Service[Request, Response]): Future[IOResponse] = {
     val requestOut = Request(request)
-    service(requestOut.asInstanceOf[ReqOut]).map {
+    service(requestOut).map {
       responseIn =>
-        Response(responseIn).asInstanceOf[RepOut]
+        responseIn.underlying
     }
   }
 

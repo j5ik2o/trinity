@@ -1,11 +1,9 @@
 package org.sisioh.trinity.domain.io.transport.codec.http
 
-import scala.language.implicitConversions
-
+import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.{HttpRequest => NettyRequest}
 import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.RequestImpl
-
-import com.twitter.finagle.http.{Request => FinagleRequest}
+import scala.language.implicitConversions
 
 trait Request extends Message {
 
@@ -33,7 +31,7 @@ object Request {
   implicit def toTrinity(underlying: NettyRequest): Request =
     RequestImpl(underlying)
 
-  def apply(httpVersion: Version.Value, method: Method.Value, uri: String): Request =
-    new RequestImpl(httpVersion, method, uri)
+  def apply(version: Version.Value, method: Method.Value, uri: String): Request =
+    new RequestImpl(method, uri, version = version)
 
 }
