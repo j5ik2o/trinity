@@ -183,7 +183,8 @@ object TrinityBuild extends Build {
     id = "trinity",
     base = file("."),
     settings = commonSettings ++ Seq(
-      name := "trinity"
+      name := "trinity",
+      publishArtifact := false, publish := {}, publishLocal := {}
     )
   ) aggregate(core, view, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker, test, example)
 
