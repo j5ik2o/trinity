@@ -10,7 +10,7 @@ case class IOtoMVCFilter
   extends IOFilter[IORequest, IOResponse, Request, Response] {
 
   def apply(request: IORequest, service: Service[Request, Response]): Future[IOResponse] = {
-    val requestOut = Request(request)
+    val requestOut = Request.fromUnderlying(request)
     service(requestOut).map {
       responseIn =>
         responseIn.underlying

@@ -3,16 +3,18 @@ package org.sisioh.trinity.domain.mvc
 import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.TrinityException
-import org.sisioh.trinity.domain.io.Service
-import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
+import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest}
+import org.sisioh.trinity.domain.io.transport.codec.http.{Response => IOResponse}
+import org.sisioh.trinity.domain.io.{Filter => IOFilter, Service}
+import scala.concurrent.{ExecutionContext, Future}
 
-case class ControllerServiceImpl
+case class ControllerFilter
 (routeRepository: RouteRepository,
  controllerRepository: ControllerRepository,
  globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None)
 (implicit executor: ExecutionContext)
-  extends Service[Request, Response] with LoggingEx {
+  extends IOFilter[IORequest, IOResponse, Request, Response] with LoggingEx {
 
   /**
    * アクションが見つからない場合のリカバリを行うためのハンドラ。
@@ -43,14 +45,7 @@ case class ControllerServiceImpl
     }
   }
 
-  /**
-   * [[org.sisioh.trinity.domain.mvc.Route]]が保持する[[org.sisioh.trinity.domain.mvc.Action]]
-   * に対してリクエストを実行する。
-   *
-   * @param request [[org.sisioh.trinity.domain.mvc.Request]]
-   * @return [[org.sisioh.trinity.domain.mvc.Response]]
-   */
-  protected def dispatchRequest(request: Request): Future[Response] = {
+  protected def getActionWithRouteParams(request: Request): Option[(Action[Request, Response], Map[String, String])] = {
     implicit val ctx = SyncEntityIOContext
     routeRepository.find {
       case Route(RouteId(m, pattern), controllerId, _) =>
@@ -60,34 +55,37 @@ case class ControllerServiceImpl
           true
         else
           false
-    }.map {
+    }.flatMap {
       case Route(RouteId(_, pattern), _, action) =>
         val routeParamsOpt = pattern(request.path.split('?').head)
-        val newRequest = routeParamsOpt.map {
+        routeParamsOpt.map {
           routeParams =>
-            request.withRouteParams(request.routeParams ++ routeParams)
-        }.getOrElse(request)
-        action(newRequest)
-    }.getOrElse {
-      notFoundHandler(request)
+            (action, request.routeParams ++ routeParams)
+        }
     }
   }
 
-  def apply(request: Request): Future[Response] = {
+  def apply(request: IORequest, service: Service[Request, Response]): Future[IOResponse] = {
+    val actionWithRouteParams = getActionWithRouteParams(Request.fromUnderlying(request))
+    val requestOut = Request.fromUnderlying(
+      request,
+      actionWithRouteParams.map(_._1),
+      actionWithRouteParams.map(_._2).getOrElse(Map.empty)
+    )
     Try {
-      dispatchRequest(request).recoverWith {
-        case throwable: Throwable =>
-          warn("occurred error", throwable)
-          errorHandler(request, throwable)
+      service(requestOut).map {
+        responseIn =>
+          responseIn.underlying
       }
     }.recoverWith {
       case throwable: Exception =>
         warn("occurred error", throwable)
-        Try(errorHandler(request, throwable))
+        Try(errorHandler(requestOut, throwable))
     }.getOrElse {
       error("occurred other error")
       Future.failed(TrinityException(Some("Other Exception")))
     }
   }
+
 
 }

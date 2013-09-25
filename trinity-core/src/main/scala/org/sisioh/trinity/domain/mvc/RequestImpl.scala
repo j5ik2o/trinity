@@ -6,16 +6,20 @@ import org.sisioh.trinity.domain.io.transport.codec.http.{Version, Method}
 
 class RequestImpl
 (underlying: http.Request,
- val routeParams: Map[String, String] = Map.empty,
- val errorOpt: Option[Throwable] = None)
+ val action: Option[Action[Request, Response]],
+ val routeParams: Map[String, String],
+ val globalSettingsOpt: Option[GlobalSettings[Request, Response]],
+ val errorOpt: Option[Throwable])
   extends AbstractRequestProxy(underlying) with Request {
 
-  def this(httpVersion: Version.Value,
-           method: Method.Value,
+  def this(method: Method.Value,
            uri: String,
+           action: Option[Action[Request, Response]] = None,
            routeParams: Map[String, String] = Map.empty,
-           errorOpt: Option[Throwable] = None) =
-    this(http.Request(httpVersion, method, uri), routeParams, errorOpt)
+           globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+           errorOpt: Option[Throwable] = None,
+           httpVersion: Version.Value = Version.Http11) =
+    this(http.Request(httpVersion, method, uri), action, routeParams, globalSettingsOpt, errorOpt)
 
   val multiParams: Map[String, MultiPartItem] =
     if (method == Method.Post) {
@@ -28,11 +32,9 @@ class RequestImpl
   def path: String = underlying.path
 
   def withRouteParams(routeParams: Map[String, String]): this.type =
-    new RequestImpl(underlying, routeParams).asInstanceOf[this.type]
-
-  def error: Option[Throwable] = errorOpt
+    new RequestImpl(underlying, action, routeParams, globalSettingsOpt, errorOpt).asInstanceOf[this.type]
 
   def withError(error: Throwable): this.type =
-    new RequestImpl(underlying, routeParams, Some(error)).asInstanceOf[this.type]
+    new RequestImpl(underlying, action, routeParams, globalSettingsOpt, Some(error)).asInstanceOf[this.type]
 
 }

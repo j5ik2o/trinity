@@ -4,8 +4,11 @@ import com.google.common.base.Splitter
 import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest, _}
 import scala.collection.JavaConversions._
 import scala.util.Sorting
+import scala.concurrent.Future
 
 trait Request extends RequestProxy {
+
+  val action: Option[Action[Request, Response]]
 
   val routeParams: Map[String, String]
 
@@ -29,21 +32,46 @@ trait Request extends RequestProxy {
 
   def path: String
 
-  def error: Option[Throwable]
+  val errorOpt: Option[Throwable]
 
   def withError(error: Throwable): this.type
+
+  def execute: Future[Response] = action.map(_(this)).getOrElse(notFoundHandler(this))
+
+  val globalSettingsOpt: Option[GlobalSettings[Request, Response]]
+
+  /**
+   * アクションが見つからない場合のリカバリを行うためのハンドラ。
+   *
+   * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
+   */
+  protected def notFoundHandler(request: Request): Future[Response] = {
+    globalSettingsOpt.map {
+      _.notFound.map(_(request)).
+        getOrElse(NotFoundHandleAction(request))
+    }.getOrElse {
+      NotFoundHandleAction(request)
+    }
+  }
 
 }
 
 object Request {
 
-  def apply(underlying: IORequest): Request =
-    new RequestImpl(underlying)
+  def fromUnderlying(underlying: IORequest,
+            action: Option[Action[Request, Response]] = None,
+            routeParams: Map[String, String] = Map.empty,
+            globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+            errorOpt: Option[Throwable] = None): Request =
+    new RequestImpl(underlying, action, routeParams, globalSettingsOpt, errorOpt)
 
-  def apply(version: Version.Value,
-            method: Method.Value,
+  def apply(method: Method.Value,
             uri: String,
-            routeParams: Map[String, String] = Map.empty): Request =
-    new RequestImpl(version, method, uri, routeParams)
+            action: Option[Action[Request, Response]] = None,
+            routeParams: Map[String, String] = Map.empty,
+            globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+            errorOpt: Option[Throwable] = None,
+            version: Version.Value = Version.Http11): Request =
+    new RequestImpl(method, uri, action, routeParams, globalSettingsOpt, errorOpt, version)
 
 }
