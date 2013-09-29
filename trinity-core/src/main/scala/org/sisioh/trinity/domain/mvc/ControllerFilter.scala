@@ -6,15 +6,17 @@ import org.sisioh.trinity.domain.TrinityException
 import scala.util.Try
 import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest}
 import org.sisioh.trinity.domain.io.transport.codec.http.{Response => IOResponse}
-import org.sisioh.trinity.domain.io.{Filter => IOFilter, Service}
-import scala.concurrent.{ExecutionContext, Future}
+import com.twitter.finagle.{Service, Filter}
+import com.twitter.util.Future
+import org.sisioh.trinity.infrastructure.util.FutureConverters._
+import scala.concurrent.ExecutionContext
 
 case class ControllerFilter
 (routeRepository: RouteRepository,
  controllerRepository: ControllerRepository,
  globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None)
-(implicit executor: ExecutionContext)
-  extends IOFilter[IORequest, IOResponse, Request, Response] with LoggingEx {
+(implicit executor : ExecutionContext)
+  extends Filter[IORequest, IOResponse, Request, Response] with LoggingEx {
 
   /**
    * アクションが見つからない場合のリカバリを行うためのハンドラ。
@@ -27,7 +29,7 @@ case class ControllerFilter
         getOrElse(NotFoundHandleAction(request))
     }.getOrElse {
       NotFoundHandleAction(request)
-    }
+    }.toTwitter
   }
 
   /**
@@ -42,7 +44,7 @@ case class ControllerFilter
         getOrElse(ErrorHandleAction(newRequest))
     }.getOrElse {
       ErrorHandleAction(request)
-    }
+    }.toTwitter
   }
 
   protected def getActionWithRouteParams(request: Request): Option[(Action[Request, Response], Map[String, String])] = {
@@ -83,7 +85,7 @@ case class ControllerFilter
         Try(errorHandler(requestOut, throwable))
     }.getOrElse {
       error("occurred other error")
-      Future.failed(TrinityException(Some("Other Exception")))
+      Future.exception(TrinityException(Some("Other Exception")))
     }
   }
 

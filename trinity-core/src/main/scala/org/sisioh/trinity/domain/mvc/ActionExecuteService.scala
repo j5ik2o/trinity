@@ -1,11 +1,14 @@
 package org.sisioh.trinity.domain.mvc
 
-import org.sisioh.trinity.domain.io.Service
 import org.sisioh.scala.toolbox.LoggingEx
-import scala.concurrent.Future
+import com.twitter.finagle.Service
+import com.twitter.util.Future
+import org.sisioh.trinity.infrastructure.util.FutureConverters._
+import scala.concurrent.ExecutionContext
 
-case class ActionExecuteService() extends Service[Request, Response] with LoggingEx {
+case class ActionExecuteService(implicit executor: ExecutionContext)
+  extends Service[Request, Response] with LoggingEx {
 
-  def apply(request: Request): Future[Response] = request.execute
+  def apply(request: Request): Future[Response] = request.execute.toTwitter
 
 }

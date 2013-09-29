@@ -75,14 +75,13 @@ object TrinityBuild extends Build {
         "ch.qos.logback" % "logback-core" % "1.0.7" exclude("org.slf4j", "slf4j-api"),
         "ch.qos.logback" % "logback-classic" % "1.0.7",
         "commons-io" % "commons-io" % "1.3.2",
-        "io.netty" % "netty" % "3.6.6.Final",
-        "com.twitter" % "finagle-core" % "6.6.0" excludeAll(
+        "com.twitter" %% "finagle-core" % "6.5.0" excludeAll(
           ExclusionRule(organization = "log4j", name = "log4j"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-jdk14"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
           ),
-        "com.twitter" % "finagle-http" % "6.6.0" excludeAll(
+        "com.twitter" %% "finagle-http" % "6.5.0" excludeAll(
           ExclusionRule(organization = "log4j", name = "log4j"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-jdk14"),

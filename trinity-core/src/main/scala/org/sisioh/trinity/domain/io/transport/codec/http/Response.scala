@@ -27,7 +27,7 @@ object Response {
   implicit def toTrinity(underlying: NettyResponse): Response =
     ResponseImpl(underlying)
 
-  def apply(version: Version.Value, status: ResponseStatus.Value): Response =
+  def apply(version: Version.Value = Version.Http11, status: ResponseStatus.Value = ResponseStatus.Ok): Response =
     new ResponseImpl(status, version = version)
 
 }
