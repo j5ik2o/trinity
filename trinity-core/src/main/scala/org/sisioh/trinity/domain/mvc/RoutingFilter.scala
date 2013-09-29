@@ -11,11 +11,11 @@ import com.twitter.util.Future
 import org.sisioh.trinity.infrastructure.util.FutureConverters._
 import scala.concurrent.ExecutionContext
 
-case class ControllerFilter
+case class RoutingFilter
 (routeRepository: RouteRepository,
  controllerRepository: ControllerRepository,
  globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None)
-(implicit executor : ExecutionContext)
+(implicit executor: ExecutionContext)
   extends Filter[IORequest, IOResponse, Request, Response] with LoggingEx {
 
   /**
@@ -23,13 +23,10 @@ case class ControllerFilter
    *
    * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
    */
-  protected def notFoundHandler(request: Request): Future[Response] = {
-    globalSettingsOpt.map {
-      _.notFound.map(_(request)).
-        getOrElse(NotFoundHandleAction(request))
-    }.getOrElse {
-      NotFoundHandleAction(request)
-    }.toTwitter
+  protected def notFoundHandler: Option[Action[Request, Response]] = {
+    globalSettingsOpt.flatMap {
+      _.notFound
+    }.orElse(Some(NotFoundHandleAction))
   }
 
   /**
@@ -71,7 +68,7 @@ case class ControllerFilter
     val actionWithRouteParams = getActionWithRouteParams(Request.fromUnderlying(request))
     val requestOut = Request.fromUnderlying(
       request,
-      actionWithRouteParams.map(_._1),
+      actionWithRouteParams.map(_._1).orElse(notFoundHandler),
       actionWithRouteParams.map(_._2).getOrElse(Map.empty)
     )
     Try {

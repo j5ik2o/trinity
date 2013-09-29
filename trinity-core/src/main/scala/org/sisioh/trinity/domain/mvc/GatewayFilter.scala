@@ -5,7 +5,7 @@ import org.sisioh.trinity.domain.io.transport.codec.http.{Response => IOResponse
 import com.twitter.finagle.{Service, Filter}
 import com.twitter.util.Future
 
-case class IOtoMVCFilter()
+case class GatewayFilter()
   extends Filter[IORequest, IOResponse, Request, Response] {
 
   def apply(request: IORequest, service: Service[Request, Response]): Future[IOResponse] = {
