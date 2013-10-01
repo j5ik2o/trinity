@@ -1,6 +1,7 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.routing
 
 import org.sisioh.dddbase.core.lifecycle.sync.{SyncEntityReadableByIterable, SyncRepository}
+import org.sisioh.trinity.domain.mvc.{Response, Request}
 
 trait RouteRepository
   extends SyncRepository[RouteId, Route[Request, Response]]

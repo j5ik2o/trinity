@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.routing
 
 /**
  * Path pattern parser based on Rack::Mount::Strexp, which is used by Rails.

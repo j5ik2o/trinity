@@ -1,10 +1,11 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.routing
 
 import org.sisioh.trinity.domain.io.transport.codec.http.Method
 import org.sisioh.dddbase.core.model.Identity
+import org.sisioh.trinity.domain.mvc.routing.{Route, PathPattern}
 
 /**
- * [[org.sisioh.trinity.domain.mvc.Route]]のための識別子。
+ * [[Route]]のための識別子。
  *
  * @param method
  * @param pathPattern

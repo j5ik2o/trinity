@@ -1,6 +1,7 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.routing
 
 import org.sisioh.dddbase.core.lifecycle.memory.mutable.sync.SyncRepositoryOnMemorySupport
+import org.sisioh.trinity.domain.mvc.{Response, Request}
 
 class RouteRepositoryOnMemory
   extends SyncRepositoryOnMemorySupport[RouteId, Route[Request, Response]]

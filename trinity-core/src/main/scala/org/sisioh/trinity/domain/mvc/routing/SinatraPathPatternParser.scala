@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.routing
 
 /**
  * A Sinatra-compatible route path pattern parser.

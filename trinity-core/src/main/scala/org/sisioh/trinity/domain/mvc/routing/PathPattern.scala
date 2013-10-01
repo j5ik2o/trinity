@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.routing
 
 import scala.collection.mutable.ListBuffer
 import scala.util.matching.Regex

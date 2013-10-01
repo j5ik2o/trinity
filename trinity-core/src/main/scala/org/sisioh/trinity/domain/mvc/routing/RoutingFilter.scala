@@ -1,8 +1,7 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.routing
 
 import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
-import org.sisioh.trinity.domain.TrinityException
 import scala.util.Try
 import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest}
 import org.sisioh.trinity.domain.io.transport.codec.http.{Response => IOResponse}
@@ -10,6 +9,11 @@ import com.twitter.finagle.{Service, Filter}
 import com.twitter.util.Future
 import org.sisioh.trinity.infrastructure.util.FutureConverters._
 import scala.concurrent.ExecutionContext
+import org.sisioh.trinity.domain.mvc._
+import org.sisioh.trinity.domain.TrinityException
+import org.sisioh.trinity.domain.mvc.Response
+import org.sisioh.trinity.domain.mvc.Request
+import scala.Some
 
 case class RoutingFilter
 (routeRepository: RouteRepository,

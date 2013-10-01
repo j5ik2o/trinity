@@ -1,10 +1,11 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.routing
 
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicLong
 import org.sisioh.dddbase.core.model.{Identity, EntityCloneable, Entity}
 import org.sisioh.trinity.domain.io.transport.codec.http.Method
 import scala.concurrent.Future
+import org.sisioh.trinity.domain.mvc.{Controller, Action}
 
 /**
  * ルートを表すエンティティ。
@@ -48,10 +49,10 @@ object Route {
   /**
    * ファクトリメソッド。
    *
-   * @param identity [[org.sisioh.trinity.domain.mvc.RouteId]]
+   * @param identity [[org.sisioh.trinity.domain.mvc.routing.RouteId]]
    * @param controllerId コントローラID
    * @param action [[org.sisioh.trinity.domain.mvc.Action]]
-   * @return [[org.sisioh.trinity.domain.mvc.Route]]
+   * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
   def apply[Req, Rep](identity: RouteId, controllerId: Identity[UUID], action: Action[Req, Rep]): Route[Req, Rep] =
     new RouteImpl(identity, controllerId, action)
@@ -59,10 +60,10 @@ object Route {
   /**
    * ファクトリメソッド。
    *
-   * @param identity [[org.sisioh.trinity.domain.mvc.RouteId]]
+   * @param identity [[org.sisioh.trinity.domain.mvc.routing.RouteId]]
    * @param controller コントローラ
    * @param action [[org.sisioh.trinity.domain.mvc.Action]]
-   * @return [[org.sisioh.trinity.domain.mvc.Route]]
+   * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
   def apply[Req, Rep](identity: RouteId, controller: Controller[Req, Rep], action: Action[Req, Rep]): Route[Req, Rep] =
     new RouteImpl(identity, controller.identity, action)
@@ -71,7 +72,7 @@ object Route {
    * ファクトリメソッド。
    *
    * @param method メソッド
-   * @param pathPattern [[org.sisioh.trinity.domain.mvc.PathPattern]]
+   * @param pathPattern [[PathPattern]]
    * @param controller [[org.sisioh.trinity.domain.mvc.Controller]]
    * @param action [[org.sisioh.trinity.domain.mvc.Action]]
    * @return [[org.sisioh.trinity.domain.mvc.Action]]
@@ -83,10 +84,10 @@ object Route {
    * ファクトリメソッド。
    *
    * @param method メソッド
-   * @param pathPattern [[org.sisioh.trinity.domain.mvc.PathPattern]]
+   * @param pathPattern [[org.sisioh.trinity.domain.mvc.routing.PathPattern]]
    * @param controllerId コントローラID
    * @param action [[org.sisioh.trinity.domain.mvc.Action]]
-   * @return [[org.sisioh.trinity.domain.mvc.Route]]
+   * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
   def apply[Req, Rep](method: Method.Value, pathPattern: PathPattern, controllerId: Identity[UUID], action: Action[Req, Rep]): Route[Req, Rep] =
     apply(RouteId(method, pathPattern), controllerId, action)
@@ -98,8 +99,8 @@ object Route {
    * @param path パス
    * @param controllerId コントローラID
    * @param action [[org.sisioh.trinity.domain.mvc.Action]]
-   * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.PathPatternParser]]
-   * @return [[org.sisioh.trinity.domain.mvc.Route]]
+   * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.routing.PathPatternParser]]
+   * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
   def apply[Req, Rep](method: Method.Value, path: String, controllerId: Identity[UUID], action: Action[Req, Rep])
                      (implicit pathPatternParser: PathPatternParser): Route[Req, Rep] = {
@@ -114,8 +115,8 @@ object Route {
    * @param path パス
    * @param controller コントローラ
    * @param action [[org.sisioh.trinity.domain.mvc.Action]]
-   * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.PathPatternParser]]
-   * @return [[org.sisioh.trinity.domain.mvc.Route]]
+   * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.routing.PathPatternParser]]
+   * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
   def apply[Req, Rep](method: Method.Value, path: String, controller: Controller[Req, Rep], action: Action[Req, Rep])
                      (implicit pathPatternParser: PathPatternParser): Route[Req, Rep] =
@@ -124,7 +125,7 @@ object Route {
   /**
    * エクストラクタメソッド。
    *
-   * @param route [[org.sisioh.trinity.domain.mvc.Route]]
+   * @param route [[org.sisioh.trinity.domain.mvc.routing.Route]]
    * @return 構成要素
    */
   def unapply[Req, Rep](route: Route[Req, Rep]): Option[(RouteId, Identity[UUID], Action[Req, Rep])] =
