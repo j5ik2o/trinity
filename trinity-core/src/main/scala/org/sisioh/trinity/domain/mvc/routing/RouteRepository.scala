@@ -6,3 +6,10 @@ import org.sisioh.trinity.domain.mvc.{Response, Request}
 trait RouteRepository
   extends SyncRepository[RouteId, Route[Request, Response]]
   with SyncEntityReadableByIterable[RouteId, Route[Request, Response]]
+
+object RouteRepository {
+
+  def ofMemory: RouteRepository = RouteRepositoryOnMemory()
+
+
+}

@@ -10,6 +10,8 @@ trait Request extends RequestProxy {
 
   val action: Option[Action[Request, Response]]
 
+  def withAction(action: Option[Action[Request, Response]]): this.type
+
   val routeParams: Map[String, String]
 
   def withRouteParams(routeParams: Map[String, String]): this.type
@@ -36,23 +38,9 @@ trait Request extends RequestProxy {
 
   def withError(error: Throwable): this.type
 
-  def execute: Future[Response] = action.map(_(this)).getOrElse(notFoundHandler(this))
+  def execute(defaultAction: Action[Request, Response]): Future[Response] = action.map(_(this)).getOrElse(defaultAction(this))
 
   val globalSettingsOpt: Option[GlobalSettings[Request, Response]]
-
-  /**
-   * アクションが見つからない場合のリカバリを行うためのハンドラ。
-   *
-   * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
-   */
-  protected def notFoundHandler(request: Request): Future[Response] = {
-    globalSettingsOpt.map {
-      _.notFound.map(_(request)).
-        getOrElse(NotFoundHandleAction(request))
-    }.getOrElse {
-      NotFoundHandleAction(request)
-    }
-  }
 
 }
 
@@ -65,8 +53,8 @@ object Request {
             errorOpt: Option[Throwable] = None): Request =
     new RequestImpl(underlying, action, routeParams, globalSettingsOpt, errorOpt)
 
-  def apply(method: Method.Value,
-            uri: String,
+  def apply(method: Method.Value = Method.Get,
+            uri: String = "/",
             action: Option[Action[Request, Response]] = None,
             routeParams: Map[String, String] = Map.empty,
             globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,

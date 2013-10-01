@@ -17,6 +17,6 @@ object Response {
 
   def apply(underlying: http.Response): Response = new ResponseImpl(underlying)
 
-  def apply(version: Version.Value, status: ResponseStatus.Value): Response = new ResponseImpl(version, status)
+  def apply(version: Version.Value = Version.Http11, status: ResponseStatus.Value = ResponseStatus.Ok): Response = new ResponseImpl(version, status)
 
 }

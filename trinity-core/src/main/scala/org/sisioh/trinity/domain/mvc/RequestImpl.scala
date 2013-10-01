@@ -31,6 +31,9 @@ class RequestImpl
 
   def path: String = underlying.path
 
+  def withAction(action: Option[Action[Request, Response]]): this.type =
+    new RequestImpl(underlying, action, routeParams, globalSettingsOpt, errorOpt).asInstanceOf[this.type]
+
   def withRouteParams(routeParams: Map[String, String]): this.type =
     new RequestImpl(underlying, action, routeParams, globalSettingsOpt, errorOpt).asInstanceOf[this.type]
 
