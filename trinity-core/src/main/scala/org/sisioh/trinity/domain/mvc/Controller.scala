@@ -4,11 +4,14 @@ import java.util.UUID
 import org.sisioh.dddbase.core.model.{EntityCloneable, Identity, Entity}
 
 
-trait Controller[Req, Rep]
+trait Controller
   extends Entity[Identity[UUID]]
-  with EntityCloneable[Identity[UUID], Controller[Req, Rep]]
-  with Ordered[Controller[Req, Rep]] {
+  with EntityCloneable[Identity[UUID], Controller]
+  with Ordered[Controller] {
 
   val identity: Identity[UUID] = Identity(UUID.randomUUID())
+
+  def compare(that: Controller): Int =
+    identity.value.compareTo(that.identity.value)
 
 }
