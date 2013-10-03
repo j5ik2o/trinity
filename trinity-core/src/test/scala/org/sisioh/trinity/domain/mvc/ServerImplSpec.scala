@@ -39,7 +39,7 @@ class ServerImplSpec extends Specification {
     }
 
     def around[T: AsResult](t: => T): Result = {
-      running(new ServerImpl(actionOpt = actionOpt))(AsResult(t))
+      running(new ServerImpl(bindAddress = new InetSocketAddress(8080), actionOpt = actionOpt))(AsResult(t))
     }
 
   }

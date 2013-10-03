@@ -2,14 +2,8 @@ package org.sisioh.trinity.domain.mvc.routing
 
 import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
-import com.twitter.finagle.{Service, Filter}
-import com.twitter.util.Future
-import org.sisioh.trinity.infrastructure.util.FutureConverters._
-import scala.concurrent.ExecutionContext
 import org.sisioh.trinity.domain.mvc._
-import org.sisioh.trinity.domain.mvc.Response
-import org.sisioh.trinity.domain.mvc.Request
-import scala.Some
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
  * ルーティング用フィルター。
@@ -49,7 +43,7 @@ case class RoutingFilter
         getOrElse(ErrorHandleAction(newRequest))
     }.getOrElse {
       ErrorHandleAction(request)
-    }.toTwitter
+    }
   }
 
   protected def getActionWithRouteParams(request: Request): Option[(Action[Request, Response], Map[String, String])] = {
@@ -72,7 +66,7 @@ case class RoutingFilter
     }
   }
 
-  def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
+  def apply(request: Request, service: Action[Request, Response]): Future[Response] = {
     if (request.action.isDefined) {
       service(request)
     } else {

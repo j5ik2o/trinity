@@ -1,58 +1,65 @@
 package org.sisioh.trinity.domain.mvc
 
-import scala.concurrent._
-import org.sisioh.trinity.domain.io.FinagleToIOFilter
 import com.twitter.finagle.builder.ServerBuilder
+import com.twitter.finagle.builder.{Server => FinagleServer}
 import com.twitter.finagle.http.{Http, RichHttp}
-import java.net.{InetSocketAddress, SocketAddress}
-import org.sisioh.trinity.domain.mvc.routing.{Route, RouteRepository, RoutingFilter}
-import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import com.twitter.finagle.http.{Response => FinagleResponse}
-import com.twitter.finagle.builder.{Server => FinagleServer}
-import org.sisioh.trinity.infrastructure.util.FutureConverters._
+import com.twitter.finagle.{Filter => FinagleFilter, Service}
+import java.net.SocketAddress
 import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
+import org.sisioh.trinity.domain.io.FinagleToIOFilter
+import org.sisioh.trinity.infrastructure.util.FutureConverters._
+import scala.collection.mutable.ListBuffer
+import scala.concurrent._
 
 class ServerImpl
-(name: String = "trinity",
- endPointAddress: SocketAddress = new InetSocketAddress(8080),
+(bindAddress: SocketAddress,
+ name: String = "trinity",
  actionOpt: Option[Action[Request, Response]] = None,
  globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None)
-(implicit executor: ExecutionContext) extends Server {
+ extends Server {
 
   implicit val ctx = SyncEntityIOContext
   private var server: FinagleServer = _
-  private val routeRepository = RouteRepository.ofMemory
-  private val controllerRepository = ControllerRepository.ofMemory
-  private val routingFilter = RoutingFilter(routeRepository, controllerRepository, globalSettingsOpt)
-  private val actionExecuteService = ActionExecuteService(globalSettingsOpt)
 
-  def registerControllers(controllers: Seq[Controller[Request, Response]]): Unit = {
-    controllerRepository.store(controllers)
+  private val finagleFilterBuffers = new ListBuffer[FinagleFilter[Request, Response, Request, Response]]()
+
+  def registerFilters(filters: Seq[Filter[Request, Response, Request, Response]])(implicit executor: ExecutionContext) {
+    registerFinagleFilters(filters.map {
+      Filter toFinagleFilter _
+    })
   }
 
-  def registerController(controller: Controller[Request, Response]): Unit = {
-    controllerRepository.store(controller)
+  def registerFilter(filter: Filter[Request, Response, Request, Response])(implicit executor: ExecutionContext) {
+    registerFinagleFilter(Filter.toFinagleFilter(filter))
   }
 
-  def registerRoutes(routes: Seq[Route[Request, Response]]): Unit = {
-    routeRepository.store(routes)
+  protected def registerFinagleFilters(filters: Seq[FinagleFilter[Request, Response, Request, Response]]) {
+    finagleFilterBuffers.appendAll(filters)
   }
 
-  def registerRoute(route: Route[Request, Response]): Unit = {
-    routeRepository.store(route)
+  protected def registerFinagleFilter(filter: FinagleFilter[Request, Response, Request, Response]) {
+    finagleFilterBuffers.append(filter)
+  }
+
+  protected def applyFinagleFilters(baseService: Service[Request, Response]) = {
+    finagleFilterBuffers.foldRight(baseService) {
+      (b, a) =>
+        b andThen a
+    }
   }
 
   def start()(implicit executor: ExecutionContext): Future[Unit] = future {
+    val actionExecuteService = ActionExecuteService(globalSettingsOpt)
     val service: Service[FinagleRequest, FinagleResponse] =
       FinagleToIOFilter() andThen
         GatewayFilter(actionOpt) andThen
-        routingFilter andThen
-        actionExecuteService
+        applyFinagleFilters(actionExecuteService)
 
     server = ServerBuilder()
       .codec(RichHttp[FinagleRequest](Http()))
-      .bindTo(endPointAddress)
+      .bindTo(bindAddress)
       .name(name)
       .build(service)
   }
