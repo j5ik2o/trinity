@@ -3,11 +3,11 @@ package org.sisioh.trinity.domain.mvc.routing
 import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc._
-import RouteDsl.{ControllerDef, ActionDef, PathDef}
-import scala.concurrent.{Future, ExecutionContext}
 import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, ErrorHandleAction, Action}
-import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.controller.ControllerRepository
+import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternParser, PathPatternParser}
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
  * ルーティング用フィルター。
@@ -20,7 +20,7 @@ import org.sisioh.trinity.domain.mvc.controller.ControllerRepository
 case class RoutingFilter
 (routeRepository: RouteRepository,
  controllerRepository: ControllerRepository,
- globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None)
+ globalSettingsOpt: Option[GlobalSettings[Request, Response]])
 (implicit executor: ExecutionContext)
   extends Filter[Request, Response, Request, Response] with LoggingEx {
 
@@ -85,18 +85,20 @@ case class RoutingFilter
 
 object RoutingFilter {
 
-  def apply(actionDefs: => Seq[ActionDef])
-           (implicit executor: ExecutionContext): RoutingFilter = {
-    implicit val pathPatternParser = new SinatraPathPatternParser
-    implicit val ctx = SyncEntityIOContext
+  private implicit val ctx = SyncEntityIOContext
+
+  def routes(routeDefs: (PathPatternParser) => Seq[RouteDef])
+            (implicit executor: ExecutionContext,
+             globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+             pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
     val routeRepository = RouteRepository.ofMemory
     val controllerRepository = ControllerRepository.ofMemory
-    actionDefs.foreach {
-      case ActionDef(ControllerDef(PathDef(method, path), controller), action) =>
+    routeDefs(pathPatternParser).foreach {
+      case RouteDef(method, pathPattern, controller, action) =>
         controllerRepository.store(controller)
-        routeRepository.store(Route(method, path, controller, action))
+        routeRepository.store(Route(method, pathPattern, controller, action))
     }
-    RoutingFilter(routeRepository, controllerRepository)
+    RoutingFilter(routeRepository, controllerRepository, globalSettingsOpt)
   }
 
 }

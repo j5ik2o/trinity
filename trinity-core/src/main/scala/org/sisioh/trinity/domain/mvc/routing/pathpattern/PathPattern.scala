@@ -1,8 +1,8 @@
-package org.sisioh.trinity.domain.mvc.routing
+package org.sisioh.trinity.domain.mvc.routing.pathpattern
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.util.matching.Regex
-import scala.collection.mutable
 
 /**
  * A path pattern optionally matches a request path and extracts path

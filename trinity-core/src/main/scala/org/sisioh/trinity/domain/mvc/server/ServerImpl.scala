@@ -1,6 +1,5 @@
 package org.sisioh.trinity.domain.mvc.server
 
-import com.twitter.finagle.Filter
 import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.builder.{Server => FinagleServer}
 import com.twitter.finagle.http.{Http, RichHttp}

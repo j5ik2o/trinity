@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc.routing
+package org.sisioh.trinity.domain.mvc.routing.pathpattern
 
 import scala.util.parsing.combinator.RegexParsers
 

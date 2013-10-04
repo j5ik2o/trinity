@@ -1,9 +1,9 @@
-package org.sisioh.trinity.domain.mvc.routing
+package org.sisioh.trinity.domain.mvc.routing.pathpattern
 
 /**
  * A Sinatra-compatible route path pattern parser.
  */
-class SinatraPathPatternParser extends RegexPathPatternParser {
+case class SinatraPathPatternParser() extends RegexPathPatternParser {
 
   def apply(pattern: String): PathPattern =
     parseAll(pathPattern, pattern) match {
@@ -39,6 +39,8 @@ class SinatraPathPatternParser extends RegexPathPatternParser {
 }
 
 object SinatraPathPatternParser {
+
   def apply(pattern: String): PathPattern = new SinatraPathPatternParser().apply(pattern)
+
 }
 

@@ -1,9 +1,10 @@
-package org.sisioh.trinity.domain.mvc.routing
+package org.sisioh.trinity.domain.mvc.routing.pathpattern
 
 /**
  * Path pattern parser based on Rack::Mount::Strexp, which is used by Rails.
  */
-class RailsPathPatternParser extends RegexPathPatternParser {
+case class RailsPathPatternParser() extends RegexPathPatternParser {
+
   def apply(pattern: String): PathPattern =
     parseAll(target, pattern) match {
       case Success(target, _) => target

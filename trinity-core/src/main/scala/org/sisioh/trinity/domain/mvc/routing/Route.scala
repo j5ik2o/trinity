@@ -7,10 +7,12 @@ import org.sisioh.trinity.domain.io.transport.codec.http.Method
 import scala.concurrent.Future
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.controller.Controller
+import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPatternParser, PathPattern}
 
 /**
  * ルートを表すエンティティ。
  */
+private[mvc]
 trait Route[Req, Rep]
   extends Entity[RouteId]
   with EntityCloneable[RouteId, Route[Req, Rep]]
@@ -52,7 +54,7 @@ object Route {
    *
    * @param identity [[org.sisioh.trinity.domain.mvc.routing.RouteId]]
    * @param controllerId コントローラID
-   * @param action [[Action]]
+   * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
    * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
   def apply[Req, Rep](identity: RouteId, controllerId: Identity[UUID], action: Action[Req, Rep]): Route[Req, Rep] =
@@ -63,7 +65,7 @@ object Route {
    *
    * @param identity [[org.sisioh.trinity.domain.mvc.routing.RouteId]]
    * @param controller コントローラ
-   * @param action [[Action]]
+   * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
    * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
   def apply[Req, Rep](identity: RouteId, controller: Controller, action: Action[Req, Rep]): Route[Req, Rep] =
@@ -73,10 +75,10 @@ object Route {
    * ファクトリメソッド。
    *
    * @param method メソッド
-   * @param pathPattern [[org.sisioh.trinity.domain.mvc.routing.PathPattern]]
-   * @param controller [[Controller]]
-   * @param action [[Action]]
-   * @return [[Action]]
+   * @param pathPattern [[PathPattern]]
+   * @param controller [[org.sisioh.trinity.domain.mvc.controller.Controller]]
+   * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
+   * @return [[org.sisioh.trinity.domain.mvc.action.Action]]
    */
   def apply[Req, Rep](method: Method.Value, pathPattern: PathPattern, controller: Controller, action: Action[Req, Rep]): Route[Req, Rep] =
     apply(method, pathPattern, controller.identity, action)
@@ -85,9 +87,9 @@ object Route {
    * ファクトリメソッド。
    *
    * @param method メソッド
-   * @param pathPattern [[org.sisioh.trinity.domain.mvc.routing.PathPattern]]
+   * @param pathPattern [[PathPattern]]
    * @param controllerId コントローラID
-   * @param action [[Action]]
+   * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
    * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
   def apply[Req, Rep](method: Method.Value, pathPattern: PathPattern, controllerId: Identity[UUID], action: Action[Req, Rep]): Route[Req, Rep] =
@@ -99,8 +101,8 @@ object Route {
    * @param method メソッド
    * @param path パス
    * @param controllerId コントローラID
-   * @param action [[Action]]
-   * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.routing.PathPatternParser]]
+   * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
+   * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPatternParser]]
    * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
   def apply[Req, Rep](method: Method.Value, path: String, controllerId: Identity[UUID], action: Action[Req, Rep])
@@ -115,8 +117,8 @@ object Route {
    * @param method メソッド
    * @param path パス
    * @param controller コントローラ
-   * @param action [[Action]]
-   * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.routing.PathPatternParser]]
+   * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
+   * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPatternParser]]
    * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
   def apply[Req, Rep](method: Method.Value, path: String, controller: Controller, action: Action[Req, Rep])

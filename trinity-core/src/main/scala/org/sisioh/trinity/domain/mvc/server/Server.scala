@@ -2,7 +2,7 @@ package org.sisioh.trinity.domain.mvc.server
 
 import java.net.InetSocketAddress
 import java.util.concurrent.TimeUnit
-import org.sisioh.trinity.domain.mvc.Filter
+import org.sisioh.trinity.domain.mvc.{GlobalSettings, Filter}
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import scala.concurrent.duration.Duration
