@@ -1,0 +1,75 @@
+package org.sisioh.trinity.domain.mvc.controller
+
+import org.sisioh.trinity.domain.io.transport.codec.http.Method
+import org.sisioh.trinity.domain.mvc.action.Action
+import org.sisioh.trinity.domain.mvc.http.{Request, Response}
+import org.sisioh.trinity.domain.mvc.routing.RouteDef
+import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPattern, PathPatternParser}
+import scala.collection.mutable
+import scala.concurrent.Future
+import scala.util.matching.Regex
+
+trait ScalatraLikeController extends Controller {
+
+  implicit val pathPatternParser: PathPatternParser
+
+  protected val routeDefs = mutable.Set.empty[RouteDef]
+
+  protected def get(path: String)(callback: Request => Future[Response]) {
+    addRoute(Method.Get, path)(callback)
+  }
+
+  protected def get(regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
+    addRoute(Method.Get, regex, captureGroupNames)(callback)
+  }
+
+  protected def delete(path: String)(callback: Request => Future[Response]) {
+    addRoute(Method.Delete, path)(callback)
+  }
+
+  protected def delete(regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
+    addRoute(Method.Delete, regex, captureGroupNames)(callback)
+  }
+
+  protected def post(path: String)(callback: Request => Future[Response]) {
+    addRoute(Method.Post, path)(callback)
+  }
+
+  protected def post(regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
+    addRoute(Method.Post, regex, captureGroupNames)(callback)
+  }
+
+  protected def put(path: String)(callback: Request => Future[Response]) {
+    addRoute(Method.Put, path)(callback)
+  }
+
+  protected def head(path: String)(callback: Request => Future[Response]) {
+    addRoute(Method.Head, path)(callback)
+  }
+
+  protected def head(regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
+    addRoute(Method.Head, regex, captureGroupNames)(callback)
+  }
+
+  protected def patch(path: String)(callback: Request => Future[Response]) {
+    addRoute(Method.Post, path)(callback)
+  }
+
+  protected def patch(regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
+    addRoute(Method.Post, regex, captureGroupNames)(callback)
+  }
+
+  protected def addRoute(method: Method.Value, path: String)(callback: Request => Future[Response]) {
+    val route = RouteDef(method, pathPatternParser(path), this, Action(callback))
+    routeDefs.add(route)
+  }
+
+  protected def addRoute(method: Method.Value, regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
+    val route = RouteDef(method, PathPattern(regex, captureGroupNames), this, Action(callback))
+    routeDefs.add(route)
+  }
+
+  def toRouteDefs: Seq[RouteDef] = routeDefs.toSeq
+
+
+}

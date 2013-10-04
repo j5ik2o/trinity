@@ -4,7 +4,7 @@ import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc._
 import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, ErrorHandleAction, Action}
-import org.sisioh.trinity.domain.mvc.controller.ControllerRepository
+import org.sisioh.trinity.domain.mvc.controller.{ScalatraLikeController, ControllerRepository}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternParser, PathPatternParser}
 import scala.concurrent.{Future, ExecutionContext}
@@ -86,6 +86,16 @@ case class RoutingFilter
 object RoutingFilter {
 
   private implicit val ctx = SyncEntityIOContext
+
+  def routeControllers(controllers: Seq[ScalatraLikeController])
+                      (implicit executor: ExecutionContext,
+                       globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+                       pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
+    routes {
+      pathPatternParser =>
+        controllers.flatMap(_.toRouteDefs)
+    }
+  }
 
   def routes(routeDefs: (PathPatternParser) => Seq[RouteDef])
             (implicit executor: ExecutionContext,
