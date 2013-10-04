@@ -12,6 +12,9 @@ import org.specs2.specification.Scope
 import org.specs2.execute.{Result, AsResult}
 import scala.concurrent.duration.Duration
 import com.twitter.util.{Await => TAwait}
+import org.sisioh.trinity.domain.mvc.action.Action
+import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+import org.sisioh.trinity.domain.mvc.server.{ServerConfig, Server}
 
 class ServerImplSpec extends Specification {
 
@@ -39,7 +42,7 @@ class ServerImplSpec extends Specification {
     }
 
     def around[T: AsResult](t: => T): Result = {
-      val server = new ServerImpl(ServerConfig(), actionOpt = actionOpt, globalSettingsOpt = None)
+      val server = Server(ServerConfig(), actionOpt = actionOpt, globalSettingsOpt = None)
       running(server)(AsResult(t))
     }
 

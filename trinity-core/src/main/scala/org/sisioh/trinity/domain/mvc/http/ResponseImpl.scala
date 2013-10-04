@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.http
 
 import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.AbstractResponseProxy
 import org.sisioh.trinity.domain.io.transport.codec.http

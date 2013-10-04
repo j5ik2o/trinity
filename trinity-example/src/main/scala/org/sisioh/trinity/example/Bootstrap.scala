@@ -1,11 +1,15 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.example
 
 import java.util.concurrent.Executors
 import org.sisioh.trinity.domain.io.transport.codec.http.Method
+import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Future, Await, ExecutionContext}
+import org.sisioh.trinity.domain.mvc.http.Response
+import org.sisioh.trinity.domain.mvc.server.{ServerConfigLoader, Server}
+import org.sisioh.trinity.domain.mvc.controller.Controller
 
 object Bootstrap extends App with Controller {
 

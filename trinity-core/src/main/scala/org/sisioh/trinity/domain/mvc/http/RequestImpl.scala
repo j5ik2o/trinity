@@ -1,8 +1,10 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.http
 
 import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.AbstractRequestProxy
 import org.sisioh.trinity.domain.io.transport.codec.http
 import org.sisioh.trinity.domain.io.transport.codec.http.{Version, Method}
+import org.sisioh.trinity.domain.mvc.action.Action
+import org.sisioh.trinity.domain.mvc.GlobalSettings
 
 class RequestImpl
 (underlying: http.Request,

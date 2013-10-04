@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.http
 
 import java.io._
 import org.jboss.netty.handler.codec.http.multipart.{MixedFileUpload, HttpPostRequestDecoder}
@@ -8,6 +8,7 @@ import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest}
 import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
+import org.sisioh.trinity.domain.mvc.http
 
 
 /**
@@ -42,10 +43,10 @@ case class MultiPartItem(mixedFileUpload: MixedFileUpload, ioChunkSize: Int = 10
 object MultiPartItem {
 
   /**
-   * リクエストから[[org.sisioh.trinity.domain.mvc.MultiPartItem]]のマップを取得する。
+   * リクエストから[[http.MultiPartItem]]のマップを取得する。
    *
    * @param request `com.twitter.finagle.http.Request`
-   * @return [[org.sisioh.trinity.domain.mvc.MultiPartItem]]のマップ
+   * @return [[http.MultiPartItem]]のマップ
    */
   def apply(request: Request): Map[String, MultiPartItem] = {
     val httpPostRequestDecoder = new HttpPostRequestDecoder(IORequest.toNetty(request))

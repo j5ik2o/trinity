@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.http
 
 import org.sisioh.dddbase.core.lifecycle.ValueObjectBuilder
 import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}

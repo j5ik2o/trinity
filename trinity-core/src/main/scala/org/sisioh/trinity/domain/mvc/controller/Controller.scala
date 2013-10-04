@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.controller
 
 import java.util.UUID
 import org.sisioh.dddbase.core.model.{EntityCloneable, Identity, Entity}

@@ -5,6 +5,7 @@ import com.twitter.finagle.{Filter => FinagleFilter}
 import com.twitter.util.{Future => TFuture}
 import org.sisioh.trinity.infrastructure.util.FutureConverters._
 import scala.concurrent.{Future => SFuture, ExecutionContext}
+import org.sisioh.trinity.domain.mvc.action.Action
 
 trait Filter[-ReqIn, +RepOut, +ReqOut, -RepIn]
   extends ((ReqIn, Action[ReqOut, RepIn]) => SFuture[RepOut]) {

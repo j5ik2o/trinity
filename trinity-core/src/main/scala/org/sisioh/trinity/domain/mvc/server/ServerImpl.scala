@@ -1,5 +1,6 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.server
 
+import com.twitter.finagle.Filter
 import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.builder.{Server => FinagleServer}
 import com.twitter.finagle.http.{Http, RichHttp}
@@ -7,21 +8,25 @@ import com.twitter.finagle.http.{Request => FinagleRequest}
 import com.twitter.finagle.http.{Response => FinagleResponse}
 import com.twitter.finagle.tracing.{NullTracer, Tracer}
 import com.twitter.finagle.{Filter => FinagleFilter, Service}
+import com.twitter.ostrich.admin.RuntimeEnvironment
 import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.io.FinagleToIOFilter
+import org.sisioh.trinity.domain.mvc.action.{ActionExecuteService, Action}
+import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+import org.sisioh.trinity.domain.mvc.{GatewayFilter, GlobalSettings, Filter}
 import org.sisioh.trinity.infrastructure.util.DurationConverters._
 import org.sisioh.trinity.infrastructure.util.FutureConverters._
 import scala.collection.mutable.ListBuffer
 import scala.concurrent._
-import com.twitter.ostrich.admin.RuntimeEnvironment
 
 private[mvc]
 class ServerImpl
 (serverConfig: ServerConfig,
  actionOpt: Option[Action[Request, Response]],
- filterOpt: Option[Filter[Request, Response, Request, Response]] = None,
+ filterOpt: Option[Filter[Request, Response, Request, Response]],
  globalSettingsOpt: Option[GlobalSettings[Request, Response]])
+(implicit executor: ExecutionContext)
   extends Server with LoggingEx {
 
   implicit val ctx = SyncEntityIOContext

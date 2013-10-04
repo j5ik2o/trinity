@@ -1,8 +1,8 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.controller
 
 import java.util.UUID
-import org.sisioh.dddbase.core.model.Identity
 import org.sisioh.dddbase.core.lifecycle.sync.SyncRepository
+import org.sisioh.dddbase.core.model.Identity
 
 trait ControllerRepository
   extends SyncRepository[Identity[UUID], Controller]

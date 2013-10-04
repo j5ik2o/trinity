@@ -1,7 +1,7 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.server
 
-import scala.concurrent.duration.Duration
 import java.net.SocketAddress
+import scala.concurrent.duration.Duration
 
 case class ServerConfig
 (nameOpt: Option[String] = None,

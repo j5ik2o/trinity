@@ -1,10 +1,12 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.http
 
 import com.google.common.base.Splitter
 import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest, _}
+import org.sisioh.trinity.domain.mvc.GlobalSettings
+import org.sisioh.trinity.domain.mvc.action.Action
 import scala.collection.JavaConversions._
-import scala.util.Sorting
 import scala.concurrent.Future
+import scala.util.Sorting
 
 trait Request extends RequestProxy {
 

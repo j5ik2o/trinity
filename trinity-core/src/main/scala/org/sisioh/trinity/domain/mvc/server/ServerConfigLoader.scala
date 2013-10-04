@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.server
 
 import java.io.File
 import java.net.InetSocketAddress
