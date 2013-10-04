@@ -4,14 +4,15 @@ import org.sisioh.dddbase.core.lifecycle.ValueObjectBuilder
 import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}
 import org.sisioh.trinity.domain.io.transport.codec.http.{CharsetUtil, Cookie, ResponseStatus, Version}
 import scala.collection.mutable.Map
+import scala.collection.mutable
 
-class ResponseBuilder extends ValueObjectBuilder[Response, ResponseBuilder] {
+case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilder] {
 
   private var version: Version.Value = _
 
   private var status: ResponseStatus.Value = _
 
-  private val headers = Map.empty[String, Any]
+  private val headers = mutable.Map.empty[String, Any]
 
   private var cookies: Seq[Cookie] = _
 
