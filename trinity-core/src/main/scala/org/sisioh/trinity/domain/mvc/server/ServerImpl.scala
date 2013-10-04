@@ -91,11 +91,21 @@ class ServerImpl
       .tracer(createTracer)
       .name(serverConfig.nameOpt.getOrElse(Server.defaultName))
       .build(service)
+
+    globalSettingsOpt.foreach {
+      globalSettings =>
+        globalSettings.onStart(this)
+    }
   }
 
   def stop()(implicit executor: ExecutionContext): Future[Unit] = {
     val awaitDuration = serverConfig.awaitDurationOpt.getOrElse(Server.defaultAwaitDuration).toTwitter
-    server.close(awaitDuration).toScala
+    val result = server.close(awaitDuration).toScala
+    globalSettingsOpt.foreach {
+      globalSettings =>
+        globalSettings.onStop(this)
+    }
+    result
   }
 
 }
