@@ -8,6 +8,7 @@ import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternPars
 import org.sisioh.trinity.domain.mvc.server.{ServerConfigLoader, Server}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future, Await}
+import org.sisioh.trinity.domain.mvc.Environment
 
 object ScalatraLikeApplication extends App with ScalatraLikeController {
 
@@ -45,7 +46,7 @@ object ScalatraLikeApplication extends App with ScalatraLikeController {
 
   val routingFilter = RoutingFilter.routeControllers(Seq(this))
 
-  val server = Server(ServerConfigLoader.load, filterOpt = Some(routingFilter))
+  val server = Server(ServerConfigLoader.load(Environment.Development), filterOpt = Some(routingFilter))
   Await.result(server.start(), Duration.Inf)
 
 }

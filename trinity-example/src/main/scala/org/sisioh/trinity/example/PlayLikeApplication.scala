@@ -2,15 +2,17 @@ package org.sisioh.trinity.example
 
 import java.util.concurrent.Executors
 import org.sisioh.trinity.domain.io.transport.codec.http.Method
+import org.sisioh.trinity.domain.mvc.Environment
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import org.sisioh.trinity.domain.mvc.controller.Controller
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
-import org.sisioh.trinity.domain.mvc.routing.{RoutingFilter}
+import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
+import org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPattern
 import org.sisioh.trinity.domain.mvc.server.{ServerConfigLoader, Server}
+import org.sisioh.trinity.domain.mvc.stats.Stats
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Future, Await, ExecutionContext}
-import org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPattern
 
 object PlayLikeApplication extends App with Controller {
 
@@ -18,7 +20,9 @@ object PlayLikeApplication extends App with Controller {
 
   def helloWorld = SimpleAction {
     request =>
-      Future.successful(Response().withContentAsString("Hello World!"))
+      Stats.timeFutureNanos("hello") {
+        Future.successful(Response().withContentAsString("Hello World!"))
+      }
   }
 
   def getUser = SimpleAction {
@@ -58,11 +62,11 @@ object PlayLikeApplication extends App with Controller {
             printText(request.routeParams("text"))(request)
         },
         // 正規表現を指定したい場合
-        Method.Get % PathPattern("""/(abc.*)""".r, List("path")) % this % getPath
+        Method.Get % PathPattern( """/(abc.*)""".r, List("path")) % this % getPath
       )
   }
 
-  val server = Server(ServerConfigLoader.load, filterOpt = Some(routingFilter))
+  val server = Server(ServerConfigLoader.load(Environment.Development), filterOpt = Some(routingFilter))
 
   Await.result(server.start(), Duration.Inf)
 

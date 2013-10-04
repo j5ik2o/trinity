@@ -7,6 +7,8 @@ case class ServerConfig
 (nameOpt: Option[String] = None,
  bindAddressOpt: Option[SocketAddress] = None,
  awaitDurationOpt: Option[Duration] = None,
+ statsEnabled: Boolean = false,
+ statsPort: Option[Int] = None,
  maxRequestSizeOpt: Option[Int] = None,
  maxResponseSizeOpt: Option[Int] = None,
  maxConcurrentRequestsOpt: Option[Int] = None,
