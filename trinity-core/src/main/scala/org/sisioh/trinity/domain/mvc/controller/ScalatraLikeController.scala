@@ -13,13 +13,14 @@ trait ScalatraLikeController extends Controller {
 
   implicit val pathPatternParser: PathPatternParser
 
-  protected val routeDefs = mutable.Set.empty[RouteDef]
+  protected val routeDefs = mutable.ListBuffer.empty[RouteDef]
 
   protected def get(path: String)(callback: Request => Future[Response]) {
     addRoute(Method.Get, path)(callback)
   }
 
-  protected def get(regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
+  protected def get(regex: Regex, captureGroupNames: List[String] = Nil)
+                   (callback: Request => Future[Response]) {
     addRoute(Method.Get, regex, captureGroupNames)(callback)
   }
 
@@ -27,7 +28,8 @@ trait ScalatraLikeController extends Controller {
     addRoute(Method.Delete, path)(callback)
   }
 
-  protected def delete(regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
+  protected def delete(regex: Regex, captureGroupNames: List[String] = Nil)
+                      (callback: Request => Future[Response]) {
     addRoute(Method.Delete, regex, captureGroupNames)(callback)
   }
 
@@ -35,7 +37,8 @@ trait ScalatraLikeController extends Controller {
     addRoute(Method.Post, path)(callback)
   }
 
-  protected def post(regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
+  protected def post(regex: Regex, captureGroupNames: List[String] = Nil)
+                    (callback: Request => Future[Response]) {
     addRoute(Method.Post, regex, captureGroupNames)(callback)
   }
 
@@ -47,7 +50,8 @@ trait ScalatraLikeController extends Controller {
     addRoute(Method.Head, path)(callback)
   }
 
-  protected def head(regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
+  protected def head(regex: Regex, captureGroupNames: List[String] = Nil)
+                    (callback: Request => Future[Response]) {
     addRoute(Method.Head, regex, captureGroupNames)(callback)
   }
 
@@ -61,12 +65,12 @@ trait ScalatraLikeController extends Controller {
 
   protected def addRoute(method: Method.Value, path: String)(callback: Request => Future[Response]) {
     val route = RouteDef(method, pathPatternParser(path), this, Action(callback))
-    routeDefs.add(route)
+    routeDefs.append(route)
   }
 
   protected def addRoute(method: Method.Value, regex: Regex, captureGroupNames: List[String] = Nil)(callback: Request => Future[Response]) {
     val route = RouteDef(method, PathPattern(regex, captureGroupNames), this, Action(callback))
-    routeDefs.add(route)
+    routeDefs.append(route)
   }
 
   def toRouteDefs: Seq[RouteDef] = routeDefs.toSeq
