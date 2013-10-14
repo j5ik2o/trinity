@@ -15,6 +15,7 @@ import com.twitter.util.{Await => TAwait}
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.server.{ServerConfig, Server}
+import java.util.concurrent.TimeUnit
 
 class ServerImplSpec extends Specification {
 
@@ -32,17 +33,17 @@ class ServerImplSpec extends Specification {
     private def running[T](server: Server)(block: => T): T = {
       synchronized {
         try {
-          SAwait.result(server.start, Duration.Inf)
+          SAwait.result(server.start, Duration(3, TimeUnit.SECONDS))
           block
         } finally {
-          SAwait.result(server.stop, Duration.Inf)
+          SAwait.result(server.stop, Duration(3, TimeUnit.SECONDS))
           Thread.sleep(100)
         }
       }
     }
 
     def around[T: AsResult](t: => T): Result = {
-      val server = Server(ServerConfig(), actionOpt = actionOpt, globalSettingsOpt = None)
+      val server = Server(ServerConfig(), actionOpt = actionOpt, filterOpt = None, globalSettingsOpt = None)
       running(server)(AsResult(t))
     }
 
@@ -59,10 +60,12 @@ class ServerImplSpec extends Specification {
     "200 OK" in new Setup(
       Some(
         new Action[Request, Response] {
-          def apply(request: Request): Future[Response] =
+          def apply(request: Request): Future[Response] = {
+            println("start action")
             Future.successful {
               Response().withContent(ChannelBuffers.copiedBuffer(body, CharsetUtil.UTF_8))
             }
+          }
         }
       )
     ) {
