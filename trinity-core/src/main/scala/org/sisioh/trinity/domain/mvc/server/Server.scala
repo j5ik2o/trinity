@@ -20,12 +20,15 @@ trait Server {
 
   def stop()(implicit executor: ExecutionContext): Future[Unit]
 
+  def isStarted: Boolean
 }
 
 object Server {
 
   val defaultName = "trinity"
-  val defaultAwaitDuration = Duration(5, TimeUnit.MINUTES)
+
+  val defaultAwaitDuration = Duration(5, TimeUnit.SECONDS)
+
   val defaultBindAddress = new InetSocketAddress(8080)
 
   def apply(serverConfig: ServerConfig,

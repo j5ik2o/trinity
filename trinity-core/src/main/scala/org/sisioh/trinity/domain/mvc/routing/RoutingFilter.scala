@@ -13,13 +13,11 @@ import scala.concurrent.{Future, ExecutionContext}
  * ルーティング用フィルター。
  *
  * @param routeRepository
- * @param controllerRepository
  * @param globalSettingsOpt
  * @param executor
  */
 case class RoutingFilter
 (routeRepository: RouteRepository,
- controllerRepository: ControllerRepository,
  globalSettingsOpt: Option[GlobalSettings[Request, Response]])
 (implicit executor: ExecutionContext)
   extends Filter[Request, Response, Request, Response] with LoggingEx {
@@ -53,15 +51,14 @@ case class RoutingFilter
   protected def getActionWithRouteParams(request: Request): Option[(Action[Request, Response], Map[String, String])] = {
     implicit val ctx = SyncEntityIOContext
     routeRepository.find {
-      case Route(RouteId(m, pattern), controllerId, _) =>
-        val hasController = controllerRepository.containsByIdentity(controllerId)
+      case Route(RouteId(m, pattern), _) =>
         val routeParamsOpt = pattern(request.path.split('?').head)
-        if (hasController.toOption.get && routeParamsOpt.isDefined && m == request.method)
+        if (routeParamsOpt.isDefined && m == request.method)
           true
         else
           false
     }.flatMap {
-      case Route(RouteId(_, pattern), _, action) =>
+      case Route(RouteId(_, pattern), action) =>
         val routeParamsOpt = pattern(request.path.split('?').head)
         routeParamsOpt.map {
           routeParams =>
@@ -102,13 +99,11 @@ object RoutingFilter {
              globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
              pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
     val routeRepository = RouteRepository.ofMemory
-    val controllerRepository = ControllerRepository.ofMemory
     routeDefs(pathPatternParser).foreach {
-      case RouteDef(method, pathPattern, controller, action) =>
-        controllerRepository.store(controller)
-        routeRepository.store(Route(method, pathPattern, controller, action))
+      case RouteDef(method, pathPattern, action) =>
+        routeRepository.store(Route(method, pathPattern, action))
     }
-    RoutingFilter(routeRepository, controllerRepository, globalSettingsOpt)
+    RoutingFilter(routeRepository, globalSettingsOpt)
   }
 
 }

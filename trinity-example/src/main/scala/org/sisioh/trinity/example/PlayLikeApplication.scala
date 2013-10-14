@@ -1,22 +1,18 @@
 package org.sisioh.trinity.example
 
-import java.util.concurrent.Executors
-import org.sisioh.trinity.domain.io.transport.codec.http.Method
-import org.sisioh.trinity.domain.mvc.Environment
+import org.sisioh.trinity.domain.io.transport.codec.http.Method._
+import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import org.sisioh.trinity.domain.mvc.controller.Controller
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPattern
-import org.sisioh.trinity.domain.mvc.server.{ServerConfigLoader, Server}
 import org.sisioh.trinity.domain.mvc.stats.Stats
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Future, Await, ExecutionContext}
+import scala.concurrent.Future
 
-object PlayLikeApplication extends App with Controller {
+object PlayLikeApplication extends App with Controller with Bootstrap {
 
-  implicit val executor = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool())
+  protected val environment = Environment.Development
 
   def helloWorld = SimpleAction {
     request =>
@@ -48,26 +44,26 @@ object PlayLikeApplication extends App with Controller {
       Future.successful(Response().withContentAsString("path = " + request.routeParams("path")))
   }
 
-  val routingFilter = RoutingFilter.routes {
+
+  override protected val routingFilterOpt: Option[RoutingFilter] = Some(RoutingFilter.routes {
     implicit pathPatternParser =>
       Seq(
         // 簡単 その1
-        Method.Get % "/hello" % this % helloWorld,
+        Get % "/hello" -> helloWorld,
         // 簡単 その2
-        Method.Get % "/counter" % this % getCounter,
-        Method.Get % "/user/:userId" % this % getUser,
+        Get % "/counter" -> getCounter,
+        Get % "/user/:userId" -> getUser,
         // メソッドの引数にパラメータを渡したい場合
-        Method.Get % "/print/:text" % this % {
+        Get % "/print/:text" -> {
           request =>
             printText(request.routeParams("text"))(request)
         },
         // 正規表現を指定したい場合
-        Method.Get % PathPattern( """/(abc.*)""".r, List("path")) % this % getPath
+        Get % ("""/(abc.*)""".r -> Seq("path")) -> getPath
       )
-  }
+  })
 
-  val server = Server(ServerConfigLoader.load(Environment.Development), filterOpt = Some(routingFilter))
 
-  Await.result(server.start(), Duration.Inf)
+  await(start())
 
 }

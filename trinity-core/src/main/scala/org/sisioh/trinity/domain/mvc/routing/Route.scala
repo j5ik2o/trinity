@@ -27,7 +27,7 @@ trait Route[Req, Rep]
   /**
    * コントローラID
    */
-  val controllerId: Identity[UUID]
+  //val controllerId: Identity[UUID]
 
   /**
    * アクション
@@ -53,77 +53,37 @@ object Route {
    * ファクトリメソッド。
    *
    * @param identity [[org.sisioh.trinity.domain.mvc.routing.RouteId]]
-   * @param controllerId コントローラID
    * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
    * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
-  def apply[Req, Rep](identity: RouteId, controllerId: Identity[UUID], action: Action[Req, Rep]): Route[Req, Rep] =
-    new RouteImpl(identity, controllerId, action)
-
-  /**
-   * ファクトリメソッド。
-   *
-   * @param identity [[org.sisioh.trinity.domain.mvc.routing.RouteId]]
-   * @param controller コントローラ
-   * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
-   * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
-   */
-  def apply[Req, Rep](identity: RouteId, controller: Controller, action: Action[Req, Rep]): Route[Req, Rep] =
-    new RouteImpl(identity, controller.identity, action)
+  def apply[Req, Rep](identity: RouteId, action: Action[Req, Rep]): Route[Req, Rep] =
+    new RouteImpl(identity, action)
 
   /**
    * ファクトリメソッド。
    *
    * @param method メソッド
-   * @param pathPattern [[PathPattern]]
-   * @param controller [[org.sisioh.trinity.domain.mvc.controller.Controller]]
-   * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
-   * @return [[org.sisioh.trinity.domain.mvc.action.Action]]
-   */
-  def apply[Req, Rep](method: Method.Value, pathPattern: PathPattern, controller: Controller, action: Action[Req, Rep]): Route[Req, Rep] =
-    apply(method, pathPattern, controller.identity, action)
-
-  /**
-   * ファクトリメソッド。
-   *
-   * @param method メソッド
-   * @param pathPattern [[PathPattern]]
-   * @param controllerId コントローラID
+   * @param pathPattern [[org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPattern]]
    * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
    * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
-  def apply[Req, Rep](method: Method.Value, pathPattern: PathPattern, controllerId: Identity[UUID], action: Action[Req, Rep]): Route[Req, Rep] =
-    apply(RouteId(method, pathPattern), controllerId, action)
+  def apply[Req, Rep](method: Method.Value, pathPattern: PathPattern, action: Action[Req, Rep]): Route[Req, Rep] =
+    new RouteImpl(RouteId(method, pathPattern), action)
 
   /**
    * ファクトリメソッド。
    *
    * @param method メソッド
    * @param path パス
-   * @param controllerId コントローラID
    * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
    * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPatternParser]]
    * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
-  def apply[Req, Rep](method: Method.Value, path: String, controllerId: Identity[UUID], action: Action[Req, Rep])
+  def apply[Req, Rep](method: Method.Value, path: String, action: Action[Req, Rep])
                      (implicit pathPatternParser: PathPatternParser): Route[Req, Rep] = {
     val pathPattern = pathPatternParser(path)
-    apply(RouteId(method, pathPattern), controllerId, action)
+    new RouteImpl(RouteId(method, pathPattern), action)
   }
-
-  /**
-   * ファクトリメソッド。
-   *
-   * @param method メソッド
-   * @param path パス
-   * @param controller コントローラ
-   * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
-   * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPatternParser]]
-   * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
-   */
-  def apply[Req, Rep](method: Method.Value, path: String, controller: Controller, action: Action[Req, Rep])
-                     (implicit pathPatternParser: PathPatternParser): Route[Req, Rep] =
-    apply[Req, Rep](method, path, controller.identity, action)
 
   /**
    * エクストラクタメソッド。
@@ -131,8 +91,8 @@ object Route {
    * @param route [[org.sisioh.trinity.domain.mvc.routing.Route]]
    * @return 構成要素
    */
-  def unapply[Req, Rep](route: Route[Req, Rep]): Option[(RouteId, Identity[UUID], Action[Req, Rep])] =
-    Some(route.identity, route.controllerId, route.action)
+  def unapply[Req, Rep](route: Route[Req, Rep]): Option[(RouteId, Action[Req, Rep])] =
+    Some(route.identity, route.action)
 
   private val orderGenerator = new AtomicLong()
 
@@ -140,4 +100,4 @@ object Route {
 
 private[domain]
 class RouteImpl[Req, Rep]
-(val identity: RouteId, val controllerId: Identity[UUID], val action: Action[Req, Rep]) extends Route[Req, Rep]
+(val identity: RouteId, val action: Action[Req, Rep]) extends Route[Req, Rep]

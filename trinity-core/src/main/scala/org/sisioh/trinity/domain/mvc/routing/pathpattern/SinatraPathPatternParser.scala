@@ -40,7 +40,8 @@ case class SinatraPathPatternParser() extends RegexPathPatternParser {
 
 object SinatraPathPatternParser {
 
-  def apply(pattern: String): PathPattern = new SinatraPathPatternParser().apply(pattern)
+  def apply(pattern: String): PathPattern =
+    new SinatraPathPatternParser().apply(pattern)
 
 }
 

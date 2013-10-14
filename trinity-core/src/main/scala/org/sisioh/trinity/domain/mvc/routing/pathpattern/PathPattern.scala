@@ -8,7 +8,7 @@ import scala.util.matching.Regex
  * A path pattern optionally matches a request path and extracts path
  * parameters.
  */
-case class PathPattern(regex: Regex, captureGroupNames: List[String] = Nil)
+case class PathPattern(regex: Regex, captureGroupNames: Seq[String] = Nil)
   extends Ordered[PathPattern] {
 
   def compare(that: PathPattern): Int = {
@@ -34,7 +34,7 @@ case class PathPattern(regex: Regex, captureGroupNames: List[String] = Nil)
 
   def +(pathPattern: PathPattern): PathPattern = PathPattern(
     new Regex(this.regex.toString + pathPattern.regex.toString),
-    this.captureGroupNames ::: pathPattern.captureGroupNames
+    this.captureGroupNames.toList ::: pathPattern.captureGroupNames.toList
   )
 
 }

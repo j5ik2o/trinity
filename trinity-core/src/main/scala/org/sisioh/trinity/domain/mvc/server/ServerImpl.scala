@@ -33,7 +33,8 @@ class ServerImpl
   extends Server with LoggingEx {
 
   implicit val ctx = SyncEntityIOContext
-  private var server: FinagleServer = _
+
+  private var finagleServerOpt: Option[FinagleServer] = None
 
   private val finagleFilterBuffers = new ListBuffer[FinagleFilter[Request, Response, Request, Response]]()
 
@@ -68,7 +69,7 @@ class ServerImpl
     }
   }
 
-  private def createAdminService(runtimeEnv: RuntimeEnvironment) = withDebugScope("createAdminService"){
+  private def createAdminService(runtimeEnv: RuntimeEnvironment) = withDebugScope("createAdminService") {
     AdminServiceFactory(
       httpPort = serverConfig.statsPort.getOrElse(9990),
       statsNodes = StatsFactory(
@@ -94,6 +95,7 @@ class ServerImpl
   }
 
   def start()(implicit executor: ExecutionContext): Future[Unit] = future {
+    require(finagleServerOpt.isEmpty)
     if (serverConfig.statsEnabled) {
       createAdminService(createRuntimeEnviroment)
     }
@@ -103,12 +105,12 @@ class ServerImpl
         GatewayFilter(actionOpt) andThen
         applyFinagleFilters(actionExecuteService)
 
-    server = ServerBuilder()
+    finagleServerOpt = Some(ServerBuilder()
       .codec(createCodec)
       .bindTo(serverConfig.bindAddressOpt.getOrElse(Server.defaultBindAddress))
       .tracer(createTracer)
       .name(serverConfig.nameOpt.getOrElse(Server.defaultName))
-      .build(service)
+      .build(service))
 
     globalSettingsOpt.foreach {
       globalSettings =>
@@ -116,14 +118,19 @@ class ServerImpl
     }
   }
 
-  def stop()(implicit executor: ExecutionContext): Future[Unit] = {
-    val awaitDuration = serverConfig.awaitDurationOpt.getOrElse(Server.defaultAwaitDuration).toTwitter
-    val result = server.close(awaitDuration).toScala
-    globalSettingsOpt.foreach {
-      globalSettings =>
-        globalSettings.onStop(this)
-    }
-    result
+  def stop()(implicit executor: ExecutionContext): Future[Unit] =  {
+    require(finagleServerOpt.isDefined)
+    finagleServerOpt.map {
+      finagleServer =>
+        val result = finagleServer.close().toScala
+        globalSettingsOpt.foreach {
+          globalSettings =>
+            globalSettings.onStop(this)
+        }
+        finagleServerOpt = None
+        result
+    }.get
   }
 
+  def isStarted: Boolean = finagleServerOpt.isDefined
 }

@@ -11,7 +11,7 @@ case class FinagleToIOFilter()
   extends Filter[Request, Response, IORequest, IOResponse] {
 
   def apply(request: Request, service: Service[IORequest, IOResponse]): Future[Response] = {
-    Stats.timeFutureNanos("FinagleToIOFilter")(service(request).map(IOResponse.toFinagle))
+    service(request).map(IOResponse.toFinagle)
   }
 
 }

@@ -17,11 +17,11 @@ trait Controller
   def compare(that: Controller): Int =
     identity.value.compareTo(that.identity.value)
 
-  protected def redirect(location: String, message: String = "moved"): Future[Response] = {
-    val response = ResponseBuilder().
+  protected def redirect(location: String, responseOpt: Option[Response] = None): Future[Response] = {
+    val responseBuilder = ResponseBuilder().
       withStatus(ResponseStatus.MovedPermanently).
-      withHeader("Location", location).
-      withContentAsString(message).build
+      withHeader("Location", location)
+    val response = responseOpt.map(responseBuilder.build(_)).getOrElse(responseBuilder.build)
     Future.successful(response)
   }
 

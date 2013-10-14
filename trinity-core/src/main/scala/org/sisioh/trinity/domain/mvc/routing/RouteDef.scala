@@ -9,7 +9,6 @@ import org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPattern
 case class RouteDef
 (method: Method.Value,
  pathPattern: PathPattern,
- controller: Controller,
  action: Action[Request, Response])
 
 
