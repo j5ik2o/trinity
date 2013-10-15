@@ -1,15 +1,13 @@
 package org.sisioh.trinity.domain.mvc.http
 
 import java.io._
+import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
 import org.jboss.netty.handler.codec.http.multipart.{MixedFileUpload, HttpPostRequestDecoder}
 import org.sisioh.scala.toolbox.Loan._
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest}
 import scala.collection.JavaConversions._
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
-import org.sisioh.trinity.domain.mvc.http
-
 
 /**
  * マルチパートアイテムを表現する値オブジェクト。
@@ -26,11 +24,12 @@ case class MultiPartItem(mixedFileUpload: MixedFileUpload, ioChunkSize: Int = 10
 
   val fileName = mixedFileUpload.getFilename
 
-  def writeToFile(path: String) = future {
+  def writeToFile(path: String)(implicit executor: ExecutionContext): Future[Unit] = future {
     using(new FileOutputStream(path)) {
       fis =>
-        while (data.readable()) {
-          data.readBytes(fis, ioChunkSize)
+        val netty: NettyChannelBuffer = data
+        while (netty.readable()) {
+          netty.readBytes(fis, ioChunkSize)
         }
     }.get
   }
@@ -43,10 +42,10 @@ case class MultiPartItem(mixedFileUpload: MixedFileUpload, ioChunkSize: Int = 10
 object MultiPartItem {
 
   /**
-   * リクエストから[[http.MultiPartItem]]のマップを取得する。
+   * リクエストから[[org.sisioh.trinity.domain.mvc.http.MultiPartItem]]のマップを取得する。
    *
    * @param request `com.twitter.finagle.http.Request`
-   * @return [[http.MultiPartItem]]のマップ
+   * @return [[org.sisioh.trinity.domain.mvc.http.MultiPartItem]]のマップ
    */
   def apply(request: Request): Map[String, MultiPartItem] = {
     val httpPostRequestDecoder = new HttpPostRequestDecoder(IORequest.toNetty(request))

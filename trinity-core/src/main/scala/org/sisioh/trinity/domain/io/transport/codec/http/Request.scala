@@ -19,16 +19,16 @@ trait Request extends Message {
 
 object Request {
 
-  implicit def toFinagle(self: Request): FinagleRequest =
+  private[domain] implicit def toFinagle(self: Request): FinagleRequest =
     FinagleRequest(toNetty(self))
 
-  implicit def toNetty(self: Request): NettyRequest =
+  private[domain] implicit def toNetty(self: Request): NettyRequest =
     self match {
       case RequestImpl(underlying) => underlying
       case _ => throw new IllegalArgumentException()
     }
 
-  implicit def toTrinity(underlying: NettyRequest): Request =
+  private[domain] implicit def toTrinity(underlying: NettyRequest): Request =
     RequestImpl(underlying)
 
   def apply(version: Version.Value, method: Method.Value, uri: String): Request =

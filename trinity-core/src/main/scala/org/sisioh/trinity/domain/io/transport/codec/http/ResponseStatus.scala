@@ -57,10 +57,10 @@ object ResponseStatus extends Enumeration {
   val InsufficientStorage = Value(INSUFFICIENT_STORAGE.getCode)
   val NotExtended = Value(NOT_EXTENDED.getCode)
 
-  implicit def toNetty(value: ResponseStatus.Value) =
+  private[domain] implicit def toNetty(value: ResponseStatus.Value) =
     HttpResponseStatus.valueOf(value.id)
 
-  implicit def toTrinity(value: HttpResponseStatus) =
+  private[domain] implicit def toTrinity(value: HttpResponseStatus) =
     ResponseStatus(value.getCode)
 
 }

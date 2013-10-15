@@ -68,7 +68,7 @@ case class RoutingFilter
   }
 
   def apply(request: Request, service: Action[Request, Response]): Future[Response] = {
-    if (request.action.isDefined) {
+    if (request.actionOpt.isDefined) {
       service(request)
     } else {
       val actionWithRouteParams = getActionWithRouteParams(request)

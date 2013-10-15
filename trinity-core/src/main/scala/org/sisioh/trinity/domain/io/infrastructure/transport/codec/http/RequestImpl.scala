@@ -42,4 +42,5 @@ private[trinity] case class RequestImpl(override val underlying: NettyRequest)
     _.setUri(uri)
   }
 
+  def fileExtension: String = null
 }

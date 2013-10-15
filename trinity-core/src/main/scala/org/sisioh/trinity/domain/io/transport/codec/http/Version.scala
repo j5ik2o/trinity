@@ -8,10 +8,10 @@ object Version extends Enumeration {
 
   val Http11 = Value("HTTP/1.1")
 
-  implicit def toNetty(value: Version.Value) =
+  private[domain] implicit def toNetty(value: Version.Value) =
     HttpVersion.valueOf(value.toString)
 
-  implicit def toTrinity(value: HttpVersion) =
+  private[domain] implicit def toTrinity(value: HttpVersion) =
     Version.withName(value.toString)
 
 }

@@ -4,6 +4,7 @@ import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.Abstract
 import org.sisioh.trinity.domain.io.transport.codec.http
 import org.sisioh.trinity.domain.io.transport.codec.http.{ResponseStatus, Version}
 
+private[http]
 class ResponseImpl(override val underlying: http.Response)
   extends AbstractResponseProxy(underlying) with Response {
 

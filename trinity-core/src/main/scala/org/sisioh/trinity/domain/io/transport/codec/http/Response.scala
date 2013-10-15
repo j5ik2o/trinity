@@ -15,16 +15,16 @@ trait Response extends Message {
 
 object Response {
 
-  implicit def toFinagle(self: Response): FinagleResponse =
+  private[domain] implicit def toFinagle(self: Response): FinagleResponse =
     FinagleResponse(toNetty(self))
 
-  implicit def toNetty(self: Response): NettyResponse =
+  private[domain] implicit def toNetty(self: Response): NettyResponse =
     self match {
       case ResponseImpl(underlying) => underlying
       case _ => throw new IllegalArgumentException()
     }
 
-  implicit def toTrinity(underlying: NettyResponse): Response =
+  private[domain] implicit def toTrinity(underlying: NettyResponse): Response =
     ResponseImpl(underlying)
 
   def apply(version: Version.Value = Version.Http11, status: ResponseStatus.Value = ResponseStatus.Ok): Response =

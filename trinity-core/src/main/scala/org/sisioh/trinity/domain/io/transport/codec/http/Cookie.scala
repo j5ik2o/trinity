@@ -57,15 +57,15 @@ trait Cookie {
 
 object Cookie {
 
-  implicit def toFinagle(self: Cookie): FinagleCookie =
+  private[domain] implicit def toFinagle(self: Cookie): FinagleCookie =
     new FinagleCookie(toNetty(self))
 
-  implicit def toNetty(self: Cookie): NettyCookie =
+  private[domain] implicit def toNetty(self: Cookie): NettyCookie =
     self match {
       case CookieImpl(underlying) => underlying
       case _ => throw new IllegalArgumentException()
     }
 
-  implicit def toTrinity(underlying: NettyCookie): Cookie = CookieImpl(underlying)
+  private[domain] implicit def toTrinity(underlying: NettyCookie): Cookie = CookieImpl(underlying)
 
 }

@@ -7,12 +7,15 @@ import org.sisioh.trinity.domain.mvc.action.Action
 import scala.collection.JavaConversions._
 import scala.concurrent.Future
 import scala.util.Sorting
+import com.twitter.finagle.http.ParamMap
 
 trait Request extends RequestProxy {
 
-  val action: Option[Action[Request, Response]]
+  val actionOpt: Option[Action[Request, Response]]
 
   def withAction(action: Option[Action[Request, Response]]): this.type
+
+  def params: ParamMap
 
   val routeParams: Map[String, String]
 
@@ -36,11 +39,13 @@ trait Request extends RequestProxy {
 
   def path: String
 
+  def fileExtension: String
+
   val errorOpt: Option[Throwable]
 
   def withError(error: Throwable): this.type
 
-  def execute(defaultAction: Action[Request, Response]): Future[Response] = action.map(_(this)).getOrElse(defaultAction(this))
+  def execute(defaultAction: Action[Request, Response]): Future[Response] = actionOpt.map(_(this)).getOrElse(defaultAction(this))
 
   val globalSettingsOpt: Option[GlobalSettings[Request, Response]]
 
