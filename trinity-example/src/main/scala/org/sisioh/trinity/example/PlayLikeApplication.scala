@@ -26,25 +26,8 @@ object PlayLikeApplication extends App with Controller with Bootstrap {
       Future.successful(Response().withContentAsString("userId = " + request.routeParams("userId")))
   }
 
-  @volatile private var counter = 0
-
-  def getCounter = SimpleAction {
-    request =>
-      counter += 1
-      Future.successful(Response().withContentAsString(counter.toString))
-  }
-
-  def printText(text: String) = SimpleAction {
-    request =>
-      Future.successful(Response().withContentAsString("text = " + text))
-  }
-
-  def getPath = SimpleAction {
-    request =>
-      Future.successful(Response().withContentAsString("path = " + request.routeParams("path")))
-  }
-
-
+  // ...
+  
   override protected val routingFilterOpt: Option[RoutingFilter] = Some(RoutingFilter.routes {
     implicit pathPatternParser =>
       Seq(
@@ -62,7 +45,6 @@ object PlayLikeApplication extends App with Controller with Bootstrap {
         Get % ("""/(abc.*)""".r -> Seq("path")) -> getPath
       )
   })
-
 
   await(start())
 
