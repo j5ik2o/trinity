@@ -1,11 +1,15 @@
 package org.sisioh.trinity.domain.io.transport.codec.http
 
-import scala.language.implicitConversions
 import com.twitter.finagle.http.{Response => FinagleResponse}
-import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse, HttpVersion, DefaultHttpResponse}
+import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse}
 import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.ResponseImpl
+import scala.language.implicitConversions
+
+import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse, DefaultHttpResponse}
 
 trait Response extends Message {
+
+  val netty: NettyResponse
 
   def status: ResponseStatus.Value
 
@@ -27,7 +31,7 @@ object Response {
   private[domain] implicit def toTrinity(underlying: NettyResponse): Response =
     ResponseImpl(underlying)
 
-  def apply(version: Version.Value = Version.Http11, status: ResponseStatus.Value = ResponseStatus.Ok): Response =
+  def apply(status: ResponseStatus.Value = ResponseStatus.Ok, version: Version.Value = Version.Http11): Response =
     new ResponseImpl(status, version = version)
 
 }

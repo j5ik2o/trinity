@@ -48,7 +48,7 @@ object MultiPartItem {
    * @return [[org.sisioh.trinity.domain.mvc.http.MultiPartItem]]のマップ
    */
   def apply(request: Request): Map[String, MultiPartItem] = {
-    val httpPostRequestDecoder = new HttpPostRequestDecoder(IORequest.toNetty(request))
+    val httpPostRequestDecoder = new HttpPostRequestDecoder(request.underlying.netty)
     if (httpPostRequestDecoder.isMultipart) {
       httpPostRequestDecoder.getBodyHttpDatas.map {
         data =>

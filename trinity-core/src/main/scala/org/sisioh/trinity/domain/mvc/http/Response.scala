@@ -1,15 +1,12 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
+import com.twitter.finagle.http.{Response => FinagleResponse}
 import org.sisioh.trinity.domain.io.transport.codec.http
-import org.sisioh.trinity.domain.io.transport.codec.http.{Response => IOResponse, CharsetUtil, ResponseStatus, Version, ResponseProxy}
+import org.sisioh.trinity.domain.io.transport.codec.http.{Response => IOResponse, ResponseStatus, Version, ResponseProxy}
 
-trait Response extends ResponseProxy {
+trait Response extends Message with ResponseProxy {
 
-  def contentAsString: String = content.toString
-
-  def withContentAsString(body: String): this.type =
-    withContent(ChannelBuffers.copiedBuffer(body, CharsetUtil.UTF_8))
+  val finagle = FinagleResponse(netty)
 
 }
 
@@ -17,6 +14,7 @@ object Response {
 
   def apply(underlying: http.Response): Response = new ResponseImpl(underlying)
 
-  def apply(version: Version.Value = Version.Http11, status: ResponseStatus.Value = ResponseStatus.Ok): Response = new ResponseImpl(version, status)
+  def apply(status: ResponseStatus.Value = ResponseStatus.Ok, version: Version.Value = Version.Http11): Response =
+    new ResponseImpl(status, version)
 
 }

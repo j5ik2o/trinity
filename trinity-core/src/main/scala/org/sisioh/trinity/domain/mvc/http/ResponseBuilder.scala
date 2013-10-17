@@ -77,7 +77,7 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
   protected def newInstance: ResponseBuilder = new ResponseBuilder()
 
   protected def createValueObject: Response = {
-    Response(version, status).withHeaders(headers.toSeq).withCookies(cookies).withContent(content)
+    Response(status, version).withHeaders(headers.toSeq).withCookies(cookies).withContent(content)
   }
 
   protected def apply(vo: Response, builder: ResponseBuilder): Unit = {

@@ -1,21 +1,42 @@
 package org.sisioh.trinity.domain.mvc.http
 
 import com.google.common.base.Splitter
+import com.twitter.finagle.http.ParamMap
+import com.twitter.finagle.http.{Request => FinagleRequest}
+import java.net.{InetAddress, InetSocketAddress}
 import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest, _}
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
 import scala.collection.JavaConversions._
 import scala.concurrent.Future
 import scala.util.Sorting
-import com.twitter.finagle.http.ParamMap
 
-trait Request extends RequestProxy {
+trait Request extends Message with RequestProxy {
+
+  val finagle = FinagleRequest(netty)
 
   val actionOpt: Option[Action[Request, Response]]
 
   def withAction(action: Option[Action[Request, Response]]): this.type
 
+  def encodeBytes: Array[Byte]
+
+  def encodeString: String
+
+  def remoteSocketAddress: InetSocketAddress
+
+  def remoteHost: String =
+    remoteAddress.getHostAddress
+
+  def remoteAddress: InetAddress =
+    remoteSocketAddress.getAddress
+
+  def remotePort: Int =
+    remoteSocketAddress.getPort
+
   def params: ParamMap
+
+  def containsParam(name: String): Boolean
 
   val routeParams: Map[String, String]
 
@@ -41,6 +62,7 @@ trait Request extends RequestProxy {
 
   def fileExtension: String
 
+
   val errorOpt: Option[Throwable]
 
   def withError(error: Throwable): this.type
@@ -54,10 +76,10 @@ trait Request extends RequestProxy {
 object Request {
 
   def fromUnderlying(underlying: IORequest,
-            action: Option[Action[Request, Response]] = None,
-            routeParams: Map[String, String] = Map.empty,
-            globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
-            errorOpt: Option[Throwable] = None): Request =
+                     action: Option[Action[Request, Response]] = None,
+                     routeParams: Map[String, String] = Map.empty,
+                     globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+                     errorOpt: Option[Throwable] = None): Request =
     new RequestImpl(underlying, action, routeParams, globalSettingsOpt, errorOpt)
 
   def apply(method: Method.Value = Method.Get,

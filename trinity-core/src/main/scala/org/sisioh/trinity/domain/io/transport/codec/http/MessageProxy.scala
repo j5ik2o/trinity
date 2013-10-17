@@ -4,10 +4,16 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 trait MessageProxy extends Message with Proxy {
 
+  val isMutable: Boolean = false
+
   protected def createInstance(message: this.type): this.type
 
   protected def mutate(f: (this.type) => Unit): this.type = {
-    val cloned = createInstance(this)
+    val cloned = if (isMutable) {
+      this.asInstanceOf[this.type]
+    } else {
+      createInstance(this)
+    }
     f(cloned)
     cloned
   }
@@ -15,6 +21,8 @@ trait MessageProxy extends Message with Proxy {
   def underlying: Message
 
   def self = underlying
+
+  def isRequest = underlying.isRequest
 
   def getHeader(name: String): String = underlying.getHeader(name)
 

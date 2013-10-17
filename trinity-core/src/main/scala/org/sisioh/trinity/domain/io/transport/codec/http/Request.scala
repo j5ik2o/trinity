@@ -7,6 +7,8 @@ import scala.language.implicitConversions
 
 trait Request extends Message {
 
+  val netty: NettyRequest
+
   val method: Method.Value
 
   def withMethod(method: Method.Value): this.type
@@ -19,19 +21,16 @@ trait Request extends Message {
 
 object Request {
 
-  private[domain] implicit def toFinagle(self: Request): FinagleRequest =
-    FinagleRequest(toNetty(self))
+  private[http] implicit def toFinagle(self: Request): FinagleRequest =
+    FinagleRequest(self.netty)
 
-  private[domain] implicit def toNetty(self: Request): NettyRequest =
-    self match {
-      case RequestImpl(underlying) => underlying
-      case _ => throw new IllegalArgumentException()
-    }
+  private[http] implicit def toNetty(self: Request): NettyRequest =
+    self.netty
 
   private[domain] implicit def toTrinity(underlying: NettyRequest): Request =
     RequestImpl(underlying)
 
-  def apply(version: Version.Value, method: Method.Value, uri: String): Request =
+  def apply(method: Method.Value, uri: String, version: Version.Value = Version.Http11): Request =
     new RequestImpl(method, uri, version = version)
 
 }

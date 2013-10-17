@@ -9,11 +9,11 @@ import org.sisioh.trinity.domain.io.transport.codec.http.{Cookie, Version, Respo
 /**
  * Netty Requestのラッパー。
  *
- * @param underlying
+ * @param netty
  */
 private[trinity]
-case class ResponseImpl(override val underlying: NettyResponse)
-  extends AbstractMessage(underlying) with Response {
+case class ResponseImpl(override val netty: NettyResponse)
+  extends AbstractMessage(netty) with Response {
 
   def this(status: ResponseStatus.Value,
            headers: Seq[(String, Any)] = Seq.empty,
@@ -26,16 +26,18 @@ case class ResponseImpl(override val underlying: NettyResponse)
     setContent(content)
   }
 
+  def isRequest: Boolean = false
+
   protected def createInstance(message: AbstractMessage): this.type =
-    new ResponseImpl(message.underlying.asInstanceOf[NettyResponse]).asInstanceOf[this.type]
+    new ResponseImpl(message.netty.asInstanceOf[NettyResponse]).asInstanceOf[this.type]
 
   protected def mutateAsResponse(f: (NettyResponse) => Unit): this.type = {
     val cloned = createInstance(this)
-    f(cloned.underlying)
+    f(cloned.netty)
     cloned
   }
 
-  val status: ResponseStatus.Value = underlying.getStatus
+  val status: ResponseStatus.Value = netty.getStatus
 
   def withStatus(status: ResponseStatus.Value): this.type = mutateAsResponse {
     _.setStatus(status)

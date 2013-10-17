@@ -7,6 +7,6 @@ import scala.concurrent.Future
 case object NotFoundHandleAction extends Action[Request, Response] {
 
   def apply(request: Request): Future[Response] =
-    Future.successful(Response(Version.Http11, ResponseStatus.NotFound))
+    Future.successful(Response(ResponseStatus.NotFound, Version.Http11))
 
 }

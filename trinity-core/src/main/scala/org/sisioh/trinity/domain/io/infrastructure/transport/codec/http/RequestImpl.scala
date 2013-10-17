@@ -6,8 +6,11 @@ import org.sisioh.trinity.domain.io.transport.codec.http.Method.{toNetty, toTrin
 import org.sisioh.trinity.domain.io.transport.codec.http.Version.toNetty
 import org.sisioh.trinity.domain.io.transport.codec.http.{Cookie, Request, Version, Method}
 
-private[trinity] case class RequestImpl(override val underlying: NettyRequest)
-  extends AbstractMessage(underlying) with Request {
+private[trinity]
+case class RequestImpl(override val netty: NettyRequest)
+  extends AbstractMessage(netty) with Request {
+
+  def isRequest: Boolean = true
 
   def this(method: Method.Value,
            uri: String,
@@ -22,25 +25,24 @@ private[trinity] case class RequestImpl(override val underlying: NettyRequest)
   }
 
   protected def createInstance(message: AbstractMessage): this.type =
-    new RequestImpl(message.underlying.asInstanceOf[NettyRequest]).asInstanceOf[this.type]
+    new RequestImpl(message.netty.asInstanceOf[NettyRequest]).asInstanceOf[this.type]
 
   protected def mutateAsRequest(f: (NettyRequest) => Unit): this.type = {
     val cloned = createInstance(this)
-    f(cloned.underlying)
+    f(cloned.netty)
     cloned
   }
 
-  val method: Method.Value = underlying.getMethod
+  val method: Method.Value = netty.getMethod
 
   def withMethod(method: Method.Value): this.type = mutateAsRequest {
     _.setMethod(method)
   }
 
-  val uri: String = underlying.getUri
+  val uri: String = netty.getUri
 
   def withUri(uri: String): this.type = mutateAsRequest {
     _.setUri(uri)
   }
 
-  def fileExtension: String = null
 }

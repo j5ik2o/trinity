@@ -10,6 +10,10 @@ import scala.collection.JavaConverters._
  */
 trait Message {
 
+  def isRequest: Boolean
+
+  def isResponse = !isRequest
+
   def getHeader(name: String): String
 
   def getHeaders(name: String): Seq[String]

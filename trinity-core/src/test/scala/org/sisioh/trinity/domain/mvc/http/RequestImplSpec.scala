@@ -12,7 +12,7 @@ class RequestImplSpec extends Specification {
       val method = Method.Get
       val uri = "/"
       val actionOpt = Some(new SimpleAction {
-        def apply(request: Request): Future[Response] = ???
+        def apply(request: Request): Future[Response] = Future.successful(Response())
       })
       val routeParams = Map.empty[String, String]
       val globalSettingsOpt = None
@@ -20,7 +20,13 @@ class RequestImplSpec extends Specification {
       val version = Version.Http11
 
       val request =  new RequestImpl(method, uri, actionOpt, routeParams, globalSettingsOpt, errorOpt, version)
-      request.actionOpt must beSome
+      request.method must_== method
+      request.uri must_== uri
+      request.actionOpt must_== actionOpt
+      request.routeParams must_== routeParams
+      request.globalSettingsOpt must_== globalSettingsOpt
+      request.errorOpt must_== errorOpt
+      request.protocolVersion must_== version
     }
   }
 

@@ -7,6 +7,7 @@ import scala.concurrent.Future
 case object ErrorHandleAction extends Action[Request, Response] {
 
   def apply(request: Request): Future[Response] =
-    Future.successful(Response(Version.Http11, ResponseStatus.InternalServerError))
+    Future.successful(Response(ResponseStatus.InternalServerError, Version.Http11))
+
 
 }

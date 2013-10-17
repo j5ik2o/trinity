@@ -2,7 +2,7 @@ package org.sisioh.trinity.domain.io.transport.codec.http
 
 trait RequestProxy extends Request with MessageProxy {
 
-  def underlying: Request
+  val underlying: Request
 
   val method: Method.Value = underlying.method
 

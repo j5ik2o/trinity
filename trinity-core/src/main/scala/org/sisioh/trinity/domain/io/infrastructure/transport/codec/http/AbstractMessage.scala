@@ -6,7 +6,7 @@ import org.sisioh.trinity.domain.io.transport.codec.http.{Cookie, Version, Messa
 import scala.collection.JavaConversions._
 
 private[trinity]
-abstract class AbstractMessage(val underlying: NettyMessage) extends Message {
+abstract class AbstractMessage(val netty: NettyMessage) extends Message {
 
   protected def createInstance(message: AbstractMessage): this.type
 
@@ -14,8 +14,8 @@ abstract class AbstractMessage(val underlying: NettyMessage) extends Message {
     headers.foreach {
       case (key, value) =>
         value match {
-          case values: Iterable[_] => underlying.setHeader(key, values)
-          case _ => underlying.setHeader(key, value)
+          case values: Iterable[_] => netty.setHeader(key, values)
+          case _ => netty.setHeader(key, value)
         }
     }
   }
@@ -27,39 +27,39 @@ abstract class AbstractMessage(val underlying: NettyMessage) extends Message {
         cookie =>
           encoder.addCookie(cookie)
       }
-      underlying.setHeader("Set-Cookie", encoder.encode())
+      netty.setHeader("Set-Cookie", encoder.encode())
     }
   }
 
   protected def setContent(content: ChannelBuffer) {
-    underlying.setContent(content)
+    netty.setContent(content)
   }
 
   protected def mutate(f: (NettyMessage) => Unit): this.type = {
     val cloned = createInstance(this)
-    f(cloned.underlying)
+    f(cloned.netty)
     cloned
   }
 
-  def getHeader(name: String): String = underlying.getHeader(name)
+  def getHeader(name: String): String = netty.getHeader(name)
 
-  def getHeaders(name: String): Seq[String] = underlying.getHeaders(name).toSeq
+  def getHeaders(name: String): Seq[String] = netty.getHeaders(name).toSeq
 
-  def headers: Seq[(String, Any)] = underlying.getHeaders.map {
+  def headers: Seq[(String, Any)] = netty.getHeaders.map {
     e => (e.getKey, e.getValue)
   }.toSeq
 
-  def containsHeader(name: String): Boolean = underlying.containsHeader(name)
+  def containsHeader(name: String): Boolean = netty.containsHeader(name)
 
-  def headerNames: Set[String] = underlying.getHeaderNames.toSet
+  def headerNames: Set[String] = netty.getHeaderNames.toSet
 
-  def protocolVersion: Version.Value = underlying.getProtocolVersion
+  def protocolVersion: Version.Value = netty.getProtocolVersion
 
   def withProtocolVersion(version: Version.Value) = mutate {
     _.setProtocolVersion(version)
   }
 
-  def content: ChannelBuffer = underlying.getContent
+  def content: ChannelBuffer = netty.getContent
 
   def withContent(content: ChannelBuffer) = mutate {
     _.setContent(content)
@@ -81,7 +81,7 @@ abstract class AbstractMessage(val underlying: NettyMessage) extends Message {
     _.clearHeaders()
   }
 
-  def isChunked: Boolean = underlying.isChunked
+  def isChunked: Boolean = netty.isChunked
 
   def withChunked(chunked: Boolean) = mutate {
     _.setChunked(chunked)

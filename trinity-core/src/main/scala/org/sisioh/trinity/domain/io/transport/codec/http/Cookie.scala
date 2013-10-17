@@ -7,6 +7,8 @@ import scala.language.implicitConversions
 
 trait Cookie {
 
+  val underlying: NettyCookie
+
   val name: String
 
   val value: String
@@ -67,5 +69,9 @@ object Cookie {
     }
 
   private[domain] implicit def toTrinity(underlying: NettyCookie): Cookie = CookieImpl(underlying)
+
+  def apply(underlying: NettyCookie): Cookie = new CookieImpl(underlying)
+
+  def apply(name: String, value: String): Cookie = new CookieImpl(name, value)
 
 }
