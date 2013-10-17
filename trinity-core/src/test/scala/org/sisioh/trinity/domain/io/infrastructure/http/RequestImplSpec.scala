@@ -1,10 +1,14 @@
-package org.sisioh.trinity.domain.io.infrastructure.transport.codec.http
+package org.sisioh.trinity.domain.io.infrastructure.http
 
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.domain.io.http.{CharsetUtil, Method, Version}
+import org.sisioh.trinity.domain.io.http.CharsetUtil
+import org.sisioh.trinity.domain.io.http.Method
+import org.sisioh.trinity.domain.io.http.Version
 import org.specs2.mutable.Specification
-import org.sisioh.trinity.domain.io.infrastructure.http.RequestImpl
+import org.junit.runner.RunWith
+import org.specs2.runner.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class RequestImplSpec extends Specification {
 
   "request" should {

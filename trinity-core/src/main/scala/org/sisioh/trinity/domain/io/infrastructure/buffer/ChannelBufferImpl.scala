@@ -1,12 +1,20 @@
 package org.sisioh.trinity.domain.io.infrastructure.buffer
 
 import java.io.InputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.nio.channels.ScatteringByteChannel
 import java.nio.charset.Charset
-import java.nio.{ByteOrder, ByteBuffer}
-import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer, ChannelBuffers}
-import org.sisioh.trinity.domain.io.buffer.{ChannelBufferFactory, ChannelBuffer}
+
 import scala.util.Try
+
+import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
+import org.jboss.netty.buffer.ChannelBuffers
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toTrinity
+import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory
+import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
 
 case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = false) extends ChannelBuffer {
 

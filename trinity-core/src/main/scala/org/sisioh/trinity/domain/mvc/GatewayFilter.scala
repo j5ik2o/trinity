@@ -2,11 +2,14 @@ package org.sisioh.trinity.domain.mvc
 
 import org.sisioh.trinity.domain.io.http.{Request => IORequest}
 import org.sisioh.trinity.domain.io.http.{Response => IOResponse}
-import com.twitter.finagle.{Service, Filter => FinagleFilter}
-import com.twitter.util.Future
 import org.sisioh.trinity.domain.mvc.action.Action
-import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+import org.sisioh.trinity.domain.mvc.http.Request
+import org.sisioh.trinity.domain.mvc.http.Response
+
+import com.twitter.finagle.{Filter => FinagleFilter}
+import com.twitter.finagle.Service
 import com.twitter.ostrich.stats.Stats
+import com.twitter.util.Future
 
 case class GatewayFilter(actionOpt: Option[Action[Request, Response]] = None)
   extends FinagleFilter[IORequest, IOResponse, Request, Response] {

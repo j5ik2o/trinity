@@ -1,12 +1,15 @@
 package org.sisioh.trinity.domain.io.buffer
 
-import java.nio.{ByteBuffer, ByteOrder}
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio._
 import java.nio.charset.Charset
 
 import scala.language.implicitConversions
 
-import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
-import org.sisioh.trinity.domain.io.infrastructure.buffer.{ChannelBufferFactoryImpl, ChannelBuffersImpl}
+import org.jboss.netty.buffer.{ ChannelBufferFactory => NettyChannelBufferFactory }
+import org.sisioh.trinity.domain.io.infrastructure.buffer.ChannelBufferFactoryImpl
+import org.sisioh.trinity.domain.io.infrastructure.buffer.ChannelBuffersImpl
 
 trait ChannelBuffers {
 
@@ -99,7 +102,6 @@ trait ChannelBuffers {
   def copiedBuffer(endianness: ByteOrder, array: Array[Char], offset: Int, length: Int, charset: Charset): ChannelBuffer
 
 }
-
 
 object ChannelBuffers extends ChannelBuffers {
 

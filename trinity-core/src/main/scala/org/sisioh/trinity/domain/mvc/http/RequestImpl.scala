@@ -1,14 +1,13 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import com.twitter.finagle.http.ParamMap
-import com.twitter.finagle.http.{Request => FinagleRequest}
-import java.net.InetSocketAddress
 import org.jboss.netty.handler.codec.http.HttpRequest
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
+import org.sisioh.trinity.domain.io.http.Method
 import org.sisioh.trinity.domain.io.http.{Request => IORequest}
-import org.sisioh.trinity.domain.io.http.{Version, Method}
+import org.sisioh.trinity.domain.io.http.Version
+import org.sisioh.trinity.domain.io.infrastructure.http.AbstractRequestProxy
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
-import org.sisioh.trinity.domain.io.infrastructure.http.AbstractRequestProxy
 
 private[http]
 class RequestImpl

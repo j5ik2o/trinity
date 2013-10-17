@@ -1,13 +1,20 @@
 package org.sisioh.trinity.domain.mvc
 
-import org.sisioh.trinity.domain.mvc.server.{ServerConfigLoader, Server}
-import scala.concurrent.{Future, ExecutionContext, Await}
-import scala.concurrent.duration.Duration
-import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternParser, PathPatternParser}
 import java.util.concurrent.Executors
-import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+
 import org.sisioh.trinity.domain.mvc.action.Action
+import org.sisioh.trinity.domain.mvc.http.Request
+import org.sisioh.trinity.domain.mvc.http.Response
+import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
+import org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPatternParser
+import org.sisioh.trinity.domain.mvc.routing.pathpattern.SinatraPathPatternParser
+import org.sisioh.trinity.domain.mvc.server.Server
+import org.sisioh.trinity.domain.mvc.server.ServerConfigLoader
 
 trait Bootstrap {
 

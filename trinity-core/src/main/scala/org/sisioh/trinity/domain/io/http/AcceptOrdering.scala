@@ -1,7 +1,8 @@
 package org.sisioh.trinity.domain.io.http
 
+import scala.collection.JavaConversions.iterableAsScalaIterable
+
 import com.google.common.base.Splitter
-import scala.collection.JavaConversions._
 
 object AcceptOrdering extends Ordering[String] {
 

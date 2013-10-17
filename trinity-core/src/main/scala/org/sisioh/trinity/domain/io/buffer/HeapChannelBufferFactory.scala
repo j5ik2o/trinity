@@ -1,7 +1,9 @@
 package org.sisioh.trinity.domain.io.buffer
 
 import java.nio.ByteOrder
+
 import org.jboss.netty.buffer.{HeapChannelBufferFactory => NettyHeapChannelBufferFactory}
+import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
 
 object HeapChannelBufferFactory {
 

@@ -1,8 +1,11 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import com.twitter.finagle.http.{Message => FinagleMessage}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.domain.io.http.{Message => IOMessage, MessageProxy, CharsetUtil}
+import org.sisioh.trinity.domain.io.http.CharsetUtil
+import org.sisioh.trinity.domain.io.http.{Message => IOMessage}
+import org.sisioh.trinity.domain.io.http.MessageProxy
+
+import com.twitter.finagle.http.{Message => FinagleMessage}
 
 trait Message extends IOMessage with MessageProxy {
 

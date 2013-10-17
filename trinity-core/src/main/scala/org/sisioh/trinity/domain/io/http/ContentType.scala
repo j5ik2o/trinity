@@ -1,6 +1,7 @@
 package org.sisioh.trinity.domain.io.http
 
-import org.sisioh.scala.toolbox.{EnumEntry, Enum}
+import org.sisioh.scala.toolbox.Enum
+import org.sisioh.scala.toolbox.EnumEntry
 
 /**
  * コンテントタイプを表すトレイト。

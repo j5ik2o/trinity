@@ -1,7 +1,8 @@
 package org.sisioh.trinity.domain.mvc
 
 import org.sisioh.trinity.domain.mvc.action.Action
-import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+import org.sisioh.trinity.domain.mvc.http.Request
+import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.server.Server
 
 /**

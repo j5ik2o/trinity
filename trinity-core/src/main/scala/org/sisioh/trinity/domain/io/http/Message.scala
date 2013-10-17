@@ -1,14 +1,20 @@
 package org.sisioh.trinity.domain.io.http
 
-import org.jboss.netty.handler.codec.http.{CookieDecoder, CookieEncoder}
+import scala.collection.JavaConverters.asScalaSetConverter
+
+import org.jboss.netty.handler.codec.http.CookieDecoder
+import org.jboss.netty.handler.codec.http.CookieEncoder
+import org.jboss.netty.handler.codec.http.{ HttpMessage => NettyMessage }
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.http.Cookie._
-import scala.collection.JavaConverters._
+import org.sisioh.trinity.domain.io.http.Cookie.toNetty
+import org.sisioh.trinity.domain.io.http.Cookie.toTrinity
 
 /**
  * HTTPのメッセージを表すトレイト。
  */
 trait Message {
+
+  val netty: NettyMessage
 
   def isRequest: Boolean
 
@@ -67,5 +73,7 @@ trait Message {
     val header = getHeader(cookieHeaderName)
     decoder.decode(header).asScala.map(toTrinity).toSeq
   }
+
+  override def toString = netty.toString
 
 }

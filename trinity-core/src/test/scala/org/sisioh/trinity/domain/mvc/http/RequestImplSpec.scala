@@ -4,7 +4,10 @@ import org.specs2.mutable.Specification
 import org.sisioh.trinity.domain.io.http.{Version, Method}
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import scala.concurrent.Future
+import org.junit.runner.RunWith
+import org.specs2.runner.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class RequestImplSpec extends Specification {
 
   "request" should {

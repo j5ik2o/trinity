@@ -1,7 +1,10 @@
 package org.sisioh.trinity.domain.io.buffer
 
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+
 import scala.language.implicitConversions
-import java.nio.{ByteBuffer, ByteOrder}
+
 import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
 import org.sisioh.trinity.domain.io.infrastructure.buffer.ChannelBufferFactoryImpl
 

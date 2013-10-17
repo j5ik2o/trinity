@@ -1,19 +1,26 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import com.google.common.base.Splitter
-import com.twitter.finagle.http.ParamMap
-import com.twitter.finagle.http.{Request => FinagleRequest}
-import java.net.{InetAddress, InetSocketAddress}
-import org.sisioh.trinity.domain.io.http.{Request => IORequest, _}
-import org.sisioh.trinity.domain.mvc.GlobalSettings
-import org.sisioh.trinity.domain.mvc.action.Action
-import scala.collection.JavaConversions._
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import scala.collection.JavaConversions.iterableAsScalaIterable
 import scala.concurrent.Future
 import scala.util.Sorting
+import org.sisioh.trinity.domain.io.http.AcceptOrdering
+import org.sisioh.trinity.domain.io.http.ContentType
+import org.sisioh.trinity.domain.io.http.Method
+import org.sisioh.trinity.domain.io.http.{ Request => IORequest }
+import org.sisioh.trinity.domain.io.http.RequestProxy
+import org.sisioh.trinity.domain.io.http.Version
+import org.sisioh.trinity.domain.mvc.GlobalSettings
+import org.sisioh.trinity.domain.mvc.action.Action
+import com.google.common.base.Splitter
+import com.twitter.finagle.http.ParamMap
+import com.twitter.finagle.http.{ Request => FinagleRequest }
+import org.sisioh.scala.toolbox.LoggingEx
 
-trait Request extends Message with RequestProxy {
+trait Request extends Message with RequestProxy with LoggingEx {
 
-  val finagle = FinagleRequest(netty)
+  lazy val finagle = FinagleRequest(netty)
 
   val actionOpt: Option[Action[Request, Response]]
 
@@ -61,7 +68,9 @@ trait Request extends Message with RequestProxy {
 
   def withError(error: Throwable): this.type
 
-  def execute(defaultAction: Action[Request, Response]): Future[Response] = actionOpt.map(_(this)).getOrElse(defaultAction(this))
+  def execute(defaultAction: Action[Request, Response]): Future[Response] = withDebugScope(s"${toString}: execute") {
+    actionOpt.map(_(this)).getOrElse(defaultAction(this))
+  }
 
   val globalSettingsOpt: Option[GlobalSettings[Request, Response]]
 
@@ -99,19 +108,19 @@ trait Request extends Message with RequestProxy {
 object Request {
 
   def fromUnderlying(underlying: IORequest,
-                     action: Option[Action[Request, Response]] = None,
-                     routeParams: Map[String, String] = Map.empty,
-                     globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
-                     errorOpt: Option[Throwable] = None): Request =
+    action: Option[Action[Request, Response]] = None,
+    routeParams: Map[String, String] = Map.empty,
+    globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+    errorOpt: Option[Throwable] = None): Request =
     new RequestImpl(underlying, action, routeParams, globalSettingsOpt, errorOpt)
 
   def apply(method: Method.Value = Method.Get,
-            uri: String = "/",
-            action: Option[Action[Request, Response]] = None,
-            routeParams: Map[String, String] = Map.empty,
-            globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
-            errorOpt: Option[Throwable] = None,
-            version: Version.Value = Version.Http11): Request =
+    uri: String = "/",
+    action: Option[Action[Request, Response]] = None,
+    routeParams: Map[String, String] = Map.empty,
+    globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+    errorOpt: Option[Throwable] = None,
+    version: Version.Value = Version.Http11): Request =
     new RequestImpl(method, uri, action, routeParams, globalSettingsOpt, errorOpt, version)
 
 }

@@ -3,10 +3,12 @@ package org.sisioh.trinity.domain.io.channel
 import java.net.SocketAddress
 import java.util.UUID
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 import org.jboss.netty.channel.{Channel => NettyChannel}
-import org.sisioh.dddbase.core.model.{Entity, Identity}
+import org.sisioh.dddbase.core.model.Entity
+import org.sisioh.dddbase.core.model.Identity
 import org.sisioh.trinity.domain.io.infrastructure.channel.ChannelImpl
 
 trait Channel extends Entity[Identity[UUID]] {

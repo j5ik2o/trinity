@@ -1,13 +1,19 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import java.io._
+import java.io.FileOutputStream
+
+import scala.collection.JavaConversions.asScalaBuffer
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.future
+
 import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
-import org.jboss.netty.handler.codec.http.multipart.{MixedFileUpload, HttpPostRequestDecoder}
-import org.sisioh.scala.toolbox.Loan._
+import org.jboss.netty.handler.codec.http.multipart.HttpPostRequestDecoder
+import org.jboss.netty.handler.codec.http.multipart.MixedFileUpload
+import org.sisioh.scala.toolbox.Loan.using
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.http.{Request => IORequest}
-import scala.collection.JavaConversions._
-import scala.concurrent._
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toTrinity
 
 /**
  * マルチパートアイテムを表現する値オブジェクト。
