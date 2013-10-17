@@ -1,6 +1,6 @@
 package org.sisioh.trinity.domain.mvc.routing
 
-import org.sisioh.trinity.domain.io.transport.codec.http.Method
+import org.sisioh.trinity.domain.io.http.Method
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPatternParser, PathPattern}

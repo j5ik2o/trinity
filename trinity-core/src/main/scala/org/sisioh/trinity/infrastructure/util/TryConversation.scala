@@ -1,5 +1,6 @@
 package org.sisioh.trinity.infrastructure.util
 
+import scala.language.implicitConversions
 import com.twitter.util.{Try => TTry}
 import scala.util.{Try => STry}
 

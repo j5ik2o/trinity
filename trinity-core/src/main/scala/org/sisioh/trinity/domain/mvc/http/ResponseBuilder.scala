@@ -2,7 +2,7 @@ package org.sisioh.trinity.domain.mvc.http
 
 import org.sisioh.dddbase.core.lifecycle.ValueObjectBuilder
 import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}
-import org.sisioh.trinity.domain.io.transport.codec.http.{CharsetUtil, Cookie, ResponseStatus, Version}
+import org.sisioh.trinity.domain.io.http.{CharsetUtil, Cookie, ResponseStatus, Version}
 import scala.collection.mutable.Map
 import scala.collection.mutable
 

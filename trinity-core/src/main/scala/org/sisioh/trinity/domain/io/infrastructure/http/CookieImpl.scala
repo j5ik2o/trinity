@@ -1,7 +1,7 @@
-package org.sisioh.trinity.domain.io.infrastructure.transport.codec.http
+package org.sisioh.trinity.domain.io.infrastructure.http
 
 import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie, DefaultCookie}
-import org.sisioh.trinity.domain.io.transport.codec.http.Cookie
+import org.sisioh.trinity.domain.io.http.Cookie
 import scala.collection.JavaConverters.asScalaSetConverter
 
 

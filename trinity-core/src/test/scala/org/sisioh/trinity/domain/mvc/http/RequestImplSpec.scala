@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.mvc.http
 
 import org.specs2.mutable.Specification
-import org.sisioh.trinity.domain.io.transport.codec.http.{Version, Method}
+import org.sisioh.trinity.domain.io.http.{Version, Method}
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import scala.concurrent.Future
 

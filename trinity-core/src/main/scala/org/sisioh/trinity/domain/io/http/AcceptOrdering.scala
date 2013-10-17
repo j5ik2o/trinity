@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.io.transport.codec.http
+package org.sisioh.trinity.domain.io.http
 
 import com.google.common.base.Splitter
 import scala.collection.JavaConversions._

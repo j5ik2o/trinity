@@ -4,7 +4,7 @@ import com.google.common.base.Splitter
 import com.twitter.finagle.http.ParamMap
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import java.net.{InetAddress, InetSocketAddress}
-import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest, _}
+import org.sisioh.trinity.domain.io.http.{Request => IORequest, _}
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
 import scala.collection.JavaConversions._
@@ -19,24 +19,23 @@ trait Request extends Message with RequestProxy {
 
   def withAction(action: Option[Action[Request, Response]]): this.type
 
-  def encodeBytes: Array[Byte]
+  def encodeBytes: Array[Byte] = finagle.encodeBytes()
 
-  def encodeString: String
+  def encodeString: String = finagle.encodeString()
 
-  def remoteSocketAddress: InetSocketAddress
+  def remoteSocketAddress: InetSocketAddress = finagle.remoteSocketAddress
 
-  def remoteHost: String =
-    remoteAddress.getHostAddress
+  def remoteHost: String = remoteAddress.getHostAddress
 
-  def remoteAddress: InetAddress =
-    remoteSocketAddress.getAddress
+  def remoteAddress: InetAddress = remoteSocketAddress.getAddress
 
-  def remotePort: Int =
-    remoteSocketAddress.getPort
+  def remotePort: Int = remoteSocketAddress.getPort
 
-  def params: ParamMap
+  def params: ParamMap = finagle.params
 
-  def containsParam(name: String): Boolean
+  def path: String = finagle.path
+
+  def fileExtension = finagle.fileExtension
 
   val routeParams: Map[String, String]
 
@@ -58,11 +57,6 @@ trait Request extends Message with RequestProxy {
     }.getOrElse(Seq.empty[ContentType])
   }
 
-  def path: String
-
-  def fileExtension: String
-
-
   val errorOpt: Option[Throwable]
 
   def withError(error: Throwable): this.type
@@ -70,6 +64,35 @@ trait Request extends Message with RequestProxy {
   def execute(defaultAction: Action[Request, Response]): Future[Response] = actionOpt.map(_(this)).getOrElse(defaultAction(this))
 
   val globalSettingsOpt: Option[GlobalSettings[Request, Response]]
+
+  def getParam(name: String, default: String): String = params.get(name).getOrElse(default)
+
+  def getShortParam(name: String): Short = params.getShortOrElse(name, 0)
+
+  def getShortParam(name: String, default: Short): Short = params.getShortOrElse(name, default)
+
+  def getIntParam(name: String): Int = params.getIntOrElse(name, 0)
+
+  def getIntParam(name: String, default: Int): Int = params.getIntOrElse(name, default)
+
+  def getLongParam(name: String): Long = params.getLongOrElse(name, 0L)
+
+  def getLongParam(name: String, default: Long = 0L): Long = params.getLongOrElse(name, default)
+
+  def getBooleanParam(name: String): Boolean = params.getBooleanOrElse(name, false)
+
+  def getBooleanParam(name: String, default: Boolean): Boolean = params.getBooleanOrElse(name, default)
+
+  def getParams(name: String): Seq[String] = params.getAll(name).toList
+
+  def getParams(): Seq[(String, String)] = params.toList.map {
+    case (k, v) =>
+      (k, v)
+  }
+
+  def containsParam(name: String): Boolean = params.contains(name)
+
+  def getParamNames(): Set[String] = params.keySet
 
 }
 

@@ -19,26 +19,32 @@
   <classpathentry path="/Users/junichi/.ivy2/cache/org.sisioh/scala-toolbox_2.10/jars/scala-toolbox_2.10-0.0.7.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.7.1.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/org.clapper/grizzled-slf4j_2.10/jars/grizzled-slf4j_2.10-1.0.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/org.sisioh/sisioh-config_2.10/jars/sisioh-config_2.10-0.0.2-SNAPSHOT.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.typesafe/config/bundles/config-1.0.2.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/org.slf4j/log4j-over-slf4j/jars/log4j-over-slf4j-1.6.6.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/org.slf4j/jul-to-slf4j/jars/jul-to-slf4j-1.6.6.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/ch.qos.logback/logback-core/jars/logback-core-1.0.7.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/ch.qos.logback/logback-classic/jars/logback-classic-1.0.7.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/commons-io/commons-io/jars/commons-io-1.3.2.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/io.netty/netty/bundles/netty-3.6.6.Final.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/finagle-core/jars/finagle-core-6.6.0.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-app/jars/util-app-6.5.0.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-core/jars/util-core-6.5.0.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-collection/jars/util-collection-6.5.0.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/finagle-core_2.10/jars/finagle-core_2.10-6.5.0.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/io.netty/netty/bundles/netty-3.5.12.Final.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-app_2.10/jars/util-app_2.10-6.3.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-core_2.10/jars/util-core_2.10-6.3.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-collection_2.10/jars/util-collection_2.10-6.3.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.google.guava/guava/jars/guava-11.0.2.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/com.google.code.findbugs/jsr305/jars/jsr305-1.3.9.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/com.google.guava/guava/jars/guava-13.0.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/commons-collections/commons-collections/jars/commons-collections-3.2.1.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-hashing/jars/util-hashing-6.5.0.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-jvm/jars/util-jvm-6.5.0.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-logging/jars/util-logging-6.5.0.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/finagle-http/jars/finagle-http-6.6.0.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/commons-lang/commons-lang/jars/commons-lang-2.6.jar" kind="lib"></classpathentry>
-  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-codec/jars/util-codec-6.5.0.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-hashing_2.10/jars/util-hashing_2.10-6.3.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-jvm_2.10/jars/util-jvm_2.10-6.3.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-logging_2.10/jars/util-logging_2.10-6.3.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/finagle-http_2.10/jars/finagle-http_2.10-6.5.0.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-codec_2.10/jars/util-codec_2.10-6.3.6.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/commons-codec/commons-codec/jars/commons-codec-1.5.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/commons-lang/commons-lang/jars/commons-lang-2.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/finagle-ostrich4_2.10/jars/finagle-ostrich4_2.10-6.5.0.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/ostrich_2.10/jars/ostrich_2.10-9.1.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/util-eval_2.10/jars/util-eval_2.10-6.3.4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/junichi/.ivy2/cache/com.twitter/scala-json_2.10/jars/scala-json_2.10-3.0.1.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/junit/junit/jars/junit-4.8.1.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/org.hamcrest/hamcrest-all/jars/hamcrest-all-1.3.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/junichi/.ivy2/cache/org.mockito/mockito-core/jars/mockito-core-1.9.5.jar" kind="lib"></classpathentry>

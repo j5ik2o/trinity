@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.mvc
 
-import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest}
-import org.sisioh.trinity.domain.io.transport.codec.http.{Response => IOResponse}
+import org.sisioh.trinity.domain.io.http.{Request => IORequest}
+import org.sisioh.trinity.domain.io.http.{Response => IOResponse}
 import com.twitter.finagle.{Service, Filter => FinagleFilter}
 import com.twitter.util.Future
 import org.sisioh.trinity.domain.mvc.action.Action

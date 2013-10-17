@@ -4,7 +4,7 @@ import org.specs2.mutable.{Around, Specification}
 import scala.concurrent.{Await => SAwait, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.domain.io.transport.codec.http.CharsetUtil
+import org.sisioh.trinity.domain.io.http.CharsetUtil
 import com.twitter.finagle.builder.ClientBuilder
 import com.twitter.finagle.http.{Request => FinagleRequest, Http, RichHttp}
 import java.net.InetSocketAddress
@@ -16,7 +16,10 @@ import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.server.{ServerConfig, Server}
 import java.util.concurrent.TimeUnit
+import org.junit.runner.RunWith
+import org.specs2.runner.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class ServerImplSpec extends Specification {
 
   sequential

@@ -1,5 +1,6 @@
-package org.sisioh.trinity.domain.io.transport.codec.http
+package org.sisioh.trinity.domain.io.http
 
+import scala.language.implicitConversions
 import org.jboss.netty.handler.codec.http.HttpVersion
 
 object Version extends Enumeration {

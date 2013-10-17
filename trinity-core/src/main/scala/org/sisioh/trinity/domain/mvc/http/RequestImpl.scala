@@ -4,11 +4,11 @@ import com.twitter.finagle.http.ParamMap
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import java.net.InetSocketAddress
 import org.jboss.netty.handler.codec.http.HttpRequest
-import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.AbstractRequestProxy
-import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest}
-import org.sisioh.trinity.domain.io.transport.codec.http.{Version, Method}
+import org.sisioh.trinity.domain.io.http.{Request => IORequest}
+import org.sisioh.trinity.domain.io.http.{Version, Method}
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
+import org.sisioh.trinity.domain.io.infrastructure.http.AbstractRequestProxy
 
 private[http]
 class RequestImpl
@@ -39,14 +39,6 @@ class RequestImpl
            httpVersion: Version.Value = Version.Http11) =
     this(IORequest(method, uri, httpVersion), actionOpt, routeParams, globalSettingsOpt, errorOpt)
 
-  def params: ParamMap = finagle.params
-
-  def containsParam(name: String) = finagle.containsParam(name)
-
-  def encodeBytes: Array[Byte] = finagle.encodeBytes()
-
-  def encodeString: String = finagle.encodeString()
-
   val multiParams: Map[String, MultiPartItem] =
     if (method == Method.Post) {
       content.markReaderIndex()
@@ -55,9 +47,6 @@ class RequestImpl
       m
     } else Map.empty[String, MultiPartItem]
 
-  def path: String = finagle.path
-
-  def fileExtension = finagle.fileExtension
 
 
   def withAction(action: Option[Action[Request, Response]]): this.type =
@@ -68,7 +57,5 @@ class RequestImpl
 
   def withError(error: Throwable): this.type =
     new RequestImpl(underlying, actionOpt, routeParams, globalSettingsOpt, Some(error)).asInstanceOf[this.type]
-
-  def remoteSocketAddress: InetSocketAddress = finagle.remoteSocketAddress
 
 }

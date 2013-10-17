@@ -1,8 +1,8 @@
-package org.sisioh.trinity.domain.io.transport.codec.http
+package org.sisioh.trinity.domain.io.http
 
 import org.jboss.netty.handler.codec.http.{CookieDecoder, CookieEncoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.transport.codec.http.Cookie._
+import org.sisioh.trinity.domain.io.http.Cookie._
 import scala.collection.JavaConverters._
 
 /**
@@ -51,18 +51,20 @@ trait Message {
 
   def withChunked(chunked: Boolean): this.type
 
+  private val cookieHeaderName = if (isResponse) "Set-Cookie" else "Cookie"
+
   def withCookies(cookies: Seq[Cookie]): this.type = {
     val cookieEncoder = new CookieEncoder(true)
     cookies.foreach {
       xs =>
         cookieEncoder.addCookie(xs)
     }
-    withHeader("Set-Cookie", cookieEncoder.encode)
+    withHeader(cookieHeaderName, cookieEncoder.encode)
   }
 
   def cookies: Seq[Cookie] = {
     val decoder = new CookieDecoder()
-    val header = getHeader("Set-Cookie")
+    val header = getHeader(cookieHeaderName)
     decoder.decode(header).asScala.map(toTrinity).toSeq
   }
 

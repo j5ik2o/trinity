@@ -1,11 +1,11 @@
-package org.sisioh.trinity.domain.io.transport.codec.http
+package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Response => FinagleResponse}
 import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse}
-import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.ResponseImpl
 import scala.language.implicitConversions
 
 import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse, DefaultHttpResponse}
+import org.sisioh.trinity.domain.io.infrastructure.http.ResponseImpl
 
 trait Response extends Message {
 

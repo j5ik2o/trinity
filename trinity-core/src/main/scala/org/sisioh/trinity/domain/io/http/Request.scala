@@ -1,9 +1,9 @@
-package org.sisioh.trinity.domain.io.transport.codec.http
+package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.{HttpRequest => NettyRequest}
-import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.RequestImpl
 import scala.language.implicitConversions
+import org.sisioh.trinity.domain.io.infrastructure.http.RequestImpl
 
 trait Request extends Message {
 

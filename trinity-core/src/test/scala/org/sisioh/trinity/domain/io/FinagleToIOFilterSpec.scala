@@ -3,7 +3,7 @@ package org.sisioh.trinity.domain.io
 import com.twitter.finagle.builder.{ClientBuilder, ServerBuilder, Server}
 import com.twitter.finagle.http.{Request, RichHttp, Http}
 import java.net.InetSocketAddress
-import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest, Response => IOResponse}
+import org.sisioh.trinity.domain.io.http.{Request => IORequest, Response => IOResponse}
 import com.twitter.finagle.Service
 import com.twitter.util.{Await, Future}
 

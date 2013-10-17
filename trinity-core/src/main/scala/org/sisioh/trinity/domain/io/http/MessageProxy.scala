@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.io.transport.codec.http
+package org.sisioh.trinity.domain.io.http
 
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 

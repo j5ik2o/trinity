@@ -5,7 +5,7 @@ import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
 import org.jboss.netty.handler.codec.http.multipart.{MixedFileUpload, HttpPostRequestDecoder}
 import org.sisioh.scala.toolbox.Loan._
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.transport.codec.http.{Request => IORequest}
+import org.sisioh.trinity.domain.io.http.{Request => IORequest}
 import scala.collection.JavaConversions._
 import scala.concurrent._
 

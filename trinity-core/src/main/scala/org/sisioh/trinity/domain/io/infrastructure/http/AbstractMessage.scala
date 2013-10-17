@@ -1,8 +1,8 @@
-package org.sisioh.trinity.domain.io.infrastructure.transport.codec.http
+package org.sisioh.trinity.domain.io.infrastructure.http
 
 import org.jboss.netty.handler.codec.http.{HttpMessage => NettyMessage, CookieEncoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.transport.codec.http.{Cookie, Version, Message}
+import org.sisioh.trinity.domain.io.http.{Cookie, Version, Message}
 import scala.collection.JavaConversions._
 
 private[trinity]

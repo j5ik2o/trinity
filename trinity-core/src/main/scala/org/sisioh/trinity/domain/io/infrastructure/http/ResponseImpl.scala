@@ -1,10 +1,10 @@
-package org.sisioh.trinity.domain.io.infrastructure.transport.codec.http
+package org.sisioh.trinity.domain.io.infrastructure.http
 
 import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse, DefaultHttpResponse}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.transport.codec.http.ResponseStatus.{toNetty, toTrinity}
-import org.sisioh.trinity.domain.io.transport.codec.http.Version.toNetty
-import org.sisioh.trinity.domain.io.transport.codec.http.{Cookie, Version, Response, ResponseStatus}
+import org.sisioh.trinity.domain.io.http.ResponseStatus.{toNetty, toTrinity}
+import org.sisioh.trinity.domain.io.http.Version.toNetty
+import org.sisioh.trinity.domain.io.http.{Cookie, Version, Response, ResponseStatus}
 
 /**
  * Netty Requestのラッパー。

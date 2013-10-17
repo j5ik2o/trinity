@@ -1,10 +1,10 @@
-package org.sisioh.trinity.domain.io.infrastructure.transport.codec.http
+package org.sisioh.trinity.domain.io.infrastructure.http
 
 import org.jboss.netty.handler.codec.http.{DefaultHttpRequest, HttpRequest => NettyRequest}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.transport.codec.http.Method.{toNetty, toTrintiy}
-import org.sisioh.trinity.domain.io.transport.codec.http.Version.toNetty
-import org.sisioh.trinity.domain.io.transport.codec.http.{Cookie, Request, Version, Method}
+import org.sisioh.trinity.domain.io.http.Method.{toNetty, toTrintiy}
+import org.sisioh.trinity.domain.io.http.Version.toNetty
+import org.sisioh.trinity.domain.io.http.{Cookie, Request, Version, Method}
 
 private[trinity]
 case class RequestImpl(override val netty: NettyRequest)

@@ -1,9 +1,9 @@
-package org.sisioh.trinity.domain.io.transport.codec.http
+package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Cookie => FinagleCookie}
 import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie}
-import org.sisioh.trinity.domain.io.infrastructure.transport.codec.http.CookieImpl
 import scala.language.implicitConversions
+import org.sisioh.trinity.domain.io.infrastructure.http.CookieImpl
 
 trait Cookie {
 

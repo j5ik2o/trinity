@@ -2,7 +2,7 @@ package org.sisioh.trinity.domain.mvc.controller
 
 import java.util.UUID
 import org.sisioh.dddbase.core.model.{EntityCloneable, Identity, Entity}
-import org.sisioh.trinity.domain.io.transport.codec.http.{ContentType, ResponseStatus}
+import org.sisioh.trinity.domain.io.http.{ContentType, ResponseStatus}
 import org.sisioh.trinity.domain.mvc.http.{Request, ResponseBuilder, Response}
 import scala.concurrent.Future
 

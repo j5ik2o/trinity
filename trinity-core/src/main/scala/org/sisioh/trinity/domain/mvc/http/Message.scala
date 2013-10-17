@@ -2,7 +2,7 @@ package org.sisioh.trinity.domain.mvc.http
 
 import com.twitter.finagle.http.{Message => FinagleMessage}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.domain.io.transport.codec.http.{Message => IOMessage, MessageProxy, CharsetUtil}
+import org.sisioh.trinity.domain.io.http.{Message => IOMessage, MessageProxy, CharsetUtil}
 
 trait Message extends IOMessage with MessageProxy {
 
@@ -120,5 +120,5 @@ trait Message extends IOMessage with MessageProxy {
   def withXForwardedFor(value: String): this.type = mutate {
     _.finagle.xForwardedFor = value
   }
-  finagle.getCookies()
+
 }

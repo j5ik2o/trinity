@@ -1,8 +1,9 @@
 package org.sisioh.trinity.domain.io.infrastructure.transport.codec.http
 
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.domain.io.transport.codec.http.{CharsetUtil, Method, Version}
+import org.sisioh.trinity.domain.io.http.{CharsetUtil, Method, Version}
 import org.specs2.mutable.Specification
+import org.sisioh.trinity.domain.io.infrastructure.http.RequestImpl
 
 class RequestImplSpec extends Specification {
 
