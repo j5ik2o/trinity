@@ -84,17 +84,17 @@ object RoutingFilter {
 
   private implicit val ctx = SyncEntityIOContext
 
-  def routeControllers(controllers: Seq[ScalatraLikeController])
+  def createForControllers(controllers: Seq[ScalatraLikeController])
                       (implicit executor: ExecutionContext,
                        globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
                        pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
-    routes {
+    createForActions {
       pathPatternParser =>
         controllers.flatMap(_.toRouteDefs)
     }
   }
 
-  def routes(routeDefs: (PathPatternParser) => Seq[RouteDef])
+  def createForActions(routeDefs: (PathPatternParser) => Seq[RouteDef])
             (implicit executor: ExecutionContext,
              globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
              pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {

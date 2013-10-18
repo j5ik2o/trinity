@@ -10,9 +10,6 @@ object ScalatraLikeApplication extends App with ScalatraLikeController with Boot
 
   protected val environment = Environment.Development
 
-  override protected val routingFilterOpt: Option[RoutingFilter] =
-    Some(RoutingFilter.routeControllers(Seq(this)))
-
   get("/hello") {
     request =>
       Future.successful(Response().withContentAsString("Hello World!"))
@@ -31,6 +28,9 @@ object ScalatraLikeApplication extends App with ScalatraLikeController with Boot
         Response().withContentAsString("name = " + request.routeParams("name"))
       )
   }
+
+  override protected val routingFilterOpt =
+    Some(RoutingFilter.createForControllers(Seq(this)))
 
   await(start())
 }
