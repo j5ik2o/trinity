@@ -1,13 +1,12 @@
 package org.sisioh.trinity.example
 
-import org.sisioh.trinity.domain.io.transport.codec.http.Method._
-import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
+import org.sisioh.trinity.domain.io.http.Method._
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import org.sisioh.trinity.domain.mvc.controller.Controller
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.stats.Stats
+import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
 import scala.concurrent.Future
 
 object PlayLikeApplication extends App with Controller with Bootstrap {
@@ -16,33 +15,30 @@ object PlayLikeApplication extends App with Controller with Bootstrap {
 
   def helloWorld = SimpleAction {
     request =>
-      Stats.timeFutureNanos("hello") {
-        Future.successful(Response().withContentAsString("Hello World!"))
-      }
+      Future.successful(Response().withContentAsString("Hello World!"))
   }
 
   def getUser = SimpleAction {
     request =>
-      Future.successful(Response().withContentAsString("userId = " + request.routeParams("userId")))
+      Future.successful(
+        Response().withContentAsString("userId = " + request.routeParams("userId"))
+      )
   }
 
-  // ...
-  
-  override protected val routingFilterOpt: Option[RoutingFilter] = Some(RoutingFilter.routes {
+  def getGroup(name: String) = SimpleAction {
+    request =>
+      Future.successful(Response().withContentAsString("name = " + name))
+  }
+
+  override protected val routingFilterOpt = Some(RoutingFilter.routes {
     implicit pathPatternParser =>
       Seq(
-        // 簡単 その1
         Get % "/hello" -> helloWorld,
-        // 簡単 その2
-        Get % "/counter" -> getCounter,
         Get % "/user/:userId" -> getUser,
-        // メソッドの引数にパラメータを渡したい場合
-        Get % "/print/:text" -> {
+        Get % ("""/group/(.*)""".r, Seq("name")) -> {
           request =>
-            printText(request.routeParams("text"))(request)
-        },
-        // 正規表現を指定したい場合
-        Get % ("""/(abc.*)""".r -> Seq("path")) -> getPath
+            getGroup(request.routeParams("name"))(request)
+        }
       )
   })
 
