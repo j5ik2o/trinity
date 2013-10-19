@@ -14,6 +14,7 @@ case class ServerConfig
  maxConcurrentRequestsOpt: Option[Int] = None,
  hostConnectionMaxIdleTimeOpt: Option[Duration] = None,
  hostConnectionMaxLifeTimeOpt: Option[Duration] = None,
- requestTimeoutOpt: Option[Int] = None)
+ requestTimeoutOpt: Option[Int] = None
+  )
 
 

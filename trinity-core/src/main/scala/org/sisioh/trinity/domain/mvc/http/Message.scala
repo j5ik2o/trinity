@@ -6,15 +6,16 @@ import org.sisioh.trinity.domain.io.http.{Message => IOMessage}
 import org.sisioh.trinity.domain.io.http.MessageProxy
 
 import com.twitter.finagle.http.{Message => FinagleMessage}
+import java.nio.charset.Charset
 
 trait Message extends IOMessage with MessageProxy {
 
   val finagle: FinagleMessage
 
-  def contentAsString: String = content.toString
+  def contentAsString(charset: Charset = CharsetUtil.UTF_8): String = content.toString(charset)
 
-  def withContentAsString(body: String): this.type =
-    withContent(ChannelBuffers.copiedBuffer(body, CharsetUtil.UTF_8))
+  def withContentAsString(body: String, charset: Charset = CharsetUtil.UTF_8): this.type =
+    withContent(ChannelBuffers.copiedBuffer(body, charset))
 
   def allow: Option[String] = finagle.allow
 

@@ -9,7 +9,7 @@ import org.sisioh.trinity.domain.io.infrastructure.http.ResponseImpl
 
 trait Response extends Message {
 
-  val netty: NettyResponse
+  val finagle : FinagleResponse
 
   def status: ResponseStatus.Value
 
@@ -28,7 +28,7 @@ object Response {
       case _ => throw new IllegalArgumentException()
     }
 
-  private[domain] implicit def toTrinity(underlying: NettyResponse): Response =
+  def apply(underlying: FinagleResponse): Response =
     ResponseImpl(underlying)
 
   def apply(status: ResponseStatus.Value = ResponseStatus.Ok, version: Version.Value = Version.Http11): Response =

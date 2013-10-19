@@ -36,7 +36,8 @@ trait Bootstrap {
     serverConfig = serverConfig,
     actionOpt = actionOpt,
     filterOpt = routingFilterOpt,
-    globalSettingsOpt = globalSettingsOpt)
+    globalSettingsOpt = globalSettingsOpt
+  )
 
   protected lazy val server = createServer
 

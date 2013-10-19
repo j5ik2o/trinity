@@ -66,7 +66,7 @@ class ServerImplSpec extends Specification {
           def apply(request: Request): Future[Response] = {
             println("start action")
             Future.successful {
-              Response().withContent(ChannelBuffers.copiedBuffer(body, CharsetUtil.UTF_8))
+              Response().withContentAsString(body)
             }
           }
         }

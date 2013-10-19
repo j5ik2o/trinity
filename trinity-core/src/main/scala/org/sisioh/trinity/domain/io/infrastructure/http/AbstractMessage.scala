@@ -4,9 +4,10 @@ import org.jboss.netty.handler.codec.http.{HttpMessage => NettyMessage, CookieEn
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import org.sisioh.trinity.domain.io.http.{Cookie, Version, Message}
 import scala.collection.JavaConversions._
+import com.twitter.finagle.http.{Message => FinagleMessage}
 
 private[trinity]
-abstract class AbstractMessage(val netty: NettyMessage) extends Message {
+abstract class AbstractMessage(val finagle: FinagleMessage) extends Message {
 
   protected def createInstance(message: AbstractMessage): this.type
 
@@ -14,11 +15,13 @@ abstract class AbstractMessage(val netty: NettyMessage) extends Message {
     headers.foreach {
       case (key, value) =>
         value match {
-          case values: Iterable[_] => netty.setHeader(key, values)
-          case _ => netty.setHeader(key, value)
+          case values: Iterable[_] => finagle.setHeader(key, values)
+          case _ => finagle.setHeader(key, value)
         }
     }
   }
+
+  private val cookieHeaderName = if (isResponse) "Set-Cookie" else "Cookie"
 
   protected def setCookies(cookies: Seq[Cookie]) {
     if (cookies.size > 0) {
@@ -27,39 +30,39 @@ abstract class AbstractMessage(val netty: NettyMessage) extends Message {
         cookie =>
           encoder.addCookie(cookie)
       }
-      netty.setHeader("Set-Cookie", encoder.encode())
+      finagle.setHeader(cookieHeaderName, encoder.encode())
     }
   }
 
   protected def setContent(content: ChannelBuffer) {
-    netty.setContent(content)
+    finagle.setContent(content)
   }
 
   protected def mutate(f: (NettyMessage) => Unit): this.type = {
     val cloned = createInstance(this)
-    f(cloned.netty)
+    f(cloned.finagle)
     cloned
   }
 
-  def getHeader(name: String): String = netty.getHeader(name)
+  def getHeader(name: String): Option[String] = Option(finagle.getHeader(name))
 
-  def getHeaders(name: String): Seq[String] = netty.getHeaders(name).toSeq
+  def getHeaders(name: String): Seq[String] = finagle.getHeaders(name).toSeq
 
-  def headers: Seq[(String, Any)] = netty.getHeaders.map {
+  def headers: Seq[(String, Any)] = finagle.getHeaders.map {
     e => (e.getKey, e.getValue)
   }.toSeq
 
-  def containsHeader(name: String): Boolean = netty.containsHeader(name)
+  def containsHeader(name: String): Boolean = finagle.containsHeader(name)
 
-  def headerNames: Set[String] = netty.getHeaderNames.toSet
+  def headerNames: Set[String] = finagle.getHeaderNames.toSet
 
-  def protocolVersion: Version.Value = netty.getProtocolVersion
+  def protocolVersion: Version.Value = finagle.getProtocolVersion
 
   def withProtocolVersion(version: Version.Value) = mutate {
     _.setProtocolVersion(version)
   }
 
-  def content: ChannelBuffer = netty.getContent
+  def content: ChannelBuffer = finagle.getContent
 
   def withContent(content: ChannelBuffer) = mutate {
     _.setContent(content)
@@ -81,7 +84,7 @@ abstract class AbstractMessage(val netty: NettyMessage) extends Message {
     _.clearHeaders()
   }
 
-  def isChunked: Boolean = netty.isChunked
+  def isChunked: Boolean = finagle.isChunked
 
   def withChunked(chunked: Boolean) = mutate {
     _.setChunked(chunked)

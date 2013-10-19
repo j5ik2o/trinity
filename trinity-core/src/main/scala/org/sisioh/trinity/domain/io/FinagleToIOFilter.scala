@@ -1,7 +1,6 @@
 package org.sisioh.trinity.domain.io
 
 import org.sisioh.trinity.domain.io.http.{ Request => IORequest }
-import org.sisioh.trinity.domain.io.http.Request.toTrinity
 import org.sisioh.trinity.domain.io.http.{ Response => IOResponse }
 import com.twitter.finagle.Filter
 import com.twitter.finagle.Service
@@ -14,7 +13,7 @@ case class FinagleToIOFilter()
   extends Filter[Request, Response, IORequest, IOResponse] {
 
   def apply(request: Request, service: Service[IORequest, IOResponse]): Future[Response] = {
-    Stats.timeFutureNanos("FinagleToIOFilter")(service(request).map(IOResponse.toFinagle))
+    Stats.timeFutureNanos("FinagleToIOFilter")(service(IORequest(request)).map(IOResponse.toFinagle))
   }
 
 }

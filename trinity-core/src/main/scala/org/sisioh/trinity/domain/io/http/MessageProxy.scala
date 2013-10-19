@@ -24,23 +24,23 @@ trait MessageProxy extends Message with Proxy {
 
   def isRequest = underlying.isRequest
 
-  def getHeader(name: String): String = underlying.getHeader(name)
+  def getHeader(name: String): Option[String] = underlying.getHeader(name)
 
   def getHeaders(name: String): Seq[String] = underlying.getHeaders(name)
 
-  val headers: Seq[(String, Any)] = underlying.headers
+  def headers: Seq[(String, Any)] = underlying.headers
 
   def containsHeader(name: String): Boolean = underlying.containsHeader(name)
 
-  val headerNames: Set[String] = underlying.headerNames
+  def headerNames: Set[String] = underlying.headerNames
 
-  val protocolVersion: Version.Value = underlying.protocolVersion
+  def protocolVersion: Version.Value = underlying.protocolVersion
 
   def withProtocolVersion(version: Version.Value): this.type = mutate {
     _.underlying.withProtocolVersion(version)
   }
 
-  val content: ChannelBuffer = underlying.content
+  def content: ChannelBuffer = underlying.content
 
   def withContent(content: ChannelBuffer): this.type = mutate {
     _.underlying.withContent(content)
