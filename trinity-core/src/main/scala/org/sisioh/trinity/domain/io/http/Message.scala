@@ -4,23 +4,23 @@ import scala.collection.JavaConverters.asScalaSetConverter
 
 import org.jboss.netty.handler.codec.http.CookieDecoder
 import org.jboss.netty.handler.codec.http.CookieEncoder
-import org.jboss.netty.handler.codec.http.{ HttpMessage => NettyMessage }
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import org.sisioh.trinity.domain.io.http.Cookie.toNetty
 import org.sisioh.trinity.domain.io.http.Cookie.toTrinity
+import com.twitter.finagle.http.{Message => FinagleMessage}
 
 /**
  * HTTPのメッセージを表すトレイト。
  */
 trait Message {
 
-  val netty: NettyMessage
+  val finagle: FinagleMessage
 
   def isRequest: Boolean
 
   def isResponse = !isRequest
 
-  def getHeader(name: String): String
+  def getHeader(name: String): Option[String]
 
   def getHeaders(name: String): Seq[String]
 
@@ -70,10 +70,10 @@ trait Message {
 
   def cookies: Seq[Cookie] = {
     val decoder = new CookieDecoder()
-    val header = getHeader(cookieHeaderName)
+    val header = getHeader(cookieHeaderName).get
     decoder.decode(header).asScala.map(toTrinity).toSeq
   }
 
-  override def toString = netty.toString
+  override def toString = finagle.toString
 
 }

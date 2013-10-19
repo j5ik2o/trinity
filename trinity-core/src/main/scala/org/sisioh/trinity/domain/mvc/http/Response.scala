@@ -6,8 +6,6 @@ import org.sisioh.trinity.domain.io.http.{ Response => IOResponse, ResponseStatu
 
 trait Response extends Message with ResponseProxy {
 
-  lazy val finagle = FinagleResponse(netty)
-
   def encodeString(): String = finagle.encodeString()
 
 }

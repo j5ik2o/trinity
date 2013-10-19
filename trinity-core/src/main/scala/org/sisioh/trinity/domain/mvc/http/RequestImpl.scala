@@ -1,6 +1,5 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import org.jboss.netty.handler.codec.http.HttpRequest
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
 import org.sisioh.trinity.domain.io.http.Method
 import org.sisioh.trinity.domain.io.http.{Request => IORequest}
@@ -18,7 +17,7 @@ class RequestImpl
  val errorOpt: Option[Throwable])
   extends AbstractRequestProxy(underlying) with Request {
 
-  val netty: HttpRequest = underlying.netty
+  val finagle = underlying.finagle
 
   protected def createInstance(message: this.type): this.type =
     new RequestImpl(
@@ -45,7 +44,6 @@ class RequestImpl
       content.resetReaderIndex()
       m
     } else Map.empty[String, MultiPartItem]
-
 
 
   def withAction(action: Option[Action[Request, Response]]): this.type =

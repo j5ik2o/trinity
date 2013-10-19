@@ -8,19 +8,17 @@ import scala.util.Sorting
 import org.sisioh.trinity.domain.io.http.AcceptOrdering
 import org.sisioh.trinity.domain.io.http.ContentType
 import org.sisioh.trinity.domain.io.http.Method
-import org.sisioh.trinity.domain.io.http.{ Request => IORequest }
+import org.sisioh.trinity.domain.io.http.{Request => IORequest}
 import org.sisioh.trinity.domain.io.http.RequestProxy
 import org.sisioh.trinity.domain.io.http.Version
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
 import com.google.common.base.Splitter
 import com.twitter.finagle.http.ParamMap
-import com.twitter.finagle.http.{ Request => FinagleRequest }
+import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.sisioh.scala.toolbox.LoggingEx
 
 trait Request extends Message with RequestProxy with LoggingEx {
-
-  lazy val finagle = FinagleRequest(netty)
 
   val actionOpt: Option[Action[Request, Response]]
 
@@ -38,7 +36,9 @@ trait Request extends Message with RequestProxy with LoggingEx {
 
   def remotePort: Int = remoteSocketAddress.getPort
 
-  def params: ParamMap = finagle.params
+  private def _params = finagle.params
+
+  def params: Map[String, String] = _params
 
   def path: String = finagle.path
 
@@ -51,7 +51,7 @@ trait Request extends Message with RequestProxy with LoggingEx {
   val multiParams: Map[String, MultiPartItem]
 
   def accepts: Seq[ContentType] = {
-    val acceptOpt = Option(getHeader("Accept"))
+    val acceptOpt = getHeader("Accept")
     acceptOpt.map {
       accept =>
         val acceptParts = Splitter.on(',').split(accept).toArray
@@ -74,53 +74,55 @@ trait Request extends Message with RequestProxy with LoggingEx {
 
   val globalSettingsOpt: Option[GlobalSettings[Request, Response]]
 
-  def getParam(name: String, default: String): String = params.get(name).getOrElse(default)
+  def getParamAsStringOpt(name: String): Option[String] = params.get(name)
 
-  def getShortParam(name: String): Short = params.getShortOrElse(name, 0)
+  def getParamAsString(name: String, default: String): String = getParamAsStringOpt(name).getOrElse(default)
 
-  def getShortParam(name: String, default: Short): Short = params.getShortOrElse(name, default)
+  def getParamAsShortOpt(name: String): Option[Short] = _params.getShort(name)
 
-  def getIntParam(name: String): Int = params.getIntOrElse(name, 0)
+  def getParamAsShort(name: String, default: Short): Short = _params.getShortOrElse(name, default)
 
-  def getIntParam(name: String, default: Int): Int = params.getIntOrElse(name, default)
+  def getParamAsIntOpt(name: String): Option[Int] = _params.getInt(name)
 
-  def getLongParam(name: String): Long = params.getLongOrElse(name, 0L)
+  def getParamAsInt(name: String, default: Int): Int = _params.getIntOrElse(name, default)
 
-  def getLongParam(name: String, default: Long = 0L): Long = params.getLongOrElse(name, default)
+  def getParamAsLongOpt(name: String): Option[Long] = _params.getLong(name)
 
-  def getBooleanParam(name: String): Boolean = params.getBooleanOrElse(name, false)
+  def getParamAsLong(name: String, default: Long): Long = _params.getLongOrElse(name, default)
 
-  def getBooleanParam(name: String, default: Boolean): Boolean = params.getBooleanOrElse(name, default)
+  def getParamAsBooleanOpt(name: String): Option[Boolean] = _params.getBoolean(name)
 
-  def getParams(name: String): Seq[String] = params.getAll(name).toList
+  def getParamAsBoolean(name: String, default: Boolean): Boolean = _params.getBooleanOrElse(name, default)
 
-  def getParams(): Seq[(String, String)] = params.toList.map {
+  def getParamAsSeq(name: String): Seq[String] = _params.getAll(name).toList
+
+  def getParams: Seq[(String, String)] = params.toList.map {
     case (k, v) =>
       (k, v)
   }
 
   def containsParam(name: String): Boolean = params.contains(name)
 
-  def getParamNames(): Set[String] = params.keySet
+  def getParamNames: Set[String] = params.keySet
 
 }
 
 object Request {
 
   def fromUnderlying(underlying: IORequest,
-    action: Option[Action[Request, Response]] = None,
-    routeParams: Map[String, String] = Map.empty,
-    globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
-    errorOpt: Option[Throwable] = None): Request =
+                     action: Option[Action[Request, Response]] = None,
+                     routeParams: Map[String, String] = Map.empty,
+                     globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+                     errorOpt: Option[Throwable] = None): Request =
     new RequestImpl(underlying, action, routeParams, globalSettingsOpt, errorOpt)
 
   def apply(method: Method.Value = Method.Get,
-    uri: String = "/",
-    action: Option[Action[Request, Response]] = None,
-    routeParams: Map[String, String] = Map.empty,
-    globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
-    errorOpt: Option[Throwable] = None,
-    version: Version.Value = Version.Http11): Request =
+            uri: String = "/",
+            action: Option[Action[Request, Response]] = None,
+            routeParams: Map[String, String] = Map.empty,
+            globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+            errorOpt: Option[Throwable] = None,
+            version: Version.Value = Version.Http11): Request =
     new RequestImpl(method, uri, action, routeParams, globalSettingsOpt, errorOpt, version)
 
 }

@@ -9,7 +9,7 @@ import com.twitter.finagle.http.{Request => FinagleRequest}
 
 trait Request extends Message {
 
-  val netty: NettyRequest
+  val finagle: FinagleRequest
 
   val method: Method.Value
 
@@ -24,15 +24,14 @@ trait Request extends Message {
 object Request {
 
   private[http] implicit def toFinagle(self: Request): FinagleRequest =
-    FinagleRequest(self.netty)
+    self.finagle
 
   private[http] implicit def toNetty(self: Request): NettyRequest =
-    self.netty
-
-  private[domain] implicit def toTrinity(underlying: NettyRequest): Request =
-    RequestImpl(underlying)
+    self.finagle
 
   def apply(method: Method.Value, uri: String, version: Version.Value = Version.Http11): Request =
     new RequestImpl(method, uri, version = version)
 
+  def apply(request: FinagleRequest): Request =
+    new RequestImpl(request)
 }
