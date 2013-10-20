@@ -19,15 +19,6 @@ trait Response extends Message {
 
 object Response {
 
-  private[domain] implicit def toFinagle(self: Response): FinagleResponse =
-    FinagleResponse(toNetty(self))
-
-  private[domain] implicit def toNetty(self: Response): NettyResponse =
-    self match {
-      case ResponseImpl(underlying) => underlying
-      case _ => throw new IllegalArgumentException()
-    }
-
   def apply(underlying: FinagleResponse): Response =
     ResponseImpl(underlying)
 

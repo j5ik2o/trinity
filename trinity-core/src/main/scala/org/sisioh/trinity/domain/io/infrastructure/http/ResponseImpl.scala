@@ -21,7 +21,7 @@ case class ResponseImpl(override val finagle: FinagleResponse)
            cookies: Seq[Cookie] = Seq.empty,
            content: ChannelBuffer = ChannelBuffer.empty,
            version: Version.Value = Version.Http11) = {
-    this(Response(status, version))
+    this(FinagleResponse(version, status))
     setHeaders(headers)
     setCookies(cookies)
     setContent(content)
@@ -38,7 +38,7 @@ case class ResponseImpl(override val finagle: FinagleResponse)
     cloned
   }
 
-  val status: ResponseStatus.Value = finagle.getStatus
+  val status: ResponseStatus.Value = finagle.getStatus()
 
   def withStatus(status: ResponseStatus.Value): this.type = mutateAsResponse {
     _.setStatus(status)
