@@ -40,13 +40,13 @@ case class RequestImpl(override val finagle: FinagleRequest)
     cloned
   }
 
-  val method: Method.Value = finagle.getMethod
+  val method: Method.Value = finagle.getMethod()
 
   def withMethod(method: Method.Value): this.type = mutateAsRequest {
     _.setMethod(method)
   }
 
-  val uri: String = finagle.getUri
+  val uri = finagle.getUri()
 
   def withUri(uri: String): this.type = mutateAsRequest {
     _.setUri(uri)

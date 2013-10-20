@@ -22,7 +22,7 @@ class RequestImplSpec extends Specification {
       val errorOpt = None
       val version = Version.Http11
 
-      val request =  new RequestImpl(method, uri, actionOpt, routeParams, globalSettingsOpt, errorOpt, version)
+      val request = new RequestImpl(method, uri, actionOpt, routeParams, globalSettingsOpt, errorOpt, version)
       request.method must_== method
       request.uri must_== uri
       request.actionOpt must_== actionOpt
@@ -31,6 +31,38 @@ class RequestImplSpec extends Specification {
       request.errorOpt must_== errorOpt
       request.protocolVersion must_== version
     }
+    "execute action" in {
+      val method = Method.Get
+      val uri = "/"
+      val responseFuture = Future.successful(Response())
+      val action = new SimpleAction {
+        def apply(request: Request): Future[Response] = responseFuture
+      }
+      val routeParams = Map.empty[String, String]
+      val globalSettingsOpt = None
+      val errorOpt = None
+      val version = Version.Http11
+
+      val request = new RequestImpl(method, uri, Some(action), routeParams, globalSettingsOpt, errorOpt, version)
+      request.execute(action) must_== responseFuture
+    }
+    "be changed action" in {
+      val method = Method.Get
+      val uri = "/"
+      val responseFuture = Future.successful(Response())
+      val action = new SimpleAction {
+        def apply(request: Request): Future[Response] = responseFuture
+      }
+      val routeParams = Map.empty[String, String]
+      val globalSettingsOpt = None
+      val errorOpt = None
+      val version = Version.Http11
+
+      val request = new RequestImpl(method, uri, None, routeParams, globalSettingsOpt, errorOpt, version)
+      val newRequest = request.withAction(Some(action))
+      newRequest must_== request
+    }
   }
+
 
 }

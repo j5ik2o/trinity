@@ -9,12 +9,12 @@ import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
 
 private[http]
-class RequestImpl
+case class RequestImpl
 (override val underlying: IORequest,
- val actionOpt: Option[Action[Request, Response]],
- val routeParams: Map[String, String],
- val globalSettingsOpt: Option[GlobalSettings[Request, Response]],
- val errorOpt: Option[Throwable])
+ actionOpt: Option[Action[Request, Response]],
+ routeParams: Map[String, String],
+ globalSettingsOpt: Option[GlobalSettings[Request, Response]],
+ errorOpt: Option[Throwable])
   extends AbstractRequestProxy(underlying) with Request {
 
   val finagle = underlying.finagle
