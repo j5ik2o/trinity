@@ -1,11 +1,11 @@
 package org.sisioh.trinity.domain.io.infrastructure.http
 
+import com.twitter.finagle.http.{Response => FinagleResponse}
 import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import org.sisioh.trinity.domain.io.http.ResponseStatus.{toNetty, toTrinity}
 import org.sisioh.trinity.domain.io.http.{Cookie, Version, Response, ResponseStatus}
 
-import com.twitter.finagle.http.{Response => FinagleResponse}
 
 /**
  * Netty Requestのラッパー。
@@ -33,7 +33,11 @@ case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse)
     new ResponseImpl(message.toUnderlyingAsFinagle.asInstanceOf[FinagleResponse]).asInstanceOf[this.type]
 
   protected def mutateAsResponse(f: (NettyResponse) => Unit): this.type = {
-    val cloned = createInstance(this)
+    val cloned = if (!isMutable) {
+      createInstance(this)
+    } else {
+      this
+    }
     f(cloned.toUnderlyingAsFinagle)
     cloned
   }
