@@ -18,6 +18,17 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
 
 case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = false) extends ChannelBuffer {
 
+  override def equals(obj: Any): Boolean = obj match {
+    case ChannelBufferImpl(netty, _) =>
+      underlying == netty
+    case _ => false
+  }
+
+  override def hashCode() =
+    31 * underlying.##
+
+  override def toString() = underlying.toString
+
   private def mutateAsThis(f: (NettyChannelBuffer) => Unit): ChannelBuffer = {
     val result = if (mutated) this else internalClone
     f(result.underlying)
@@ -29,7 +40,6 @@ case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = 
     f(result.underlying)
   }
 
-  import ChannelBuffersImpl._
 
   def factory: ChannelBufferFactory = underlying.factory()
 
@@ -405,4 +415,5 @@ case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = 
   def toString(index: Int, length: Int, charset: Charset): String = underlying.toString(index, length, charset)
 
   def compareTo(buffer: ChannelBuffer): Int = underlying.compareTo(buffer)
+
 }

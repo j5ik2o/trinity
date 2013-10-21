@@ -8,7 +8,7 @@ private[http]
 class ResponseImpl(override val underlying: http.Response)
   extends AbstractResponseProxy(underlying) with Response {
 
-  val finagle = underlying.finagle
+  val toUnderlyingAsFinagle = underlying.toUnderlyingAsFinagle
 
   def this(status: ResponseStatus.Value, version: Version.Value) =
     this(http.Response(status, version))

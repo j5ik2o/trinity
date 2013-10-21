@@ -4,7 +4,6 @@ import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie, DefaultCookie}
 import org.sisioh.trinity.domain.io.http.Cookie
 import scala.collection.JavaConverters.asScalaSetConverter
 
-
 private[trinity]
 case class CookieImpl(underlying: NettyCookie) extends Cookie {
 

@@ -4,7 +4,7 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 trait MessageProxy extends Message with Proxy {
 
-  val isMutable: Boolean = false
+
 
   protected def createInstance(message: this.type): this.type
 

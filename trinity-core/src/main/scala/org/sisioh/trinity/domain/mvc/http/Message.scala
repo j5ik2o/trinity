@@ -1,128 +1,120 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.domain.io.http.CharsetUtil
 import org.sisioh.trinity.domain.io.http.{Message => IOMessage}
 import org.sisioh.trinity.domain.io.http.MessageProxy
 
 import com.twitter.finagle.http.{Message => FinagleMessage}
-import java.nio.charset.Charset
 
 trait Message extends IOMessage with MessageProxy {
 
-  val finagle: FinagleMessage
+  val toUnderlyingAsFinagle: FinagleMessage
 
-  def contentAsString(charset: Charset = CharsetUtil.UTF_8): String = content.toString(charset)
-
-  def withContentAsString(body: String, charset: Charset = CharsetUtil.UTF_8): this.type =
-    withContent(ChannelBuffers.copiedBuffer(body, charset))
-
-  def allow: Option[String] = finagle.allow
+  def allow: Option[String] = toUnderlyingAsFinagle.allow
 
   def withAllow(value: String): this.type = mutate {
-    _.finagle.allow = value
+    _.toUnderlyingAsFinagle.allow = value
   }
 
-  def authorization: Option[String] = finagle.authorization
+  def authorization: Option[String] = toUnderlyingAsFinagle.authorization
 
   def withAuthorization(value: String): this.type = mutate {
-    _.finagle.authorization = value
+    _.toUnderlyingAsFinagle.authorization = value
   }
 
-  def cacheControl: Option[String] = finagle.cacheControl
+  def cacheControl: Option[String] = toUnderlyingAsFinagle.cacheControl
 
   def withCacheControl(value: String): this.type = mutate {
-    _.finagle.cacheControl = value
+    _.toUnderlyingAsFinagle.cacheControl = value
   }
 
-  def charset: Option[String] = finagle.charset
+  def charset: Option[String] = toUnderlyingAsFinagle.charset
 
   def withCharset(value: String): this.type = mutate {
-    _.finagle.charset = value
+    _.toUnderlyingAsFinagle.charset = value
   }
 
-  def contentLength: Option[Long] = finagle.contentLength
+  def contentLength: Option[Long] = toUnderlyingAsFinagle.contentLength
 
   def withContentLength(value: Long): this.type = mutate {
-    _.finagle.contentLength = value
+    _.toUnderlyingAsFinagle.contentLength = value
   }
 
-  def contentType: Option[String] = finagle.contentType
+  def contentType: Option[String] = toUnderlyingAsFinagle.contentType
 
   def withContentType(value: String): this.type = mutate {
-    _.finagle.contentType = value
+    _.toUnderlyingAsFinagle.contentType = value
   }
 
-  def date: Option[String] = finagle.date
+  def date: Option[String] = toUnderlyingAsFinagle.date
 
   def withDate(value: String): this.type = mutate {
-    _.finagle.date = value
+    _.toUnderlyingAsFinagle.date = value
   }
 
-  def expires: Option[String] = finagle.expires
+  def expires: Option[String] = toUnderlyingAsFinagle.expires
 
   def withExpire(value: String): this.type = mutate {
-    _.finagle.expires = value
+    _.toUnderlyingAsFinagle.expires = value
   }
 
-  def host: Option[String] = finagle.host
+  def host: Option[String] = toUnderlyingAsFinagle.host
 
   def withHost(value: String): this.type = mutate {
-    _.finagle.host = value
+    _.toUnderlyingAsFinagle.host = value
   }
 
-  def lastModified: Option[String] = finagle.lastModified
+  def lastModified: Option[String] = toUnderlyingAsFinagle.lastModified
 
   def withLastModified(value: String): this.type = mutate {
-    _.finagle.lastModified = value
+    _.toUnderlyingAsFinagle.lastModified = value
   }
 
-  def location: Option[String] = finagle.location
+  def location: Option[String] = toUnderlyingAsFinagle.location
 
   def withLocation(value: String): this.type = mutate {
-    _.finagle.location = value
+    _.toUnderlyingAsFinagle.location = value
   }
 
-  def mediaType: Option[String] = finagle.mediaType
+  def mediaType: Option[String] = toUnderlyingAsFinagle.mediaType
 
   def withMediaType(value: String): this.type = mutate {
-    _.finagle.mediaType = value
+    _.toUnderlyingAsFinagle.mediaType = value
   }
 
-  def referer: Option[String] = finagle.referer
+  def referer: Option[String] = toUnderlyingAsFinagle.referer
 
   def withReferer(value: String): this.type = mutate {
-    _.finagle.referer = value
+    _.toUnderlyingAsFinagle.referer = value
   }
 
-  def retryAfter: Option[String] = finagle.retryAfter
+  def retryAfter: Option[String] = toUnderlyingAsFinagle.retryAfter
 
   def withRetryAfter(value: String): this.type = mutate {
-    _.finagle.retryAfter = value
+    _.toUnderlyingAsFinagle.retryAfter = value
   }
 
-  def server: Option[String] = finagle.server
+  def server: Option[String] = toUnderlyingAsFinagle.server
 
   def withServer(value: String): this.type = mutate {
-    _.finagle.server = value
+    _.toUnderlyingAsFinagle.server = value
   }
 
-  def userAgent: Option[String] = finagle.userAgent
+  def userAgent: Option[String] = toUnderlyingAsFinagle.userAgent
 
   def withUserAgent(value: String): this.type = mutate {
-    _.finagle.userAgent = value
+    _.toUnderlyingAsFinagle.userAgent = value
   }
 
-  def wwwAuthenticate: Option[String] = finagle.wwwAuthenticate
+  def wwwAuthenticate: Option[String] = toUnderlyingAsFinagle.wwwAuthenticate
 
   def withWwwAuthenticate(value: String): this.type = mutate {
-    _.finagle.wwwAuthenticate = value
+    _.toUnderlyingAsFinagle.wwwAuthenticate = value
   }
 
-  def xForwardedFor: Option[String] = finagle.xForwardedFor
+  def xForwardedFor: Option[String] = toUnderlyingAsFinagle.xForwardedFor
 
   def withXForwardedFor(value: String): this.type = mutate {
-    _.finagle.xForwardedFor = value
+    _.toUnderlyingAsFinagle.xForwardedFor = value
   }
 
 }

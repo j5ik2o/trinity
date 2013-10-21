@@ -6,7 +6,7 @@ import org.sisioh.trinity.domain.io.http.{ Response => IOResponse, ResponseStatu
 
 trait Response extends Message with ResponseProxy {
 
-  def encodeString(): String = finagle.encodeString()
+  def encodeString(): String = toUnderlyingAsFinagle.encodeString()
 
 }
 
