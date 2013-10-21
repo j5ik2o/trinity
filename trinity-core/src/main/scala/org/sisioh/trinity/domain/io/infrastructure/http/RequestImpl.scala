@@ -1,6 +1,6 @@
 package org.sisioh.trinity.domain.io.infrastructure.http
 
-import org.jboss.netty.handler.codec.http.DefaultHttpRequest
+import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.{HttpRequest => NettyRequest}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import org.sisioh.trinity.domain.io.http.Cookie
@@ -11,7 +11,6 @@ import org.sisioh.trinity.domain.io.http.Request
 import org.sisioh.trinity.domain.io.http.Version
 import org.sisioh.trinity.domain.io.http.Version.toNetty
 
-import com.twitter.finagle.http.{Request => FinagleRequest}
 
 private[trinity]
 class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest)
@@ -35,7 +34,11 @@ class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest)
     new RequestImpl(message.toUnderlyingAsFinagle.asInstanceOf[FinagleRequest]).asInstanceOf[this.type]
 
   protected def mutateAsRequest(f: (NettyRequest) => Unit): this.type = {
-    val cloned = createInstance(this)
+    val cloned = if (!isMutable) {
+      createInstance(this)
+    } else {
+      this
+    }
     f(cloned.toUnderlyingAsFinagle)
     cloned
   }
