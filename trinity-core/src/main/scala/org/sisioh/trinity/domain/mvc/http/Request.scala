@@ -1,22 +1,21 @@
 package org.sisioh.trinity.domain.mvc.http
 
+import com.google.common.base.Splitter
+import com.twitter.finagle.http.{Request => FinagleRequest}
 import java.net.InetAddress
 import java.net.InetSocketAddress
-import scala.collection.JavaConversions.iterableAsScalaIterable
-import scala.concurrent.Future
-import scala.util.{Try, Sorting}
+import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.io.http.AcceptOrdering
 import org.sisioh.trinity.domain.io.http.ContentType
 import org.sisioh.trinity.domain.io.http.Method
-import org.sisioh.trinity.domain.io.http.{Request => IORequest}
 import org.sisioh.trinity.domain.io.http.RequestProxy
 import org.sisioh.trinity.domain.io.http.Version
+import org.sisioh.trinity.domain.io.http.{Request => IORequest}
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
-import com.google.common.base.Splitter
-import com.twitter.finagle.http.ParamMap
-import com.twitter.finagle.http.{Request => FinagleRequest}
-import org.sisioh.scala.toolbox.LoggingEx
+import scala.collection.JavaConversions.iterableAsScalaIterable
+import scala.concurrent.Future
+import scala.util.{Try, Sorting}
 
 trait Request extends Message with RequestProxy with LoggingEx {
 
@@ -140,7 +139,13 @@ object Request {
                      routeParams: Map[String, String] = Map.empty,
                      globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
                      errorOpt: Option[Throwable] = None): Request =
-    new RequestImpl(underlying, actionOpt, routeParams, globalSettingsOpt, errorOpt)
+    new RequestImpl(
+      underlying,
+      actionOpt,
+      routeParams,
+      globalSettingsOpt,
+      errorOpt
+    )
 
   def apply(method: Method.Value = Method.Get,
             uri: String = "/",
@@ -155,6 +160,7 @@ object Request {
       actionOpt,
       routeParams,
       globalSettingsOpt,
-      errorOpt, version)
+      errorOpt, version
+    )
 
 }
