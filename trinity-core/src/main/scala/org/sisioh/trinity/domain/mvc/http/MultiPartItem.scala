@@ -1,19 +1,16 @@
 package org.sisioh.trinity.domain.mvc.http
 
 import java.io.FileOutputStream
-
-import scala.collection.JavaConversions.asScalaBuffer
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.concurrent.future
-
 import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
-import org.jboss.netty.handler.codec.http.multipart.HttpPostRequestDecoder
 import org.jboss.netty.handler.codec.http.multipart.MixedFileUpload
 import org.sisioh.scala.toolbox.Loan.using
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toTrinity
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.future
+
 
 /**
  * マルチパートアイテムを表現する値オブジェクト。
@@ -30,7 +27,8 @@ case class MultiPartItem(mixedFileUpload: MixedFileUpload, ioChunkSize: Int = 10
 
   val fileName = mixedFileUpload.getFilename
 
-  def writeToFile(path: String)(implicit executor: ExecutionContext): Future[Unit] = future {
+  def writeToFile(path: String)
+                 (implicit executor: ExecutionContext): Future[Unit] = future {
     using(new FileOutputStream(path)) {
       fis =>
         val netty: NettyChannelBuffer = data
@@ -42,25 +40,4 @@ case class MultiPartItem(mixedFileUpload: MixedFileUpload, ioChunkSize: Int = 10
 
 }
 
-/**
- * コンパニオンオブジェクト。
- */
-object MultiPartItem {
 
-  /**
-   * リクエストから[[org.sisioh.trinity.domain.mvc.http.MultiPartItem]]のマップを取得する。
-   *
-   * @param request `com.twitter.finagle.http.Request`
-   * @return [[org.sisioh.trinity.domain.mvc.http.MultiPartItem]]のマップ
-   */
-  def apply(request: Request): Map[String, MultiPartItem] = {
-    val httpPostRequestDecoder = new HttpPostRequestDecoder(request.underlying.finagle)
-    if (httpPostRequestDecoder.isMultipart) {
-      httpPostRequestDecoder.getBodyHttpDatas.map {
-        data =>
-          data.getName -> MultiPartItem(data.asInstanceOf[MixedFileUpload])
-      }.toMap
-    } else Map.empty[String, MultiPartItem]
-  }
-
-}

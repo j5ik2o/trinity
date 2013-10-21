@@ -14,8 +14,8 @@ import org.sisioh.trinity.domain.io.http.Version.toNetty
 import com.twitter.finagle.http.{Request => FinagleRequest}
 
 private[trinity]
-case class RequestImpl(override val finagle: FinagleRequest)
-  extends AbstractMessage(finagle) with Request {
+class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest)
+  extends AbstractMessage(toUnderlyingAsFinagle) with Request {
 
   def isRequest: Boolean = true
 
@@ -32,21 +32,21 @@ case class RequestImpl(override val finagle: FinagleRequest)
   }
 
   protected def createInstance(message: AbstractMessage): this.type =
-    new RequestImpl(message.finagle.asInstanceOf[FinagleRequest]).asInstanceOf[this.type]
+    new RequestImpl(message.toUnderlyingAsFinagle.asInstanceOf[FinagleRequest]).asInstanceOf[this.type]
 
   protected def mutateAsRequest(f: (NettyRequest) => Unit): this.type = {
     val cloned = createInstance(this)
-    f(cloned.finagle)
+    f(cloned.toUnderlyingAsFinagle)
     cloned
   }
 
-  val method: Method.Value = finagle.getMethod()
+  val method: Method.Value = toUnderlyingAsFinagle.getMethod()
 
   def withMethod(method: Method.Value): this.type = mutateAsRequest {
     _.setMethod(method)
   }
 
-  val uri = finagle.getUri()
+  val uri = toUnderlyingAsFinagle.getUri()
 
   def withUri(uri: String): this.type = mutateAsRequest {
     _.setUri(uri)

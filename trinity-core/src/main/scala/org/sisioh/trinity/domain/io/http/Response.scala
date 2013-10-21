@@ -1,15 +1,30 @@
 package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Response => FinagleResponse}
-import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse}
+import org.sisioh.trinity.domain.io.infrastructure.http.ResponseImpl
 import scala.language.implicitConversions
 
-import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse, DefaultHttpResponse}
-import org.sisioh.trinity.domain.io.infrastructure.http.ResponseImpl
 
 trait Response extends Message {
 
-  val finagle : FinagleResponse
+  val toUnderlyingAsFinagle: FinagleResponse
+
+  override def toString() =
+    Seq(
+      s"protocolVersion = $protocolVersion",
+      s"headers = $headers",
+      s"status = $status",
+      s"content = $content"
+    ).mkString("Response(", ", ", ")")
+
+  override def equals(obj: Any): Boolean = obj match {
+    case that: Response =>
+      super.equals(that) && status == that.status
+    case _ => false
+  }
+
+  override def hashCode: Int =
+    31 * (super.hashCode + status.hashCode)
 
   def status: ResponseStatus.Value
 

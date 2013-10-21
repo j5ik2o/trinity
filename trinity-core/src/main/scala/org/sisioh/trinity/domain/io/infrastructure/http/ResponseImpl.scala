@@ -10,11 +10,11 @@ import com.twitter.finagle.http.{Response => FinagleResponse}
 /**
  * Netty Requestのラッパー。
  *
- * @param finagle
+ * @param toUnderlyingAsFinagle
  */
 private[trinity]
-case class ResponseImpl(override val finagle: FinagleResponse)
-  extends AbstractMessage(finagle) with Response {
+case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse)
+  extends AbstractMessage(toUnderlyingAsFinagle) with Response {
 
   def this(status: ResponseStatus.Value,
            headers: Seq[(String, Any)] = Seq.empty,
@@ -30,15 +30,15 @@ case class ResponseImpl(override val finagle: FinagleResponse)
   def isRequest: Boolean = false
 
   protected def createInstance(message: AbstractMessage): this.type =
-    new ResponseImpl(message.finagle.asInstanceOf[FinagleResponse]).asInstanceOf[this.type]
+    new ResponseImpl(message.toUnderlyingAsFinagle.asInstanceOf[FinagleResponse]).asInstanceOf[this.type]
 
   protected def mutateAsResponse(f: (NettyResponse) => Unit): this.type = {
     val cloned = createInstance(this)
-    f(cloned.finagle)
+    f(cloned.toUnderlyingAsFinagle)
     cloned
   }
 
-  val status: ResponseStatus.Value = finagle.getStatus()
+  val status: ResponseStatus.Value = toUnderlyingAsFinagle.getStatus()
 
   def withStatus(status: ResponseStatus.Value): this.type = mutateAsResponse {
     _.setStatus(status)

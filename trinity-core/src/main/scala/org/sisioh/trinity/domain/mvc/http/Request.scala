@@ -4,7 +4,7 @@ import java.net.InetAddress
 import java.net.InetSocketAddress
 import scala.collection.JavaConversions.iterableAsScalaIterable
 import scala.concurrent.Future
-import scala.util.Sorting
+import scala.util.{Try, Sorting}
 import org.sisioh.trinity.domain.io.http.AcceptOrdering
 import org.sisioh.trinity.domain.io.http.ContentType
 import org.sisioh.trinity.domain.io.http.Method
@@ -20,15 +20,41 @@ import org.sisioh.scala.toolbox.LoggingEx
 
 trait Request extends Message with RequestProxy with LoggingEx {
 
+  override def equals(obj: Any): Boolean = obj match {
+    case that: Request =>
+      super.equals(that) &&
+        actionOpt == that.actionOpt &&
+        routeParams == that.routeParams &&
+        globalSettingsOpt == that.globalSettingsOpt &&
+        errorOpt == that.errorOpt
+    case _ => false
+  }
+
+  override def hashCode(): Int =
+    31 * (toUnderlyingAsFinagle.## + actionOpt.## + routeParams.## + globalSettingsOpt.## + errorOpt.##)
+
+  override def toString() =
+    Seq(
+      s"protocolVersion = $protocolVersion",
+      s"method = $method",
+      s"uri = $uri",
+      s"headers = $headers",
+      s"content = $content",
+      s"actionOpt = $actionOpt",
+      s"routeParams = $routeParams",
+      s"globalSettingOpt = $globalSettingsOpt",
+      s"errorOpt = $errorOpt"
+    ).mkString("Request(", ", ", ")")
+
   val actionOpt: Option[Action[Request, Response]]
 
-  def withAction(action: Option[Action[Request, Response]]): this.type
+  def withActionOpt(actionOpt: Option[Action[Request, Response]]): this.type
 
-  def encodeBytes: Array[Byte] = finagle.encodeBytes()
+  def encodeBytes: Array[Byte] = toUnderlyingAsFinagle.encodeBytes()
 
-  def encodeString: String = finagle.encodeString()
+  def encodeString: String = toUnderlyingAsFinagle.encodeString()
 
-  def remoteSocketAddress: InetSocketAddress = finagle.remoteSocketAddress
+  def remoteSocketAddress: InetSocketAddress = toUnderlyingAsFinagle.remoteSocketAddress
 
   def remoteHost: String = remoteAddress.getHostAddress
 
@@ -36,19 +62,19 @@ trait Request extends Message with RequestProxy with LoggingEx {
 
   def remotePort: Int = remoteSocketAddress.getPort
 
-  private def _params = finagle.params
+  private def _params = toUnderlyingAsFinagle.params
 
   def params: Map[String, String] = _params
 
-  def path: String = finagle.path
+  def path: String = toUnderlyingAsFinagle.path
 
-  def fileExtension = finagle.fileExtension
+  def fileExtension = toUnderlyingAsFinagle.fileExtension
 
-  val routeParams: Map[String, String]
+  def routeParams: Map[String, String]
 
   def withRouteParams(routeParams: Map[String, String]): this.type
 
-  val multiParams: Map[String, MultiPartItem]
+  def multiParams: Try[Map[String, MultiPartItem]]
 
   def accepts: Seq[ContentType] = {
     val acceptOpt = getHeader("Accept")
@@ -110,19 +136,25 @@ trait Request extends Message with RequestProxy with LoggingEx {
 object Request {
 
   def fromUnderlying(underlying: IORequest,
-                     action: Option[Action[Request, Response]] = None,
+                     actionOpt: Option[Action[Request, Response]] = None,
                      routeParams: Map[String, String] = Map.empty,
                      globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
                      errorOpt: Option[Throwable] = None): Request =
-    new RequestImpl(underlying, action, routeParams, globalSettingsOpt, errorOpt)
+    new RequestImpl(underlying, actionOpt, routeParams, globalSettingsOpt, errorOpt)
 
   def apply(method: Method.Value = Method.Get,
             uri: String = "/",
-            action: Option[Action[Request, Response]] = None,
+            actionOpt: Option[Action[Request, Response]] = None,
             routeParams: Map[String, String] = Map.empty,
             globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
             errorOpt: Option[Throwable] = None,
             version: Version.Value = Version.Http11): Request =
-    new RequestImpl(method, uri, action, routeParams, globalSettingsOpt, errorOpt, version)
+    new RequestImpl(
+      method,
+      uri,
+      actionOpt,
+      routeParams,
+      globalSettingsOpt,
+      errorOpt, version)
 
 }

@@ -1,20 +1,40 @@
 package org.sisioh.trinity.domain.io.http
 
-import scala.collection.JavaConverters.asScalaSetConverter
-
+import com.twitter.finagle.http.{Message => FinagleMessage}
+import java.nio.charset.Charset
 import org.jboss.netty.handler.codec.http.CookieDecoder
 import org.jboss.netty.handler.codec.http.CookieEncoder
-import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
+import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}
 import org.sisioh.trinity.domain.io.http.Cookie.toNetty
 import org.sisioh.trinity.domain.io.http.Cookie.toTrinity
-import com.twitter.finagle.http.{Message => FinagleMessage}
+import scala.collection.JavaConverters.asScalaSetConverter
+
 
 /**
  * HTTPのメッセージを表すトレイト。
  */
 trait Message {
 
-  val finagle: FinagleMessage
+  val isMutable: Boolean = false
+
+  val toUnderlyingAsFinagle: FinagleMessage
+
+  override def toString = Seq(
+    s"protocolVersion = ${protocolVersion.toString}",
+    s"headers = $headers",
+    s"content = $content"
+  ).mkString("Message(", ", ", ")")
+
+  override def equals(obj: Any): Boolean = obj match {
+    case that: Message =>
+      protocolVersion == that.protocolVersion &&
+        headers == that.headers &&
+        content == that.content
+    case _ => false
+  }
+
+  override def hashCode: Int =
+    31 * (protocolVersion.## + headers.## + content.##)
 
   def isRequest: Boolean
 
@@ -37,6 +57,11 @@ trait Message {
   def content: ChannelBuffer
 
   def withContent(content: ChannelBuffer): this.type
+
+  def contentAsString(charset: Charset = CharsetUtil.UTF_8): String = content.toString(charset)
+
+  def withContentAsString(body: String, charset: Charset = CharsetUtil.UTF_8): this.type =
+    withContent(ChannelBuffers.copiedBuffer(body, charset))
 
   def withHeader(name: String, value: Any): this.type
 
@@ -73,7 +98,5 @@ trait Message {
     val header = getHeader(cookieHeaderName).get
     decoder.decode(header).asScala.map(toTrinity).toSeq
   }
-
-  override def toString = finagle.toString
 
 }

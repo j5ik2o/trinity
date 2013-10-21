@@ -74,7 +74,7 @@ case class RoutingFilter
       val actionWithRouteParams = getActionWithRouteParams(request)
       val action = actionWithRouteParams.map(_._1).orElse(notFoundHandler)
       val routeParams = actionWithRouteParams.map(_._2).getOrElse(Map.empty)
-      service(request.withAction(action).withRouteParams(routeParams))
+      service(request.withActionOpt(action).withRouteParams(routeParams))
     }
   }
 

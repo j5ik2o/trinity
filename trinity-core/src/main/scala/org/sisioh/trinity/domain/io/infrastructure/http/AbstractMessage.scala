@@ -7,7 +7,7 @@ import scala.collection.JavaConversions._
 import com.twitter.finagle.http.{Message => FinagleMessage}
 
 private[trinity]
-abstract class AbstractMessage(val finagle: FinagleMessage) extends Message {
+abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extends Message {
 
   protected def createInstance(message: AbstractMessage): this.type
 
@@ -15,8 +15,8 @@ abstract class AbstractMessage(val finagle: FinagleMessage) extends Message {
     headers.foreach {
       case (key, value) =>
         value match {
-          case values: Iterable[_] => finagle.setHeader(key, values)
-          case _ => finagle.setHeader(key, value)
+          case values: Iterable[_] => toUnderlyingAsFinagle.setHeader(key, values)
+          case _ => toUnderlyingAsFinagle.setHeader(key, value)
         }
     }
   }
@@ -30,39 +30,39 @@ abstract class AbstractMessage(val finagle: FinagleMessage) extends Message {
         cookie =>
           encoder.addCookie(cookie)
       }
-      finagle.setHeader(cookieHeaderName, encoder.encode())
+      toUnderlyingAsFinagle.setHeader(cookieHeaderName, encoder.encode())
     }
   }
 
   protected def setContent(content: ChannelBuffer) {
-    finagle.setContent(content)
+    toUnderlyingAsFinagle.setContent(content)
   }
 
   protected def mutate(f: (NettyMessage) => Unit): this.type = {
     val cloned = createInstance(this)
-    f(cloned.finagle)
+    f(cloned.toUnderlyingAsFinagle)
     cloned
   }
 
-  def getHeader(name: String): Option[String] = Option(finagle.getHeader(name))
+  def getHeader(name: String): Option[String] = Option(toUnderlyingAsFinagle.getHeader(name))
 
-  def getHeaders(name: String): Seq[String] = finagle.getHeaders(name).toSeq
+  def getHeaders(name: String): Seq[String] = toUnderlyingAsFinagle.getHeaders(name).toList
 
-  def headers: Seq[(String, Any)] = finagle.getHeaders.map {
+  def headers: Seq[(String, Any)] = toUnderlyingAsFinagle.getHeaders.toList.map {
     e => (e.getKey, e.getValue)
-  }.toSeq
+  }
 
-  def containsHeader(name: String): Boolean = finagle.containsHeader(name)
+  def containsHeader(name: String): Boolean = toUnderlyingAsFinagle.containsHeader(name)
 
-  def headerNames: Set[String] = finagle.getHeaderNames.toSet
+  def headerNames: Set[String] = toUnderlyingAsFinagle.getHeaderNames.toSet
 
-  def protocolVersion: Version.Value = finagle.getProtocolVersion
+  def protocolVersion: Version.Value = toUnderlyingAsFinagle.getProtocolVersion
 
   def withProtocolVersion(version: Version.Value) = mutate {
     _.setProtocolVersion(version)
   }
 
-  def content: ChannelBuffer = finagle.getContent
+  def content: ChannelBuffer = toUnderlyingAsFinagle.getContent
 
   def withContent(content: ChannelBuffer) = mutate {
     _.setContent(content)
@@ -84,7 +84,7 @@ abstract class AbstractMessage(val finagle: FinagleMessage) extends Message {
     _.clearHeaders()
   }
 
-  def isChunked: Boolean = finagle.isChunked
+  def isChunked: Boolean = toUnderlyingAsFinagle.isChunked
 
   def withChunked(chunked: Boolean) = mutate {
     _.setChunked(chunked)
