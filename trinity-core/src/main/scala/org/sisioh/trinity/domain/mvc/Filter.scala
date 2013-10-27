@@ -11,6 +11,14 @@ import com.twitter.finagle.{Filter => FinagleFilter}
 import com.twitter.finagle.Service
 import com.twitter.util.{Future => TFuture}
 
+/**
+ * Trinity独自のフィルター。
+ *
+ * @tparam ReqIn
+ * @tparam RepOut
+ * @tparam ReqOut
+ * @tparam RepIn
+ */
 trait Filter[-ReqIn, +RepOut, +ReqOut, -RepIn]
   extends ((ReqIn, Action[ReqOut, RepIn]) => SFuture[RepOut]) {
 

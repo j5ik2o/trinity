@@ -4,7 +4,7 @@ import com.twitter.finagle.http.{Response => FinagleResponse}
 import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import org.sisioh.trinity.domain.io.http.ResponseStatus.{toNetty, toTrinity}
-import org.sisioh.trinity.domain.io.http.{Cookie, Version, Response, ResponseStatus}
+import org.sisioh.trinity.domain.io.http.{Cookie, ProtocolVersion, Response, ResponseStatus}
 
 
 /**
@@ -20,8 +20,8 @@ case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse)
            headers: Seq[(String, Any)] = Seq.empty,
            cookies: Seq[Cookie] = Seq.empty,
            content: ChannelBuffer = ChannelBuffer.empty,
-           version: Version.Value = Version.Http11) = {
-    this(FinagleResponse(version, status))
+           protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11) = {
+    this(FinagleResponse(protocolVersion, status))
     setHeaders(headers)
     setCookies(cookies)
     setContent(content)
@@ -39,12 +39,12 @@ case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse)
       this
     }
     f(cloned.toUnderlyingAsFinagle)
-    cloned
+    cloned.asInstanceOf[this.type]
   }
 
-  val status: ResponseStatus.Value = toUnderlyingAsFinagle.getStatus()
+  def responseStatus: ResponseStatus.Value = toUnderlyingAsFinagle.getStatus()
 
-  def withStatus(status: ResponseStatus.Value): this.type = mutateAsResponse {
+  def withResponseStatus(status: ResponseStatus.Value): this.type = mutateAsResponse {
     _.setStatus(status)
   }
 

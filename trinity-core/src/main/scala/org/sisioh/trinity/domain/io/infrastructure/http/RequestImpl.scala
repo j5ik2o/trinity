@@ -8,8 +8,8 @@ import org.sisioh.trinity.domain.io.http.Method
 import org.sisioh.trinity.domain.io.http.Method.toNetty
 import org.sisioh.trinity.domain.io.http.Method.toTrintiy
 import org.sisioh.trinity.domain.io.http.Request
-import org.sisioh.trinity.domain.io.http.Version
-import org.sisioh.trinity.domain.io.http.Version.toNetty
+import org.sisioh.trinity.domain.io.http.ProtocolVersion
+import org.sisioh.trinity.domain.io.http.ProtocolVersion.toNetty
 
 
 private[trinity]
@@ -23,8 +23,8 @@ class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest)
            headers: Seq[(String, Any)] = Seq.empty,
            cookies: Seq[Cookie] = Seq.empty,
            content: ChannelBuffer = ChannelBuffer.empty,
-           version: Version.Value = Version.Http11) = {
-    this(FinagleRequest(version, method, uri))
+           protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11) = {
+    this(FinagleRequest(protocolVersion, method, uri))
     setHeaders(headers)
     setCookies(cookies)
     setContent(content)
@@ -40,16 +40,16 @@ class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest)
       this
     }
     f(cloned.toUnderlyingAsFinagle)
-    cloned
+    cloned.asInstanceOf[this.type]
   }
 
-  val method: Method.Value = toUnderlyingAsFinagle.getMethod()
+  def method: Method.Value = toUnderlyingAsFinagle.getMethod()
 
   def withMethod(method: Method.Value): this.type = mutateAsRequest {
     _.setMethod(method)
   }
 
-  val uri = toUnderlyingAsFinagle.getUri()
+  def uri = toUnderlyingAsFinagle.getUri()
 
   def withUri(uri: String): this.type = mutateAsRequest {
     _.setUri(uri)

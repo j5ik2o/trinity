@@ -3,7 +3,7 @@ package org.sisioh.trinity.domain.mvc.http
 import org.jboss.netty.handler.codec.http.multipart.{MixedFileUpload, HttpPostRequestDecoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
 import org.sisioh.trinity.domain.io.http.Method
-import org.sisioh.trinity.domain.io.http.Version
+import org.sisioh.trinity.domain.io.http.ProtocolVersion
 import org.sisioh.trinity.domain.io.http.{Request => IORequest}
 import org.sisioh.trinity.domain.io.infrastructure.http.AbstractRequestProxy
 import org.sisioh.trinity.domain.mvc.GlobalSettings
@@ -20,6 +20,15 @@ class RequestImpl
  val errorOpt: Option[Throwable])
   extends AbstractRequestProxy(underlying) with Request {
 
+  def this(method: Method.Value,
+           uri: String,
+           actionOpt: Option[Action[Request, Response]],
+           routeParams: Map[String, String],
+           globalSettingsOpt: Option[GlobalSettings[Request, Response]],
+           errorOpt: Option[Throwable],
+           protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11) =
+    this(IORequest(method, uri, protocolVersion), actionOpt, routeParams, globalSettingsOpt, errorOpt)
+
   val toUnderlyingAsFinagle = underlying.toUnderlyingAsFinagle
 
   protected def createInstance(message: this.type): this.type =
@@ -31,14 +40,6 @@ class RequestImpl
       message.errorOpt
     ).asInstanceOf[this.type]
 
-  def this(method: Method.Value,
-           uri: String,
-           actionOpt: Option[Action[Request, Response]],
-           routeParams: Map[String, String],
-           globalSettingsOpt: Option[GlobalSettings[Request, Response]],
-           errorOpt: Option[Throwable],
-           httpVersion: Version.Value = Version.Http11) =
-    this(IORequest(method, uri, httpVersion), actionOpt, routeParams, globalSettingsOpt, errorOpt)
 
   def multiParams: Try[Map[String, MultiPartItem]] = Try {
     if (method == Method.Post) {

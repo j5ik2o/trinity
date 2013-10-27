@@ -3,7 +3,7 @@ package org.sisioh.trinity.domain.mvc.routing
 import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc._
-import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, ErrorHandleAction, Action}
+import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, InternalServerErrorAction, Action}
 import org.sisioh.trinity.domain.mvc.controller.{ScalatraLikeController, ControllerRepository}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternParser, PathPatternParser}
@@ -42,9 +42,9 @@ case class RoutingFilter
     val newRequest = request.withError(throwable)
     globalSettingsOpt.map {
       _.error.map(_(newRequest)).
-        getOrElse(ErrorHandleAction(newRequest))
+        getOrElse(InternalServerErrorAction(newRequest))
     }.getOrElse {
-      ErrorHandleAction(request)
+      InternalServerErrorAction(request)
     }
   }
 

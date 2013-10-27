@@ -4,7 +4,6 @@ import com.twitter.finagle.http.{Response => FinagleResponse}
 import org.sisioh.trinity.domain.io.infrastructure.http.ResponseImpl
 import scala.language.implicitConversions
 
-
 trait Response extends Message {
 
   val toUnderlyingAsFinagle: FinagleResponse
@@ -13,22 +12,22 @@ trait Response extends Message {
     Seq(
       s"protocolVersion = $protocolVersion",
       s"headers = $headers",
-      s"status = $status",
+      s"responseStatus = $responseStatus",
       s"content = $content"
     ).mkString("Response(", ", ", ")")
 
   override def equals(obj: Any): Boolean = obj match {
     case that: Response =>
-      super.equals(that) && status == that.status
+      super.equals(that) && responseStatus == that.responseStatus
     case _ => false
   }
 
   override def hashCode: Int =
-    31 * (super.hashCode + status.hashCode)
+    31 * (super.hashCode + responseStatus.##)
 
-  def status: ResponseStatus.Value
+  def responseStatus: ResponseStatus.Value
 
-  def withStatus(status: ResponseStatus.Value): this.type
+  def withResponseStatus(status: ResponseStatus.Value): this.type
 
 }
 
@@ -37,7 +36,8 @@ object Response {
   def apply(underlying: FinagleResponse): Response =
     ResponseImpl(underlying)
 
-  def apply(status: ResponseStatus.Value = ResponseStatus.Ok, version: Version.Value = Version.Http11): Response =
-    new ResponseImpl(status, version = version)
+  def apply(responseStatus: ResponseStatus.Value = ResponseStatus.Ok,
+            protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11): Response =
+    new ResponseImpl(responseStatus, protocolVersion = protocolVersion)
 
 }

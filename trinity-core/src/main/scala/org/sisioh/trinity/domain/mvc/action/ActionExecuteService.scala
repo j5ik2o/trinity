@@ -26,9 +26,9 @@ case class ActionExecuteService
     val newRequest = request.withError(throwable)
     globalSettingsOpt.map {
       _.error.map(_(newRequest)).
-        getOrElse(ErrorHandleAction(newRequest))
+        getOrElse(InternalServerErrorAction(newRequest))
     }.getOrElse {
-      ErrorHandleAction(request)
+      InternalServerErrorAction(request)
     }.toTwitter
   }
 

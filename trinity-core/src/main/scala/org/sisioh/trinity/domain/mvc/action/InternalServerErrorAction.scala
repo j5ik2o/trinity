@@ -5,11 +5,11 @@ import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import scala.concurrent.Future
 
 /**
- * NOT_FOUND(404)を返す[[org.sisioh.trinity.domain.mvc.action.Action]]。
+ * INTERNAL_SERVER_ERROR(500)を返す[[org.sisioh.trinity.domain.mvc.action.Action]]。
  */
-case object NotFoundHandleAction extends Action[Request, Response] {
+case object InternalServerErrorAction extends Action[Request, Response] {
 
   def apply(request: Request): Future[Response] =
-    Future.successful(Response(ResponseStatus.NotFound, ProtocolVersion.Http11))
+    Future.successful(Response(ResponseStatus.InternalServerError, ProtocolVersion.Http11))
 
 }

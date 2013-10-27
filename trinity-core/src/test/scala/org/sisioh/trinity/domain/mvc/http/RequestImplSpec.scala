@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.mvc.http
 
 import org.junit.runner.RunWith
-import org.sisioh.trinity.domain.io.http.{Version, Method}
+import org.sisioh.trinity.domain.io.http.{ProtocolVersion, Method}
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
@@ -20,7 +20,7 @@ class RequestImplSpec extends Specification {
       val routeParams = Map.empty[String, String]
       val globalSettingsOpt = None
       val errorOpt = None
-      val version = Version.Http11
+      val version = ProtocolVersion.Http11
 
       val request = new RequestImpl(method, uri, actionOpt, routeParams, globalSettingsOpt, errorOpt, version)
       request.method must_== method
@@ -41,7 +41,7 @@ class RequestImplSpec extends Specification {
       val routeParams = Map.empty[String, String]
       val globalSettingsOpt = None
       val errorOpt = None
-      val version = Version.Http11
+      val version = ProtocolVersion.Http11
 
       val request = new RequestImpl(method, uri, Some(action), routeParams, globalSettingsOpt, errorOpt, version)
       request.execute(action) must_== responseFuture
@@ -56,7 +56,7 @@ class RequestImplSpec extends Specification {
       val routeParams = Map.empty[String, String]
       val globalSettingsOpt = None
       val errorOpt = None
-      val version = Version.Http11
+      val version = ProtocolVersion.Http11
 
       val request = new RequestImpl(method, uri, None, routeParams, globalSettingsOpt, errorOpt, version)
 
@@ -75,7 +75,7 @@ class RequestImplSpec extends Specification {
       val routeParams = Map.empty[String, String]
       val globalSettingsOpt = None
       val errorOpt = None
-      val version = Version.Http11
+      val version = ProtocolVersion.Http11
 
       val request = new RequestImpl(method, uri, actionOpt, routeParams, globalSettingsOpt, errorOpt, version)
       println(request)
@@ -94,7 +94,7 @@ class RequestImplSpec extends Specification {
       val routeParams = Map.empty[String, String]
       val globalSettingsOpt = None
       val errorOpt = None
-      val version = Version.Http11
+      val version = ProtocolVersion.Http11
 
       val request = new RequestImpl(method, uri, actionOpt, routeParams, globalSettingsOpt, errorOpt, version)
       val newRouteParams = Map("userId" -> "userA")

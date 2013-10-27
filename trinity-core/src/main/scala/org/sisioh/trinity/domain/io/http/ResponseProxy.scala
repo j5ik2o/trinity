@@ -4,10 +4,10 @@ trait ResponseProxy extends Response with MessageProxy {
 
   def underlying: Response
 
-  val status: ResponseStatus.Value = underlying.status
+  def responseStatus: ResponseStatus.Value = underlying.responseStatus
 
-  def withStatus(status: ResponseStatus.Value): this.type = mutate {
-    _.underlying.withStatus(status)
+  def withResponseStatus(status: ResponseStatus.Value): this.type = mutate {
+    _.underlying.withResponseStatus(status)
   }
 
 }
