@@ -20,7 +20,7 @@ trait Message {
   val toUnderlyingAsFinagle: FinagleMessage
 
   override def toString = Seq(
-    s"protocolVersion = ${protocolVersion.toString}",
+    s"protocolVersion = $protocolVersion",
     s"headers = $headers",
     s"content = $content"
   ).mkString("Message(", ", ", ")")
@@ -50,9 +50,9 @@ trait Message {
 
   def headerNames: Set[String]
 
-  def protocolVersion: Version.Value
+  def protocolVersion: ProtocolVersion.Value
 
-  def withProtocolVersion(version: Version.Value): this.type
+  def withProtocolVersion(version: ProtocolVersion.Value): this.type
 
   def content: ChannelBuffer
 
@@ -65,7 +65,18 @@ trait Message {
 
   def withHeader(name: String, value: Any): this.type
 
+  def withHeader(name: HeaderNames.Value, value: Any): this.type
+
   def withHeader(name: String, values: Seq[_]): this.type
+
+  def withHeader(name: HeaderNames.Value, values: Seq[_]): this.type
+
+  def withHeadersAsEnum(headers: Seq[(HeaderNames.Value, Any)]): this.type = {
+    withHeaders(headers.map {
+      case (l, r) =>
+        (l.toString, r)
+    })
+  }
 
   def withHeaders(headers: Seq[(String, Any)]): this.type = {
     headers.foldLeft(this) {
@@ -75,6 +86,8 @@ trait Message {
   }
 
   def withoutHeader(name: String): this.type
+
+  def withoutHeader(name: HeaderNames.Value): this.type
 
   def withoutAllHeaders: this.type
 

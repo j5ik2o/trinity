@@ -4,8 +4,6 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 trait MessageProxy extends Message with Proxy {
 
-
-
   protected def createInstance(message: this.type): this.type
 
   protected def mutate(f: (this.type) => Unit): this.type = {
@@ -34,9 +32,9 @@ trait MessageProxy extends Message with Proxy {
 
   def headerNames: Set[String] = underlying.headerNames
 
-  def protocolVersion: Version.Value = underlying.protocolVersion
+  def protocolVersion: ProtocolVersion.Value = underlying.protocolVersion
 
-  def withProtocolVersion(version: Version.Value): this.type = mutate {
+  def withProtocolVersion(version: ProtocolVersion.Value): this.type = mutate {
     _.underlying.withProtocolVersion(version)
   }
 

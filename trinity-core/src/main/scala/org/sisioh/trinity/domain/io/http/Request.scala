@@ -19,28 +19,30 @@ trait Request extends Message {
 
   override def equals(obj: Any): Boolean = obj match {
     case that: Request =>
-      method == that.method && uri == that.uri
+      super.equals(that) && method == that.method && uri == that.uri
     case _ => false
   }
 
   override def hashCode: Int =
-    31 * (method.## + uri.##)
+    31 * (super.hashCode + method.## + uri.##)
 
-  val method: Method.Value
+  def method: Method.Value
 
   def withMethod(method: Method.Value): this.type
 
-  val uri: String
+  def uri: String
 
   def withUri(uri: String): this.type
 
 }
 
 object Request {
-
-  def apply(method: Method.Value, uri: String, version: Version.Value = Version.Http11): Request =
-    new RequestImpl(method, uri, version = version)
-
+  
   def apply(request: FinagleRequest): Request =
     new RequestImpl(request)
+
+  def apply(method: Method.Value, uri: String,
+            protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11): Request =
+    new RequestImpl(method, uri, protocolVersion = protocolVersion)
+
 }

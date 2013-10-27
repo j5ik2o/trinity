@@ -2,7 +2,7 @@ package org.sisioh.trinity.domain.io.infrastructure.http
 
 import org.jboss.netty.handler.codec.http.{HttpMessage => NettyMessage, CookieEncoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.http.{Cookie, Version, Message}
+import org.sisioh.trinity.domain.io.http.{Cookie, ProtocolVersion, Message}
 import scala.collection.JavaConversions._
 import com.twitter.finagle.http.{Message => FinagleMessage}
 
@@ -56,9 +56,9 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
 
   def headerNames: Set[String] = toUnderlyingAsFinagle.getHeaderNames.toSet
 
-  def protocolVersion: Version.Value = toUnderlyingAsFinagle.getProtocolVersion
+  def protocolVersion: ProtocolVersion.Value = toUnderlyingAsFinagle.getProtocolVersion
 
-  def withProtocolVersion(version: Version.Value) = mutate {
+  def withProtocolVersion(version: ProtocolVersion.Value) = mutate {
     _.setProtocolVersion(version)
   }
 

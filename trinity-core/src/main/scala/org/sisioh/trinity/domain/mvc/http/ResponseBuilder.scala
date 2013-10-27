@@ -2,15 +2,15 @@ package org.sisioh.trinity.domain.mvc.http
 
 import org.sisioh.dddbase.core.lifecycle.ValueObjectBuilder
 import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}
-import org.sisioh.trinity.domain.io.http.{CharsetUtil, Cookie, ResponseStatus, Version}
-import scala.collection.mutable.Map
+import org.sisioh.trinity.domain.io.http._
 import scala.collection.mutable
+import org.sisioh.trinity.domain.mvc.http.ResponseBuilder
 
 case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilder] {
 
-  private var version: Version.Value = _
+  private var protocolVersion: ProtocolVersion.Value = _
 
-  private var status: ResponseStatus.Value = _
+  private var responseStatus: ResponseStatus.Value = _
 
   private val headers = mutable.Map.empty[String, Any]
 
@@ -19,13 +19,13 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
   private var content: ChannelBuffer = _
 
 
-  def withVersion(version: Version.Value) = {
-    addConfigurator(_.version = version)
+  def withProtocolVersion(protocolVersion: ProtocolVersion.Value) = {
+    addConfigurator(_.protocolVersion = protocolVersion)
     getThis
   }
 
-  def withStatus(status: ResponseStatus.Value) = {
-    addConfigurator(_.status = status)
+  def withResponseStatus(responseStatus: ResponseStatus.Value) = {
+    addConfigurator(_.responseStatus = responseStatus)
     getThis
   }
 
@@ -48,6 +48,9 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
     }
     getThis
   }
+
+  def withHeader(name: HeaderNames.Value, value: Any) =
+    withHeader(name.toString, value)
 
   def withHeaders(headers: Seq[(String, Any)]) = {
     addConfigurator {
@@ -77,12 +80,12 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
   protected def newInstance: ResponseBuilder = new ResponseBuilder()
 
   protected def createValueObject: Response = {
-    Response(status, version).withHeaders(headers.toSeq).withCookies(cookies).withContent(content)
+    Response(responseStatus, protocolVersion).withHeaders(headers.toSeq).withCookies(cookies).withContent(content)
   }
 
   protected def apply(vo: Response, builder: ResponseBuilder): Unit = {
-    builder.withVersion(vo.protocolVersion)
-    builder.withStatus(vo.status)
+    builder.withProtocolVersion(vo.protocolVersion)
+    builder.withResponseStatus(vo.responseStatus)
     builder.withHeaders(vo.headers)
     builder.withCookies(vo.cookies)
     builder.withContent(vo.content)

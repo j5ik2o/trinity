@@ -9,7 +9,7 @@ import org.sisioh.trinity.domain.io.http.AcceptOrdering
 import org.sisioh.trinity.domain.io.http.ContentType
 import org.sisioh.trinity.domain.io.http.Method
 import org.sisioh.trinity.domain.io.http.RequestProxy
-import org.sisioh.trinity.domain.io.http.Version
+import org.sisioh.trinity.domain.io.http.ProtocolVersion
 import org.sisioh.trinity.domain.io.http.{Request => IORequest}
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
@@ -30,7 +30,7 @@ trait Request extends Message with RequestProxy with LoggingEx {
   }
 
   override def hashCode(): Int =
-    31 * (toUnderlyingAsFinagle.## + actionOpt.## + routeParams.## + globalSettingsOpt.## + errorOpt.##)
+    31 * (super.hashCode + toUnderlyingAsFinagle.## + actionOpt.## + routeParams.## + globalSettingsOpt.## + errorOpt.##)
 
   override def toString() =
     Seq(
@@ -153,14 +153,14 @@ object Request {
             routeParams: Map[String, String] = Map.empty,
             globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
             errorOpt: Option[Throwable] = None,
-            version: Version.Value = Version.Http11): Request =
+            protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11): Request =
     new RequestImpl(
       method,
       uri,
       actionOpt,
       routeParams,
       globalSettingsOpt,
-      errorOpt, version
+      errorOpt, protocolVersion
     )
 
 }
