@@ -14,10 +14,10 @@ import scala.util.Try
 private[http]
 class RequestImpl
 (override val underlying: IORequest,
- val actionOpt: Option[Action[Request, Response]],
+ val action: Option[Action[Request, Response]],
  val routeParams: Map[String, String],
  val globalSettingsOpt: Option[GlobalSettings[Request, Response]],
- val errorOpt: Option[Throwable])
+ val error: Option[Throwable])
   extends AbstractRequestProxy(underlying) with Request {
 
   def this(method: Method.Value,
@@ -37,7 +37,7 @@ class RequestImpl
       message.actionOpt,
       message.routeParams,
       message.globalSettingsOpt,
-      message.errorOpt
+      message.error
     ).asInstanceOf[this.type]
 
 
