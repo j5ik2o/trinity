@@ -8,8 +8,8 @@ import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.io.http.AcceptOrdering
 import org.sisioh.trinity.domain.io.http.ContentType
 import org.sisioh.trinity.domain.io.http.Method
-import org.sisioh.trinity.domain.io.http.RequestProxy
 import org.sisioh.trinity.domain.io.http.ProtocolVersion
+import org.sisioh.trinity.domain.io.http.RequestProxy
 import org.sisioh.trinity.domain.io.http.{Request => IORequest}
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
@@ -89,11 +89,17 @@ trait Request extends Message with RequestProxy with LoggingEx {
     }.getOrElse(Seq.empty[ContentType])
   }
 
-  val errorOpt: Option[Throwable]
+  val error: Option[Throwable]
 
   def withError(error: Throwable): this.type
 
-  def execute(defaultAction: Action[Request, Response]): Future[Response] = withDebugScope(s"${toString}: execute") {
+  /**
+   * この `Request` に割り当てられた `Action` を実行する。
+   *
+   * @param defaultAction [[org.sisioh.trinity.domain.mvc.action.Action]]
+   * @return `Future`でラップされた [[org.sisioh.trinity.domain.mvc.http.Response]]
+   */
+  def execute(defaultAction: Action[Request, Response]): Future[Response] = withDebugScope(s"$toString : execute") {
     actionOpt.map(_(this)).getOrElse(defaultAction(this))
   }
 
