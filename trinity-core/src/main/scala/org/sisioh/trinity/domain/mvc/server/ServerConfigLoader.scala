@@ -5,6 +5,9 @@ import java.net.InetSocketAddress
 import org.sisioh.config.{ConfigurationMode, Configuration}
 import org.sisioh.trinity.domain.mvc.Environment
 
+/**
+ * サーバ用設定ファイルを読み込むためのサービス。
+ */
 object ServerConfigLoader {
 
   def load(enviroment: Environment.Value): ServerConfig = {

@@ -23,8 +23,8 @@ class ControllerUnitTestSupportSpec extends Specification with ControllerUnitTes
       )
   }
 
-  "test" should {
-    "test" in {
+  "unit-test" should {
+    "test get method" in {
       testGet("/hello") {
         result =>
           result must beSuccessfulTry.like {

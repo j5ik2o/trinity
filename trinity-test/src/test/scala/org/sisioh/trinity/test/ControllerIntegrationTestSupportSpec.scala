@@ -25,7 +25,7 @@ class ControllerIntegrationTestSupportSpec extends Specification with Controller
   }
 
   "integration-test" should {
-    "test get" in new WithServer(Server(filter = Some(routingFilter))) {
+    "test get method" in new WithServer(Server(filter = Some(routingFilter))) {
       testGet("/hello") {
         result =>
           result must beSuccessfulTry.like {

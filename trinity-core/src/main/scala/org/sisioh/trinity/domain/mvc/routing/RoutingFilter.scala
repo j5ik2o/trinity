@@ -13,12 +13,12 @@ import scala.concurrent.{Future, ExecutionContext}
  * ルーティング用フィルター。
  *
  * @param routeRepository
- * @param globalSettingsOpt
+ * @param globalSettings
  * @param executor
  */
 case class RoutingFilter
 (routeRepository: RouteRepository,
- globalSettingsOpt: Option[GlobalSettings[Request, Response]])
+ globalSettings: Option[GlobalSettings[Request, Response]])
 (implicit executor: ExecutionContext)
   extends Filter[Request, Response, Request, Response] with LoggingEx {
 
@@ -28,7 +28,7 @@ case class RoutingFilter
    * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
    */
   protected def notFoundHandler: Option[Action[Request, Response]] = {
-    globalSettingsOpt.flatMap {
+    globalSettings.flatMap {
       _.notFound
     }.orElse(Some(NotFoundHandleAction))
   }
@@ -40,7 +40,7 @@ case class RoutingFilter
    */
   protected def errorHandler(request: Request, throwable: Throwable): Future[Response] = {
     val newRequest = request.withError(throwable)
-    globalSettingsOpt.map {
+    globalSettings.map {
       _.error.map(_(newRequest)).
         getOrElse(InternalServerErrorAction(newRequest))
     }.getOrElse {

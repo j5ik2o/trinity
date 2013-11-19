@@ -34,9 +34,9 @@ trait Request extends Message with RequestProxy with LoggingEx {
       s"uri = $uri",
       s"headers = $headers",
       s"content = $content",
-      s"actionOpt = $action",
+      s"action = $action",
       s"routeParams = $routeParams",
-      s"globalSettingOpt = $globalSettings",
+      s"globalSetting = $globalSettings",
       s"error = $error"
     ).mkString("Request(", ", ", ")")
 

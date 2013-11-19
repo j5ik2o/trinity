@@ -9,6 +9,9 @@ import org.sisioh.trinity.domain.mvc.{GlobalSettings, Filter, GatewayFilter}
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext
 
+/**
+ * Finagleサービスを作成するためのビルダー責務。
+ */
 trait ServiceBuilder {
 
   private val finagleFilterBuffers = new ListBuffer[FinagleFilter[Request, Response, Request, Response]]()

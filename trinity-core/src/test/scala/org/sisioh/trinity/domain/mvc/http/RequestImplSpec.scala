@@ -46,7 +46,7 @@ class RequestImplSpec extends Specification {
       val request = new RequestImpl(method, uri, Some(action), routeParams, globalSettings, error, version)
       request.execute(action) must_== responseFuture
     }
-    "be changed actionOpt" in {
+    "be changed action" in {
       val method = Method.Get
       val uri = "/"
       val responseFuture = Future.successful(Response())
@@ -64,7 +64,7 @@ class RequestImplSpec extends Specification {
       newRequest.action must_== action
       newRequest must_!= request
     }
-    "be changed errorOpt" in {
+    "be changed error" in {
       val method = Method.Get
       val uri = "/"
       val responseFuture = Future.successful(Response())
