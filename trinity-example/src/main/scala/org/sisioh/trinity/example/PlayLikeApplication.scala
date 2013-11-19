@@ -30,7 +30,7 @@ object PlayLikeApplication extends App with Controller with Bootstrap {
       Future.successful(Response().withContentAsString("name = " + name))
   }
 
-  override protected val routingFilterOpt = Some(RoutingFilter.createForActions {
+  override protected val routingFilter = Some(RoutingFilter.createForActions {
     implicit pathPatternParser =>
       Seq(
         Get % "/hello" -> helloWorld,
