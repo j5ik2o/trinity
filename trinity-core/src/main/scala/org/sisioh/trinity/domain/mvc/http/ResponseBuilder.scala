@@ -4,7 +4,6 @@ import org.sisioh.dddbase.core.lifecycle.ValueObjectBuilder
 import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}
 import org.sisioh.trinity.domain.io.http._
 import scala.collection.mutable
-import org.sisioh.trinity.domain.mvc.http.ResponseBuilder
 
 case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilder] {
 
@@ -12,7 +11,7 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
 
   private var responseStatus: ResponseStatus.Value = _
 
-  private val headers = mutable.Map.empty[String, Any]
+  private val headers = mutable.Map.empty[HeaderName, Any]
 
   private var cookies: Seq[Cookie] = _
 
@@ -42,17 +41,14 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
     getThis
   }
 
-  def withHeader(name: String, value: Any) = {
+  def withHeader(name: HeaderName, value: Any) = {
     addConfigurator {
       _.headers += (name -> value)
     }
     getThis
   }
 
-  def withHeader(name: HeaderNames.Value, value: Any) =
-    withHeader(name.toString, value)
-
-  def withHeaders(headers: Seq[(String, Any)]) = {
+  def withHeaders(headers: Seq[(HeaderName, Any)]) = {
     addConfigurator {
       builder =>
         builder.headers.clear()
@@ -61,7 +57,7 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
     getThis
   }
 
-  def withoutHeader(name: String) = {
+  def withoutHeader(name: HeaderName) = {
     addConfigurator {
       _.headers.remove(name)
     }

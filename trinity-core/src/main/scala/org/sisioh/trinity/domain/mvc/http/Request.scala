@@ -5,12 +5,7 @@ import com.twitter.finagle.http.{Request => FinagleRequest}
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import org.sisioh.scala.toolbox.LoggingEx
-import org.sisioh.trinity.domain.io.http.AcceptOrdering
-import org.sisioh.trinity.domain.io.http.ContentType
-import org.sisioh.trinity.domain.io.http.Method
-import org.sisioh.trinity.domain.io.http.ProtocolVersion
-import org.sisioh.trinity.domain.io.http.RequestProxy
-import org.sisioh.trinity.domain.io.http.{Request => IORequest}
+import org.sisioh.trinity.domain.io.http.{Request => IORequest, _}
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
 import scala.collection.JavaConversions.iterableAsScalaIterable
@@ -22,15 +17,15 @@ trait Request extends Message with RequestProxy with LoggingEx {
   override def equals(obj: Any): Boolean = obj match {
     case that: Request =>
       super.equals(that) &&
-        actionOpt == that.actionOpt &&
+        action == that.action &&
         routeParams == that.routeParams &&
-        globalSettingsOpt == that.globalSettingsOpt &&
-        errorOpt == that.errorOpt
+        globalSettings == that.globalSettings &&
+        error == that.error
     case _ => false
   }
 
   override def hashCode(): Int =
-    31 * (super.hashCode + toUnderlyingAsFinagle.## + actionOpt.## + routeParams.## + globalSettingsOpt.## + errorOpt.##)
+    31 * (super.hashCode + toUnderlyingAsFinagle.## + action.## + routeParams.## + globalSettings.## + error.##)
 
   override def toString() =
     Seq(
@@ -39,13 +34,13 @@ trait Request extends Message with RequestProxy with LoggingEx {
       s"uri = $uri",
       s"headers = $headers",
       s"content = $content",
-      s"actionOpt = $actionOpt",
+      s"actionOpt = $action",
       s"routeParams = $routeParams",
-      s"globalSettingOpt = $globalSettingsOpt",
-      s"errorOpt = $errorOpt"
+      s"globalSettingOpt = $globalSettings",
+      s"error = $error"
     ).mkString("Request(", ", ", ")")
 
-  val actionOpt: Option[Action[Request, Response]]
+  val action: Option[Action[Request, Response]]
 
   def withActionOpt(actionOpt: Option[Action[Request, Response]]): this.type
 
@@ -76,7 +71,7 @@ trait Request extends Message with RequestProxy with LoggingEx {
   def multiParams: Try[Map[String, MultiPartItem]]
 
   def accepts: Seq[ContentType] = {
-    val acceptOpt = getHeader("Accept")
+    val acceptOpt = getHeader(HeaderNames.Accept)
     acceptOpt.map {
       accept =>
         val acceptParts = Splitter.on(',').split(accept).toArray
@@ -100,10 +95,10 @@ trait Request extends Message with RequestProxy with LoggingEx {
    * @return `Future`でラップされた [[org.sisioh.trinity.domain.mvc.http.Response]]
    */
   def execute(defaultAction: Action[Request, Response]): Future[Response] = withDebugScope(s"$toString : execute") {
-    actionOpt.map(_(this)).getOrElse(defaultAction(this))
+    action.map(_(this)).getOrElse(defaultAction(this))
   }
 
-  val globalSettingsOpt: Option[GlobalSettings[Request, Response]]
+  val globalSettings: Option[GlobalSettings[Request, Response]]
 
   def getParamAsStringOpt(name: String): Option[String] = params.get(name)
 

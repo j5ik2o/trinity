@@ -11,7 +11,6 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.future
 
-
 /**
  * マルチパートアイテムを表現する値オブジェクト。
  *

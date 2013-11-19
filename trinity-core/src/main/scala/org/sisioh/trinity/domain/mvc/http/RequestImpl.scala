@@ -16,7 +16,7 @@ class RequestImpl
 (override val underlying: IORequest,
  val action: Option[Action[Request, Response]],
  val routeParams: Map[String, String],
- val globalSettingsOpt: Option[GlobalSettings[Request, Response]],
+ val globalSettings: Option[GlobalSettings[Request, Response]],
  val error: Option[Throwable])
   extends AbstractRequestProxy(underlying) with Request {
 
@@ -34,9 +34,9 @@ class RequestImpl
   protected def createInstance(message: this.type): this.type =
     new RequestImpl(
       message.underlying,
-      message.actionOpt,
+      message.action,
       message.routeParams,
-      message.globalSettingsOpt,
+      message.globalSettings,
       message.error
     ).asInstanceOf[this.type]
 
@@ -56,13 +56,13 @@ class RequestImpl
     } else Map.empty[String, MultiPartItem]
   }
 
-  def withActionOpt(actionOpt: Option[Action[Request, Response]]): this.type =
-    new RequestImpl(underlying, actionOpt, routeParams, globalSettingsOpt, errorOpt).asInstanceOf[this.type]
+  def withActionOpt(action: Option[Action[Request, Response]]): this.type =
+    new RequestImpl(underlying, action, routeParams, globalSettings, error).asInstanceOf[this.type]
 
   def withRouteParams(routeParams: Map[String, String]): this.type =
-    new RequestImpl(underlying, actionOpt, routeParams, globalSettingsOpt, errorOpt).asInstanceOf[this.type]
+    new RequestImpl(underlying, action, routeParams, globalSettings, error).asInstanceOf[this.type]
 
   def withError(error: Throwable): this.type =
-    new RequestImpl(underlying, actionOpt, routeParams, globalSettingsOpt, Some(error)).asInstanceOf[this.type]
+    new RequestImpl(underlying, action, routeParams, globalSettings, Some(error)).asInstanceOf[this.type]
 
 }

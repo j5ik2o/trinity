@@ -1,9 +1,7 @@
 package org.sisioh.trinity.domain.io.infrastructure.http
 
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.domain.io.http.CharsetUtil
-import org.sisioh.trinity.domain.io.http.Method
-import org.sisioh.trinity.domain.io.http.ProtocolVersion
+import org.sisioh.trinity.domain.io.http.{HeaderNames, CharsetUtil, Method, ProtocolVersion}
 import org.specs2.mutable.Specification
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
@@ -26,7 +24,7 @@ class RequestImplSpec extends Specification {
     }
     "contains header" in {
       val target = new RequestImpl(Method.Get, "/index", protocolVersion = ProtocolVersion.Http11)
-      target.withHeader("name", "value").containsHeader("name") must beTrue
+      target.withHeader(HeaderNames.ofAny("name"), "value").containsHeader(HeaderNames.ofAny("name")) must beTrue
     }
     "contains header" in {
       val target = new RequestImpl(Method.Get, "/index", protocolVersion = ProtocolVersion.Http11)
@@ -38,7 +36,7 @@ class RequestImplSpec extends Specification {
     }
     "have headerNames" in {
       val target = new RequestImpl(Method.Get, "/index", protocolVersion = ProtocolVersion.Http11)
-      target.withHeader("name", "value").headerNames must haveSize(1)
+      target.withHeader(HeaderNames.ofAny("name"), "value").headerNames must haveSize(1)
     }
     "have a chunked value which false" in {
       val target = new RequestImpl(Method.Get, "/index", protocolVersion = ProtocolVersion.Http11)
