@@ -1,5 +1,8 @@
 package org.sisioh.trinity.domain.io.http
 
+/**
+ * レスポンスのためのプロキシー。
+ */
 trait ResponseProxy extends Response with MessageProxy {
 
   def underlying: Response

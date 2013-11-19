@@ -16,6 +16,9 @@ import org.sisioh.trinity.domain.mvc.routing.pathpattern.SinatraPathPatternParse
 import org.sisioh.trinity.domain.mvc.server.Server
 import org.sisioh.trinity.domain.mvc.server.ServerConfigLoader
 
+/**
+ * サーバを起動させるためのトレイト。
+ */
 trait Bootstrap {
 
   protected implicit val executor = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool())
@@ -41,11 +44,9 @@ trait Bootstrap {
 
   protected lazy val server = createServer
 
-  def start() =
-    server.start()
+  def start(): Future[Unit] = server.start()
 
-  def stop() =
-    server.stop()
+  def stop(): Future[Unit] = server.stop()
 
   def await(future: Future[Unit], duration: Duration = Duration.Inf): Unit =
     Await.result(future, duration)
