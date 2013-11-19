@@ -17,7 +17,7 @@ case class GatewayFilter(actionOpt: Option[Action[Request, Response]] = None)
   def apply(ioRequest: IORequest, service: Service[Request, Response]): Future[IOResponse] = {
     Stats.timeFutureNanos("GatewayFilter")({
       val request = Request.fromUnderlying(ioRequest)
-      service(request.withActionOpt(actionOpt)).map {
+      service(request.withAction(actionOpt)).map {
         responseIn =>
           responseIn.underlying
       }

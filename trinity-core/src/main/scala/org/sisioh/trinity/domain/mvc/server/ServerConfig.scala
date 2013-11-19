@@ -4,17 +4,17 @@ import java.net.SocketAddress
 import scala.concurrent.duration.Duration
 
 case class ServerConfig
-(nameOpt: Option[String] = None,
- bindAddressOpt: Option[SocketAddress] = None,
- awaitDurationOpt: Option[Duration] = None,
+(name: Option[String] = None,
+ bindAddress: Option[SocketAddress] = None,
+ awaitDuration: Option[Duration] = None,
  statsEnabled: Boolean = false,
  statsPort: Option[Int] = None,
- maxRequestSizeOpt: Option[Int] = None,
- maxResponseSizeOpt: Option[Int] = None,
- maxConcurrentRequestsOpt: Option[Int] = None,
- hostConnectionMaxIdleTimeOpt: Option[Duration] = None,
- hostConnectionMaxLifeTimeOpt: Option[Duration] = None,
- requestTimeoutOpt: Option[Int] = None
+ maxRequestSize: Option[Int] = None,
+ maxResponseSize: Option[Int] = None,
+ maxConcurrentRequests: Option[Int] = None,
+ hostConnectionMaxIdleTime: Option[Duration] = None,
+ hostConnectionMaxLifeTime: Option[Duration] = None,
+ requestTimeout: Option[Int] = None
   )
 
 

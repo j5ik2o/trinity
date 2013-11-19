@@ -4,7 +4,6 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.TrinityException
-import org.sisioh.trinity.domain.TrinityException
 import org.sisioh.trinity.domain.mvc._
 import org.sisioh.trinity.infrastructure.util.FutureConverters._
 import scala.Some

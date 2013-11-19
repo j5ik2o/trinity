@@ -26,15 +26,15 @@ import scala.concurrent._
 private[mvc]
 class ServerImpl
 (serverConfig: ServerConfig,
- actionOpt: Option[Action[Request, Response]],
- filterOpt: Option[Filter[Request, Response, Request, Response]],
- globalSettingsOpt: Option[GlobalSettings[Request, Response]])
+ action: Option[Action[Request, Response]],
+ filter: Option[Filter[Request, Response, Request, Response]],
+ globalSettings: Option[GlobalSettings[Request, Response]])
 (implicit executor: ExecutionContext)
   extends Server with LoggingEx {
 
   implicit val ctx = SyncEntityIOContext
 
-  private var finagleServerOpt: Option[FinagleServer] = None
+  private var finagleServer: Option[FinagleServer] = None
 
   private val finagleFilterBuffers = new ListBuffer[FinagleFilter[Request, Response, Request, Response]]()
 
@@ -42,7 +42,7 @@ class ServerImpl
 
   protected def createRuntimeEnviroment: RuntimeEnvironment = new RuntimeEnvironment(this)
 
-  filterOpt.foreach(registerFilter)
+  filter.foreach(registerFilter)
 
   def registerFilters(filters: Seq[Filter[Request, Response, Request, Response]])(implicit executor: ExecutionContext) {
     registerFinagleFilters(filters.map {
@@ -83,11 +83,11 @@ class ServerImpl
   protected def createCodec = {
     import com.twitter.conversions.storage._
     val http = Http()
-    serverConfig.maxRequestSizeOpt.foreach {
+    serverConfig.maxRequestSize.foreach {
       v =>
         http.maxRequestSize(v.megabytes)
     }
-    serverConfig.maxResponseSizeOpt.foreach {
+    serverConfig.maxResponseSize.foreach {
       v =>
         http.maxResponseSize(v.megabytes)
     }
@@ -95,42 +95,42 @@ class ServerImpl
   }
 
   def start()(implicit executor: ExecutionContext): Future[Unit] = future {
-    require(finagleServerOpt.isEmpty)
+    require(finagleServer.isEmpty)
     if (serverConfig.statsEnabled) {
       createAdminService(createRuntimeEnviroment)
     }
-    val actionExecuteService = ActionExecuteService(globalSettingsOpt)
+    val actionExecuteService = ActionExecuteService(globalSettings)
     val service: Service[FinagleRequest, FinagleResponse] =
       FinagleToIOFilter() andThen
-        GatewayFilter(actionOpt) andThen
+        GatewayFilter(action) andThen
         applyFinagleFilters(actionExecuteService)
 
-    finagleServerOpt = Some(ServerBuilder()
+    finagleServer = Some(ServerBuilder()
       .codec(createCodec)
-      .bindTo(serverConfig.bindAddressOpt.getOrElse(Server.defaultBindAddress))
+      .bindTo(serverConfig.bindAddress.getOrElse(Server.defaultBindAddress))
       .tracer(createTracer)
-      .name(serverConfig.nameOpt.getOrElse(Server.defaultName))
+      .name(serverConfig.name.getOrElse(Server.defaultName))
       .build(service))
 
-    globalSettingsOpt.foreach {
+    globalSettings.foreach {
       globalSettings =>
         globalSettings.onStart(this)
     }
   }
 
   def stop()(implicit executor: ExecutionContext): Future[Unit] =  {
-    require(finagleServerOpt.isDefined)
-    finagleServerOpt.map {
-      finagleServer =>
-        val result = finagleServer.close().toScala
-        globalSettingsOpt.foreach {
+    require(finagleServer.isDefined)
+    finagleServer.map {
+      fs =>
+        val result = fs.close().toScala
+        globalSettings.foreach {
           globalSettings =>
             globalSettings.onStop(this)
         }
-        finagleServerOpt = None
+        finagleServer = None
         result
     }.get
   }
 
-  def isStarted: Boolean = finagleServerOpt.isDefined
+  def isStarted: Boolean = finagleServer.isDefined
 }

@@ -29,13 +29,13 @@ object Server {
 
   val defaultAwaitDuration = Duration(5, TimeUnit.SECONDS)
 
-  val defaultBindAddress = new InetSocketAddress(8080)
+  val defaultBindAddress = new InetSocketAddress(7070)
 
-  def apply(serverConfig: ServerConfig,
-            actionOpt: Option[Action[Request, Response]] = None,
-            filterOpt: Option[Filter[Request, Response, Request, Response]] = None,
-            globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None)
+  def apply(serverConfig: ServerConfig = ServerConfig(),
+            action: Option[Action[Request, Response]] = None,
+            filter: Option[Filter[Request, Response, Request, Response]] = None,
+            globalSettings: Option[GlobalSettings[Request, Response]] = None)
            (implicit executor: ExecutionContext): Server =
-    new ServerImpl(serverConfig, actionOpt, filterOpt, globalSettingsOpt)
+    new ServerImpl(serverConfig, action, filter, globalSettings)
 
 }

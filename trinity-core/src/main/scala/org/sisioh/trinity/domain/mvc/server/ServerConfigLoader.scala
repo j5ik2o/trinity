@@ -16,8 +16,8 @@ object ServerConfigLoader {
         ConfigurationMode.Dev
     )
     val serverConfiguration = ServerConfig(
-      nameOpt = configuration.getStringValue("name"),
-      bindAddressOpt = configuration.getStringValue("bindAddress").map {
+      name = configuration.getStringValue("name"),
+      bindAddress = configuration.getStringValue("bindAddress").map {
         bindAddress =>
           val splits = bindAddress.split(":")
           val host = splits(0)

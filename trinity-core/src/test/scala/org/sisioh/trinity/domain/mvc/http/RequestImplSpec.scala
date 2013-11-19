@@ -60,7 +60,7 @@ class RequestImplSpec extends Specification {
 
       val request = new RequestImpl(method, uri, None, routeParams, globalSettings, error, version)
 
-      val newRequest = request.withActionOpt(action)
+      val newRequest = request.withAction(action)
       newRequest.action must_== action
       newRequest must_!= request
     }
