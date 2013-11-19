@@ -46,7 +46,7 @@ class ServerImplSpec extends Specification {
     }
 
     def around[T: AsResult](t: => T): Result = {
-      val server = Server(ServerConfig(), actionOpt = actionOpt, filterOpt = None, globalSettingsOpt = None)
+      val server = Server(ServerConfig(), action = actionOpt, filter = None, globalSettings = None)
       running(server)(AsResult(t))
     }
 

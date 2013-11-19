@@ -56,7 +56,7 @@ class RequestImpl
     } else Map.empty[String, MultiPartItem]
   }
 
-  def withActionOpt(action: Option[Action[Request, Response]]): this.type =
+  def withAction(action: Option[Action[Request, Response]]): this.type =
     new RequestImpl(underlying, action, routeParams, globalSettings, error).asInstanceOf[this.type]
 
   def withRouteParams(routeParams: Map[String, String]): this.type =

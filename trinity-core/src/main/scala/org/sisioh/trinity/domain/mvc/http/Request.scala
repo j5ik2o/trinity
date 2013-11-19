@@ -42,7 +42,7 @@ trait Request extends Message with RequestProxy with LoggingEx {
 
   val action: Option[Action[Request, Response]]
 
-  def withActionOpt(actionOpt: Option[Action[Request, Response]]): this.type
+  def withAction(action: Option[Action[Request, Response]]): this.type
 
   def encodeBytes: Array[Byte] = toUnderlyingAsFinagle.encodeBytes()
 
@@ -71,8 +71,8 @@ trait Request extends Message with RequestProxy with LoggingEx {
   def multiParams: Try[Map[String, MultiPartItem]]
 
   def accepts: Seq[ContentType] = {
-    val acceptOpt = getHeader(HeaderNames.Accept)
-    acceptOpt.map {
+    val accept = getHeader(HeaderNames.Accept)
+    accept.map {
       accept =>
         val acceptParts = Splitter.on(',').split(accept).toArray
         Sorting.quickSort(acceptParts)(AcceptOrdering)

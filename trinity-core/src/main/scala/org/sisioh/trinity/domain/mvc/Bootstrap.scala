@@ -34,9 +34,9 @@ trait Bootstrap {
 
   protected def createServer: Server = Server(
     serverConfig = serverConfig,
-    actionOpt = action,
-    filterOpt = routingFilter,
-    globalSettingsOpt = globalSettings
+    action = action,
+    filter = routingFilter,
+    globalSettings = globalSettings
   )
 
   protected lazy val server = createServer
