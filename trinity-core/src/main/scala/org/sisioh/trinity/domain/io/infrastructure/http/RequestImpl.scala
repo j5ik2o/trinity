@@ -3,12 +3,9 @@ package org.sisioh.trinity.domain.io.infrastructure.http
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.{HttpRequest => NettyRequest}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.http.Cookie
-import org.sisioh.trinity.domain.io.http.Method
+import org.sisioh.trinity.domain.io.http._
 import org.sisioh.trinity.domain.io.http.Method.toNetty
 import org.sisioh.trinity.domain.io.http.Method.toTrintiy
-import org.sisioh.trinity.domain.io.http.Request
-import org.sisioh.trinity.domain.io.http.ProtocolVersion
 import org.sisioh.trinity.domain.io.http.ProtocolVersion.toNetty
 
 

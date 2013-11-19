@@ -1,10 +1,10 @@
 package org.sisioh.trinity.domain.io.infrastructure.http
 
+import com.twitter.finagle.http.{Message => FinagleMessage}
 import org.jboss.netty.handler.codec.http.{HttpMessage => NettyMessage, CookieEncoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.http.{Cookie, ProtocolVersion, Message}
+import org.sisioh.trinity.domain.io.http._
 import scala.collection.JavaConversions._
-import com.twitter.finagle.http.{Message => FinagleMessage}
 
 private[trinity]
 abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extends Message {
@@ -44,17 +44,17 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
     cloned
   }
 
-  def getHeader(name: String): Option[String] = Option(toUnderlyingAsFinagle.getHeader(name))
+  def getHeader(name: HeaderName): Option[String] = Option(toUnderlyingAsFinagle.getHeader(name.asString))
 
-  def getHeaders(name: String): Seq[String] = toUnderlyingAsFinagle.getHeaders(name).toList
+  def getHeaders(name: HeaderName): Seq[String] = toUnderlyingAsFinagle.getHeaders(name.asString).toList
 
-  def headers: Seq[(String, Any)] = toUnderlyingAsFinagle.getHeaders.toList.map {
-    e => (e.getKey, e.getValue)
+  def headers: Seq[(HeaderName, Any)] = toUnderlyingAsFinagle.getHeaders.toList.map {
+    e => (HeaderNames.valueOf(e.getKey), e.getValue)
   }
 
-  def containsHeader(name: String): Boolean = toUnderlyingAsFinagle.containsHeader(name)
+  def containsHeader(name: HeaderName): Boolean = toUnderlyingAsFinagle.containsHeader(name.asString)
 
-  def headerNames: Set[String] = toUnderlyingAsFinagle.getHeaderNames.toSet
+  def headerNames: Set[HeaderName] = toUnderlyingAsFinagle.getHeaderNames.map(HeaderNames.valueOf).toSet
 
   def protocolVersion: ProtocolVersion.Value = toUnderlyingAsFinagle.getProtocolVersion
 
@@ -68,16 +68,16 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
     _.setContent(content)
   }
 
-  def withHeader(name: String, value: Any) = mutate {
-    _.addHeader(name, value)
+  def withHeader(name: HeaderName, value: Any) = mutate {
+    _.addHeader(name.asString, value)
   }
 
-  def withHeader(name: String, values: Seq[_]) = mutate {
-    _.setHeader(name, values)
+  def withHeader(name: HeaderName, values: Seq[_]) = mutate {
+    _.setHeader(name.asString, values)
   }
 
-  def withoutHeader(name: String) = mutate {
-    _.removeHeader(name)
+  def withoutHeader(name: HeaderName) = mutate {
+    _.removeHeader(name.asString)
   }
 
   def withoutAllHeaders = mutate {

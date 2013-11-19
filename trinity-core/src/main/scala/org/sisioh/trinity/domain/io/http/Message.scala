@@ -40,15 +40,15 @@ trait Message {
 
   def isResponse = !isRequest
 
-  def getHeader(name: String): Option[String]
+  def getHeader(name: HeaderName): Option[String]
 
-  def getHeaders(name: String): Seq[String]
+  def getHeaders(name: HeaderName): Seq[String]
 
-  def headers: Seq[(String, Any)]
+  def headers: Seq[(HeaderName, Any)]
 
-  def containsHeader(name: String): Boolean
+  def containsHeader(name: HeaderName): Boolean
 
-  def headerNames: Set[String]
+  def headerNames: Set[HeaderName]
 
   def protocolVersion: ProtocolVersion.Value
 
@@ -63,31 +63,18 @@ trait Message {
   def withContentAsString(body: String, charset: Charset = CharsetUtil.UTF_8): this.type =
     withContent(ChannelBuffers.copiedBuffer(body, charset))
 
-  def withHeader(name: String, value: Any): this.type
+  def withHeader(name: HeaderName, value: Any): this.type
 
-  def withHeader(name: HeaderNames.Value, value: Any): this.type
+  def withHeader(name: HeaderName, values: Seq[_]): this.type
 
-  def withHeader(name: String, values: Seq[_]): this.type
-
-  def withHeader(name: HeaderNames.Value, values: Seq[_]): this.type
-
-  def withHeadersAsEnum(headers: Seq[(HeaderNames.Value, Any)]): this.type = {
-    withHeaders(headers.map {
-      case (l, r) =>
-        (l.toString, r)
-    })
-  }
-
-  def withHeaders(headers: Seq[(String, Any)]): this.type = {
+  def withHeaders(headers: Seq[(HeaderName, Any)]): this.type = {
     headers.foldLeft(this) {
       (l, r) =>
         l.withHeader(r._1, r._2)
     }.asInstanceOf[this.type]
   }
 
-  def withoutHeader(name: String): this.type
-
-  def withoutHeader(name: HeaderNames.Value): this.type
+  def withoutHeader(name: HeaderName): this.type
 
   def withoutAllHeaders: this.type
 
@@ -95,7 +82,7 @@ trait Message {
 
   def withChunked(chunked: Boolean): this.type
 
-  private val cookieHeaderName = if (isResponse) "Set-Cookie" else "Cookie"
+  private val cookieHeaderName = if (isResponse) HeaderNames.SetCookie else HeaderNames.Cookie
 
   def withCookies(cookies: Seq[Cookie]): this.type = {
     val cookieEncoder = new CookieEncoder(true)

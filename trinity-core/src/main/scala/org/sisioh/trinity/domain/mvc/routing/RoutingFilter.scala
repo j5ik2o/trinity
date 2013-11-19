@@ -68,7 +68,7 @@ case class RoutingFilter
   }
 
   def apply(request: Request, service: Action[Request, Response]): Future[Response] = {
-    if (request.actionOpt.isDefined) {
+    if (request.action.isDefined) {
       service(request)
     } else {
       val actionWithRouteParams = getActionWithRouteParams(request)
@@ -80,6 +80,9 @@ case class RoutingFilter
 
 }
 
+/**
+ * コンパニオンオブジェクト。
+ */
 object RoutingFilter {
 
   private implicit val ctx = SyncEntityIOContext

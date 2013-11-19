@@ -22,15 +22,15 @@ trait MessageProxy extends Message with Proxy {
 
   def isRequest = underlying.isRequest
 
-  def getHeader(name: String): Option[String] = underlying.getHeader(name)
+  def getHeader(name: HeaderName): Option[String] = underlying.getHeader(name)
 
-  def getHeaders(name: String): Seq[String] = underlying.getHeaders(name)
+  def getHeaders(name: HeaderName): Seq[String] = underlying.getHeaders(name)
 
-  def headers: Seq[(String, Any)] = underlying.headers
+  def headers: Seq[(HeaderName, Any)] = underlying.headers
 
-  def containsHeader(name: String): Boolean = underlying.containsHeader(name)
+  def containsHeader(name: HeaderName): Boolean = underlying.containsHeader(name)
 
-  def headerNames: Set[String] = underlying.headerNames
+  def headerNames: Set[HeaderName] = underlying.headerNames
 
   def protocolVersion: ProtocolVersion.Value = underlying.protocolVersion
 
@@ -44,15 +44,15 @@ trait MessageProxy extends Message with Proxy {
     _.underlying.withContent(content)
   }
 
-  def withHeader(name: String, value: Any): this.type = mutate {
+  def withHeader(name: HeaderName, value: Any): this.type = mutate {
     _.underlying.withHeader(name, value)
   }
 
-  def withHeader(name: String, values: Seq[_]): this.type = mutate {
+  def withHeader(name: HeaderName, values: Seq[_]): this.type = mutate {
     _.underlying.withHeader(name, values)
   }
 
-  def withoutHeader(name: String): this.type = mutate {
+  def withoutHeader(name: HeaderName): this.type = mutate {
     _.underlying.withoutHeader(name)
   }
 
