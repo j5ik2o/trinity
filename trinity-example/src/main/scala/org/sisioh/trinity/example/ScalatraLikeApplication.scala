@@ -29,7 +29,7 @@ object ScalatraLikeApplication extends App with ScalatraLikeController with Boot
       )
   }
 
-  override protected val routingFilterOpt =
+  override protected val routingFilter =
     Some(RoutingFilter.createForControllers(Seq(this)))
 
   await(start())

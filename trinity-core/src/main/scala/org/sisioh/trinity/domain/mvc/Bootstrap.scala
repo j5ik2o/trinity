@@ -24,19 +24,19 @@ trait Bootstrap {
 
   protected lazy val serverConfig = ServerConfigLoader.load(environment)
 
-  protected implicit val globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None
+  protected implicit val globalSettings: Option[GlobalSettings[Request, Response]] = None
 
   protected implicit val pathPatternParser: PathPatternParser = SinatraPathPatternParser()
 
-  protected val routingFilterOpt: Option[RoutingFilter] = None
+  protected val routingFilter: Option[RoutingFilter] = None
 
-  protected val actionOpt: Option[Action[Request, Response]] = None
+  protected val action: Option[Action[Request, Response]] = None
 
   protected def createServer: Server = Server(
     serverConfig = serverConfig,
-    actionOpt = actionOpt,
-    filterOpt = routingFilterOpt,
-    globalSettingsOpt = globalSettingsOpt
+    actionOpt = action,
+    filterOpt = routingFilter,
+    globalSettingsOpt = globalSettings
   )
 
   protected lazy val server = createServer
