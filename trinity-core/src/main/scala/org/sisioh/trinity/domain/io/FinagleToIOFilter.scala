@@ -9,6 +9,11 @@ import com.twitter.finagle.http.Response
 import com.twitter.util.Future
 import com.twitter.ostrich.stats.Stats
 
+/**
+ * Finagleのためのフィルター。
+ *
+ * FinagleとIORequest, IOResponseを扱うサービスとの橋渡しを行う。
+ */
 case class FinagleToIOFilter()
   extends Filter[Request, Response, IORequest, IOResponse] {
 
