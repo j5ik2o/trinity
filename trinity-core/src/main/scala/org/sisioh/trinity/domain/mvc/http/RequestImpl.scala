@@ -22,12 +22,12 @@ class RequestImpl
 
   def this(method: Method.Value,
            uri: String,
-           actionOpt: Option[Action[Request, Response]],
+           action: Option[Action[Request, Response]],
            routeParams: Map[String, String],
-           globalSettingsOpt: Option[GlobalSettings[Request, Response]],
-           errorOpt: Option[Throwable],
+           globalSettings: Option[GlobalSettings[Request, Response]],
+           error: Option[Throwable],
            protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11) =
-    this(IORequest(method, uri, protocolVersion), actionOpt, routeParams, globalSettingsOpt, errorOpt)
+    this(IORequest(method, uri, protocolVersion), action, routeParams, globalSettings, error)
 
   val toUnderlyingAsFinagle = underlying.toUnderlyingAsFinagle
 

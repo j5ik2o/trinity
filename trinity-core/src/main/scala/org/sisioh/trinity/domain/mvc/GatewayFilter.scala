@@ -11,13 +11,13 @@ import com.twitter.finagle.Service
 import com.twitter.ostrich.stats.Stats
 import com.twitter.util.Future
 
-case class GatewayFilter(actionOpt: Option[Action[Request, Response]] = None)
+case class GatewayFilter(action: Option[Action[Request, Response]] = None)
   extends FinagleFilter[IORequest, IOResponse, Request, Response] {
 
   def apply(ioRequest: IORequest, service: Service[Request, Response]): Future[IOResponse] = {
     Stats.timeFutureNanos("GatewayFilter")({
       val request = Request.fromUnderlying(ioRequest)
-      service(request.withAction(actionOpt)).map {
+      service(request.withAction(action)).map {
         responseIn =>
           responseIn.underlying
       }

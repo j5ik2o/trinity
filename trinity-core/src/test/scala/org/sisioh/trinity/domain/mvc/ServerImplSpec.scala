@@ -24,7 +24,7 @@ class ServerImplSpec extends Specification {
 
   sequential
 
-  class Setup(actionOpt: Option[Action[Request, Response]] = None)
+  class Setup(action: Option[Action[Request, Response]] = None)
     extends Around with Scope {
 
     val client = ClientBuilder()
@@ -46,7 +46,7 @@ class ServerImplSpec extends Specification {
     }
 
     def around[T: AsResult](t: => T): Result = {
-      val server = Server(ServerConfig(), action = actionOpt, filter = None, globalSettings = None)
+      val server = Server(ServerConfig(), action = action, filter = None, globalSettings = None)
       running(server)(AsResult(t))
     }
 

@@ -12,7 +12,7 @@ import scala.util.Try
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 
 case class ActionExecuteService
-(globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None)
+(globalSettings: Option[GlobalSettings[Request, Response]] = None)
 (implicit executor: ExecutionContext)
   extends Service[Request, Response] with LoggingEx {
 
@@ -23,7 +23,7 @@ case class ActionExecuteService
    */
   protected def errorHandler(request: Request, throwable: Throwable): Future[Response] = {
     val newRequest = request.withError(throwable)
-    globalSettingsOpt.map {
+    globalSettings.map {
       _.error.map(_(newRequest)).
         getOrElse(InternalServerErrorAction(newRequest))
     }.getOrElse {
@@ -37,7 +37,7 @@ case class ActionExecuteService
    * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
    */
   protected def notFoundHandler: Action[Request, Response] = {
-    globalSettingsOpt.flatMap {
+    globalSettings.flatMap {
       _.notFound
     }.getOrElse(NotFoundHandleAction)
   }
