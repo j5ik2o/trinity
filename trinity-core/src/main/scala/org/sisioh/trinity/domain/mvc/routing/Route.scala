@@ -1,12 +1,11 @@
 package org.sisioh.trinity.domain.mvc.routing
 
-import java.util.UUID
 import java.util.concurrent.atomic.AtomicLong
-import org.sisioh.dddbase.core.model.{Identity, EntityCloneable, Entity}
+import org.sisioh.dddbase.core.model.{EntityCloneable, Entity}
 import org.sisioh.trinity.domain.io.http.Method
-import scala.concurrent.Future
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPatternParser, PathPattern}
+import scala.concurrent.Future
 
 /**
  * ルートを表すエンティティ。
@@ -22,11 +21,6 @@ trait Route[Req, Rep]
   }
 
   private val order = Route.orderGenerator.getAndIncrement
-
-  /**
-   * コントローラID
-   */
-  //val controllerId: Identity[UUID]
 
   /**
    * アクション
@@ -97,6 +91,3 @@ object Route {
 
 }
 
-private[domain]
-class RouteImpl[Req, Rep]
-(val identity: RouteId, val action: Action[Req, Rep]) extends Route[Req, Rep]
