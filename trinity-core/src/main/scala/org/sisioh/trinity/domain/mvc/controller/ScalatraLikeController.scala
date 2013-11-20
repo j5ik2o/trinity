@@ -2,14 +2,14 @@ package org.sisioh.trinity.domain.mvc.controller
 
 import org.sisioh.trinity.domain.io.http.Method
 import org.sisioh.trinity.domain.mvc.action.Action
-import org.sisioh.trinity.domain.mvc.http.{Request, Response}
+import org.sisioh.trinity.domain.mvc.http.{ResponseSupport, Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.RouteDef
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPattern, PathPatternParser}
 import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util.matching.Regex
 
-trait ScalatraLikeController extends Controller {
+trait ScalatraLikeController extends ResponseSupport {
 
   protected val routeDefs = mutable.ListBuffer.empty[RouteDef]
 
@@ -65,12 +65,14 @@ trait ScalatraLikeController extends Controller {
     addRoute(Method.Post, regex, captureGroupNames)(callback)
   }
 
-  protected def addRoute(method: Method.Value, path: String)(callback: Request => Future[Response])(implicit pathPatternParser: PathPatternParser) {
+  protected def addRoute(method: Method.Value, path: String)(callback: Request => Future[Response])
+                        (implicit pathPatternParser: PathPatternParser) {
     val route = RouteDef(method, pathPatternParser(path), Action(callback))
     routeDefs.append(route)
   }
 
-  protected def addRoute(method: Method.Value, regex: Regex, captureGroupNames: Seq[String] = Seq.empty)(callback: Request => Future[Response]) {
+  protected def addRoute(method: Method.Value, regex: Regex, captureGroupNames: Seq[String] = Seq.empty)
+                        (callback: Request => Future[Response]) {
     val route = RouteDef(method, PathPattern(regex, captureGroupNames), Action(callback))
     routeDefs.append(route)
   }
