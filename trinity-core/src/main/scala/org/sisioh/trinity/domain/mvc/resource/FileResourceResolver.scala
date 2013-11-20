@@ -4,7 +4,13 @@ import java.io.{FileNotFoundException, FileInputStream, File, InputStream}
 import org.sisioh.trinity.domain.mvc.Environment
 import scala.util.{Failure, Success, Try}
 
-case class FileResourceResolver(environment: Environment.Value, localPath: File) {
+/**
+ * ファイルリソースを解決するためのクラス。
+ *
+ * @param environment [[org.sisioh.trinity.domain.mvc.Environment]]
+ * @param localBasePath Development時のローカルベースパス
+ */
+case class FileResourceResolver(environment: Environment.Value, localBasePath: File) {
 
   def hasFile(path: String): Boolean = {
     if (environment == Environment.Product) {
@@ -27,7 +33,7 @@ case class FileResourceResolver(environment: Environment.Value, localPath: File)
   }
 
   private def getLocalInputStream(path: String): Try[InputStream] = Try {
-    val file = new File(localPath, path)
+    val file = new File(localBasePath, path)
     new FileInputStream(file)
   }
 
@@ -46,7 +52,7 @@ case class FileResourceResolver(environment: Environment.Value, localPath: File)
   }
 
   private def hasLocalFile(path: String): Boolean = {
-    val file = new File(localPath, path)
+    val file = new File(localBasePath, path)
     if (file.toString.contains("trinity-core/src/test")) false
     else if (!file.exists || file.isDirectory) false
     else if (!file.canRead) false

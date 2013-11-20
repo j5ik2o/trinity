@@ -4,7 +4,7 @@ import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc._
 import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, InternalServerErrorAction, Action}
-import org.sisioh.trinity.domain.mvc.controller.{ScalatraLikeController, ControllerRepository}
+import org.sisioh.trinity.domain.mvc.controller.{ScalatraLikeController}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternParser, PathPatternParser}
 import scala.concurrent.{Future, ExecutionContext}
