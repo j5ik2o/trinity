@@ -11,6 +11,12 @@ import scala.concurrent.ExecutionContext
 import scala.util.Try
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 
+/**
+ * リクエストに関連づくアクションを実行するためのサービス。
+ *
+ * @param globalSettings [[org.sisioh.trinity.domain.mvc.GlobalSettings]]
+ * @param executor [[scala.concurrent.ExecutionContext]]
+ */
 case class ActionExecuteService
 (globalSettings: Option[GlobalSettings[Request, Response]] = None)
 (implicit executor: ExecutionContext)
