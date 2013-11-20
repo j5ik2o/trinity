@@ -89,7 +89,7 @@ object RoutingFilter {
 
   def createForControllers(controllers: Seq[ScalatraLikeController])
                       (implicit executor: ExecutionContext,
-                       globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+                       globalSettings: Option[GlobalSettings[Request, Response]] = None,
                        pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
     createForActions {
       pathPatternParser =>
@@ -99,14 +99,14 @@ object RoutingFilter {
 
   def createForActions(routeDefs: (PathPatternParser) => Seq[RouteDef])
             (implicit executor: ExecutionContext,
-             globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+             globalSettings: Option[GlobalSettings[Request, Response]] = None,
              pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
     val routeRepository = RouteRepository.ofMemory
     routeDefs(pathPatternParser).foreach {
       case RouteDef(method, pathPattern, action) =>
         routeRepository.store(Route(method, pathPattern, action))
     }
-    RoutingFilter(routeRepository, globalSettingsOpt)
+    RoutingFilter(routeRepository, globalSettings)
   }
 
 }
