@@ -1,5 +1,7 @@
 package org.sisioh.trinity.domain.io.http
 
+import java.io.File
+import javax.activation.MimetypesFileTypeMap
 import org.sisioh.scala.toolbox.Enum
 import org.sisioh.scala.toolbox.EnumEntry
 
@@ -24,6 +26,8 @@ trait ContentType extends EnumEntry {
  * コンパニオンオブジェクト。
  */
 object ContentType extends Enum[ContentType] {
+
+
 
   def valueOf(value: String): Option[ContentType] = {
     values.find(_.toString() == value)

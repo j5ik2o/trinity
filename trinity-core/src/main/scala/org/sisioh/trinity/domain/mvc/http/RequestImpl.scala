@@ -10,6 +10,7 @@ import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
 import scala.collection.JavaConverters._
 import scala.util.Try
+import org.sisioh.trinity.domain.io.http
 
 private[http]
 class RequestImpl
@@ -55,6 +56,9 @@ class RequestImpl
       m
     } else Map.empty[String, MultiPartItem]
   }
+
+  def response: http.Response =
+    Response(underlying.response)
 
   def withAction(action: Option[Action[Request, Response]]): this.type =
     new RequestImpl(underlying, action, routeParams, globalSettings, error).asInstanceOf[this.type]

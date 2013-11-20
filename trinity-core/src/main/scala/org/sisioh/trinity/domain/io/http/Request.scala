@@ -8,6 +8,8 @@ trait Request extends Message {
 
   val toUnderlyingAsFinagle: FinagleRequest
 
+  def response: Response
+
   override def toString() =
     Seq(
       s"protocolVersion = $protocolVersion",

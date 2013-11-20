@@ -40,6 +40,8 @@ class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest)
     cloned.asInstanceOf[this.type]
   }
 
+  def response: Response = Response(toUnderlyingAsFinagle.response)
+
   def method: Method.Value = toUnderlyingAsFinagle.getMethod()
 
   def withMethod(method: Method.Value): this.type = mutateAsRequest {
