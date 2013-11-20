@@ -66,7 +66,7 @@ class ServerImpl
       createAdminService(createRuntimeEnviroment)
     }
 
-    val service = buildService
+    val service = buildService(action)
 
     finagleServer = Some(ServerBuilder()
       .codec(createCodec)

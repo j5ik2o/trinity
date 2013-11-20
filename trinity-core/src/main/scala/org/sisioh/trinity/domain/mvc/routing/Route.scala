@@ -6,7 +6,6 @@ import org.sisioh.dddbase.core.model.{Identity, EntityCloneable, Entity}
 import org.sisioh.trinity.domain.io.http.Method
 import scala.concurrent.Future
 import org.sisioh.trinity.domain.mvc.action.Action
-import org.sisioh.trinity.domain.mvc.controller.Controller
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPatternParser, PathPattern}
 
 /**
