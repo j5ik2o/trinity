@@ -109,7 +109,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testPost[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
-                           (f: Try[Response] => T)(implicit executor: ExecutionContext, routingFilter: RoutingFilter): T = {
+                           (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
     f(buildRequest(Method.Post, path, content, headers))
   }
 
