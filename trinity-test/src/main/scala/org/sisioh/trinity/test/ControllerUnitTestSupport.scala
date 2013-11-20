@@ -26,7 +26,7 @@ trait ControllerUnitTestSupport extends ControllerTestSupport with ServiceBuilde
   (implicit executor: ExecutionContext): Try[Response] = {
     val request = newRequest(method, path, content, headers)
     registerFilter(routingFilter)
-    val service = buildService
+    val service = buildService()
     Try {
       val finagleResponse = Await.result(service(request))
       val r = IOResponse(finagleResponse)
