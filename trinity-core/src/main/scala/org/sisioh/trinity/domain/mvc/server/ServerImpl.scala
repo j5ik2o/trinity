@@ -24,10 +24,7 @@ class ServerImpl
 (implicit executor: ExecutionContext)
   extends Server with ServiceBuilder with LoggingEx {
 
-  implicit val ctx = SyncEntityIOContext
-
   private var finagleServer: Option[FinagleServer] = None
-
 
   protected def createTracer: Tracer = NullTracer
 
