@@ -9,8 +9,12 @@ import org.sisioh.trinity.domain.mvc.server.Server
 import org.specs2.mutable.Specification
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 class ControllerIntegrationTestSupportSpec extends Specification with ControllerIntegrationTestSupport {
+
+  sequential
 
   def helloWorld = SimpleAction {
     request =>
@@ -34,5 +38,23 @@ class ControllerIntegrationTestSupportSpec extends Specification with Controller
           }
       }
     }
+    "test get method without WithServer Scope" in {
+      val server = Server(filter = Some(routingFilter))
+      val f = server.start().map {
+        _ =>
+          testGet("/hello") {
+            result =>
+              result must beSuccessfulTry.like {
+                case response =>
+                  response.contentAsString() must_== "Hello World!"
+              }
+          }
+      }.flatMap {
+        result =>
+          server.stop.map(_ => result)
+      }
+      Await.result(f, Duration.Inf)
+    }
+
   }
 }
