@@ -4,7 +4,7 @@ import com.twitter.finagle.http.{Response => FinagleResponse, Request => Finagle
 import com.twitter.finagle.{Filter => FinagleFilter}
 import com.twitter.util.Await
 import org.jboss.netty.handler.codec.http.HttpMethod
-import org.sisioh.trinity.domain.io.http.{Response => IOResponse}
+import org.sisioh.trinity.domain.io.http.{Response => IOResponse, HeaderName}
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.server.ServiceBuilder
@@ -22,7 +22,7 @@ trait ControllerUnitTestSupport extends ControllerTestSupport with ServiceBuilde
   (method: HttpMethod,
    path: String,
    content: Option[Content],
-   headers: Map[String, String])
+   headers: Map[HeaderName, String])
   (implicit executor: ExecutionContext): Try[Response] = {
     val request = newRequest(method, path, content, headers)
     registerFilter(routingFilter)
