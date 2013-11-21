@@ -2,7 +2,6 @@ package org.sisioh.trinity.example
 
 import org.sisioh.trinity.domain.io.http.Method._
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
-//import org.sisioh.trinity.domain.mvc.controller.Controller
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter

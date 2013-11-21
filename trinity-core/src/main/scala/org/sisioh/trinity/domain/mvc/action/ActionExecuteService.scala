@@ -23,21 +23,6 @@ case class ActionExecuteService
   extends Service[Request, Response] with LoggingEx {
 
   /**
-   * エラー発生時のリカバリを行うためのハンドラ。
-   *
-   * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
-   */
-  protected def errorHandler(request: Request, throwable: Throwable): Future[Response] = {
-    val newRequest = request.withError(throwable)
-    globalSettings.map {
-      _.error.map(_(newRequest)).
-        getOrElse(InternalServerErrorAction(newRequest))
-    }.getOrElse {
-      InternalServerErrorAction(request)
-    }.toTwitter
-  }
-
-  /**
    * アクションが見つからない場合のリカバリを行うためのハンドラ。
    *
    * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
@@ -49,16 +34,7 @@ case class ActionExecuteService
   }
 
   def apply(request: Request): Future[Response] = {
-    Try {
-      request.execute(notFoundHandler).toTwitter
-    }.recover {
-      case throwable: Exception =>
-        warn("occurred error", throwable)
-        errorHandler(request, throwable)
-    }.getOrElse {
-      error("occurred other error")
-      Future.exception(TrinityException(Some("Other Exception")))
-    }
+    request.execute(notFoundHandler).toTwitter
   }
 
 }
