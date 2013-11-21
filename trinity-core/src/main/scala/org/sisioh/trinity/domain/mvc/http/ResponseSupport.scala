@@ -2,7 +2,6 @@ package org.sisioh.trinity.domain.mvc.http
 
 import scala.concurrent.Future
 import org.sisioh.trinity.domain.io.http.{MimeTypes, ContentType, HeaderNames, ResponseStatus}
-import org.sisioh.trinity.domain.mvc.controller.RespondNotFoundException
 
 trait ResponseSupport {
 

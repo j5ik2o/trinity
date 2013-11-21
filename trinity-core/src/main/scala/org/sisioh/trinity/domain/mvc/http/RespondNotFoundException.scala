@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc.controller
+package org.sisioh.trinity.domain.mvc.http
 
 import org.sisioh.dddbase.core.BaseException
 
