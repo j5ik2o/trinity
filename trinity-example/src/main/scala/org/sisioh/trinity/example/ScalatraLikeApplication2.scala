@@ -9,6 +9,9 @@ import org.sisioh.trinity.domain.mvc.action.Action
 
 object ScalatraLikeApplication2 extends App with ScalatraLikeController with Bootstrap {
 
+  override protected val routingFilter =
+    Some(RoutingFilter.createForControllers(Seq(this)))
+
   server.registerFilter(new SimpleFilter[Request, Response] {
     def apply(requestIn: Request, action: Action[Request, Response]): Future[Response] = {
       if ("shared secret" == requestIn.authorization) {
@@ -40,8 +43,6 @@ object ScalatraLikeApplication2 extends App with ScalatraLikeController with Boo
       )
   }
 
-  override protected val routingFilter =
-    Some(RoutingFilter.createForControllers(Seq(this)))
 
   await(start())
 }

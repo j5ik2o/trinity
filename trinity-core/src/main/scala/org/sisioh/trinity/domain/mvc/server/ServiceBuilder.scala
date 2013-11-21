@@ -3,7 +3,7 @@ package org.sisioh.trinity.domain.mvc.server
 import com.twitter.finagle.http.{Response => FinagleResponse, Request => FinagleRequest}
 import com.twitter.finagle.{Filter => FinagleFilter, Service}
 import org.sisioh.trinity.domain.io.FinagleToIOFilter
-import org.sisioh.trinity.domain.mvc.action.{Action, ActionExecuteService}
+import org.sisioh.trinity.domain.mvc.action.{ExceptionHandleFilter, Action, ActionExecuteService}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.{GlobalSettings, Filter, GatewayFilter}
 import scala.collection.mutable.ListBuffer
@@ -47,7 +47,9 @@ trait ServiceBuilder {
     val actionExecuteService = ActionExecuteService(globalSettings)
     val service: Service[FinagleRequest, FinagleResponse] =
       FinagleToIOFilter() andThen
-        GatewayFilter(action) andThen applyFinagleFilters(actionExecuteService)
+        GatewayFilter(action) andThen
+        Filter.toFinagleFilter(ExceptionHandleFilter(globalSettings)) andThen
+        applyFinagleFilters(actionExecuteService)
     service
   }
 
