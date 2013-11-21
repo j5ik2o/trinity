@@ -6,7 +6,7 @@ import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleR
 import com.twitter.util.{Await => TAwait}
 import java.net.{SocketAddress, InetSocketAddress}
 import org.jboss.netty.handler.codec.http.{HttpResponse, HttpRequest, HttpMethod}
-import org.sisioh.trinity.domain.io.http.{Response => IOResponse}
+import org.sisioh.trinity.domain.io.http.{Response => IOResponse, HeaderName}
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.server.Server
 import org.specs2.execute.{Result, AsResult}
@@ -22,7 +22,7 @@ import scala.util.Try
 trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
   protected def buildRequest
-  (method: HttpMethod, path: String, content: Option[Content], headers: Map[String, String])
+  (method: HttpMethod, path: String, content: Option[Content], headers: Map[HeaderName, String])
   (implicit executor: ExecutionContext): Try[Response] = {
     val request = newRequest(method, path, content, headers)
     val address: SocketAddress = new InetSocketAddress(serverHost.getOrElse("localhost"), serverPort.getOrElse(7070))

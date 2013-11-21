@@ -9,6 +9,7 @@ import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import scala.concurrent.ExecutionContext
+import org.sisioh.trinity.domain.io.http.HeaderName
 
 trait ControllerTestSupport extends LoggingEx {
 
@@ -32,7 +33,7 @@ trait ControllerTestSupport extends LoggingEx {
   (method: HttpMethod,
    path: String,
    content: Option[Content],
-   headers: Map[String, String]): FinagleRequest =
+   headers: Map[HeaderName, String]): FinagleRequest =
     withDebugScope(s"newRequest($method, $path, $content, $headers)") {
       val request = content match {
         case Some(StringContent(v)) =>
@@ -61,7 +62,7 @@ trait ControllerTestSupport extends LoggingEx {
       }
       headers.foreach {
         header =>
-          request.httpRequest.setHeader(header._1, header._2)
+          request.httpRequest.setHeader(header._1.asString, header._2)
       }
       scopedDebug(s"request = $request")
       request
@@ -80,7 +81,7 @@ trait ControllerTestSupport extends LoggingEx {
   (method: HttpMethod,
    path: String,
    content: Option[Content],
-   headers: Map[String, String])
+   headers: Map[HeaderName, String])
   (implicit executor: ExecutionContext): Try[Response]
 
   /**
@@ -93,7 +94,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @tparam T 関数の戻り値の型
    * @return 関数の戻り値
    */
-  protected def testGet[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
+  protected def testGet[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
                           (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
     f(buildRequest(Method.Get, path, content, headers))
   }
@@ -108,7 +109,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @tparam T 関数の戻り値の型
    * @return 関数の戻り値
    */
-  protected def testPost[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
+  protected def testPost[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
                            (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
     f(buildRequest(Method.Post, path, content, headers))
   }
@@ -123,7 +124,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @tparam T 関数の戻り値の型
    * @return 関数の戻り値
    */
-  protected def testPut[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
+  protected def testPut[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
                           (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
     f(buildRequest(Method.Put, path, content, headers))
   }
@@ -138,7 +139,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @tparam T 関数の戻り値の型
    * @return 関数の戻り値
    */
-  protected def testDelete[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
+  protected def testDelete[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
                              (f: Try[Response] => T)(implicit executor: ExecutionContext, routingFilter: RoutingFilter): T = {
     f(buildRequest(Method.Delete, path, content, headers))
   }
@@ -153,12 +154,12 @@ trait ControllerTestSupport extends LoggingEx {
    * @tparam T 関数の戻り値の型
    * @return 関数の戻り値
    */
-  protected def testHead[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
+  protected def testHead[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
                            (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
     f(buildRequest(Method.Head, path, content, headers))
   }
 
-  protected def testPatch[T](path: String, content: Option[Content] = None, headers: Map[String, String] = Map())
+  protected def testPatch[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
                             (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
     f(buildRequest(Method.Patch, path, content, headers))
   }
