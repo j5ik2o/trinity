@@ -12,6 +12,18 @@ object PlayLikeApplication extends App with Bootstrap {
 
   protected val environment = Environment.Development
 
+  override protected val routingFilter = Some(RoutingFilter.createForActions {
+    implicit pathPatternParser =>
+      Seq(
+        Get % "/hello" -> helloWorld,
+        Get % "/user/:userId" -> getUser,
+        Get % ("""/group/(.*)""".r, Seq("name")) -> {
+          request =>
+            getGroup(request.routeParams("name"))(request)
+        }
+      )
+  })
+
   def helloWorld = SimpleAction {
     request =>
       Future.successful(Response().withContentAsString("Hello World!"))
@@ -28,18 +40,6 @@ object PlayLikeApplication extends App with Bootstrap {
     request =>
       Future.successful(Response().withContentAsString("name = " + name))
   }
-
-  override protected val routingFilter = Some(RoutingFilter.createForActions {
-    implicit pathPatternParser =>
-      Seq(
-        Get % "/hello" -> helloWorld,
-        Get % "/user/:userId" -> getUser,
-        Get % ("""/group/(.*)""".r, Seq("name")) -> {
-          request =>
-            getGroup(request.routeParams("name"))(request)
-        }
-      )
-  })
 
   await(start())
 
