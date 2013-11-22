@@ -19,7 +19,6 @@ trait ControllerTestSupport extends LoggingEx {
 
   protected val globalSettings: Option[GlobalSettings[Request, Response]] = None
 
-
   /**
    * HTTPリクエストを生成する。
    *

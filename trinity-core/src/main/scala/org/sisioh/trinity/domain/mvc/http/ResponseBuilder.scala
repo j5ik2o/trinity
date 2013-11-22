@@ -7,15 +7,15 @@ import scala.collection.mutable
 
 case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilder] {
 
-  private var protocolVersion: ProtocolVersion.Value = _
+  private var protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11
 
-  private var responseStatus: ResponseStatus.Value = _
+  private var responseStatus: ResponseStatus.Value = ResponseStatus.Ok
 
   private val headers = mutable.Map.empty[HeaderName, Any]
 
-  private var cookies: Seq[Cookie] = _
+  private var cookies: Seq[Cookie] = Seq.empty
 
-  private var content: ChannelBuffer = _
+  private var content: ChannelBuffer = ChannelBuffer.empty
 
 
   def withProtocolVersion(protocolVersion: ProtocolVersion.Value) = {
