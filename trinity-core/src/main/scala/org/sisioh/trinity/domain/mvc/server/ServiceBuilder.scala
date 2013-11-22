@@ -16,7 +16,7 @@ trait ServiceBuilder {
 
   private val finagleFilterBuffers = new ListBuffer[FinagleFilter[Request, Response, Request, Response]]()
 
-  protected val globalSettings: Option[GlobalSettings[Request, Response]]
+  val globalSettings: Option[GlobalSettings[Request, Response]]
 
   protected def applyFinagleFilters(baseService: Service[Request, Response]) = {
     finagleFilterBuffers.foldRight(baseService) {
@@ -25,12 +25,20 @@ trait ServiceBuilder {
     }
   }
 
+  protected def unregisterAllFinagleFilters() = {
+    finagleFilterBuffers.clear()
+  }
+
   protected def registerFinagleFilters(filters: Seq[FinagleFilter[Request, Response, Request, Response]]) {
     finagleFilterBuffers.appendAll(filters)
   }
 
   protected def registerFinagleFilter(filter: FinagleFilter[Request, Response, Request, Response]) {
     finagleFilterBuffers.append(filter)
+  }
+
+  def unregisterAllFilters() = {
+    unregisterAllFinagleFilters()
   }
 
   def registerFilters(filters: Seq[Filter[Request, Response, Request, Response]])(implicit executor: ExecutionContext) {
