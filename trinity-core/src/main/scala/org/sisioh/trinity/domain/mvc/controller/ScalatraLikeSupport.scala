@@ -3,13 +3,13 @@ package org.sisioh.trinity.domain.mvc.controller
 import org.sisioh.trinity.domain.io.http.Method
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{ResponseSupport, Request, Response}
-import org.sisioh.trinity.domain.mvc.routing.RouteDef
+import org.sisioh.trinity.domain.mvc.routing.{RouteDefHolder, RouteDef}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPattern, PathPatternParser}
 import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util.matching.Regex
 
-trait ScalatraLikeSupport extends ResponseSupport {
+trait ScalatraLikeSupport extends ResponseSupport with RouteDefHolder {
 
   protected val routeDefs = mutable.ListBuffer.empty[RouteDef]
 
@@ -77,7 +77,6 @@ trait ScalatraLikeSupport extends ResponseSupport {
     routeDefs.append(route)
   }
 
-  def toRouteDefs: Seq[RouteDef] = routeDefs.toSeq
-
+  def getRouteDefs: Seq[RouteDef] = routeDefs.toSeq
 
 }
