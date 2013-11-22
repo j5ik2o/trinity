@@ -36,7 +36,7 @@ object PlayLikeApplicationForController extends App with Bootstrap {
       Seq(
         Get % "/hello" -> main.helloWorld,
         Get % "/user/:userId" -> main.getUser,
-        Get % ("/group/(.*)".r -> Seq("name")) -> {
+        Get % ("""/group/(.*)""".r -> Seq("name")) -> {
           request =>
             main.getGroup(request.routeParams("name"))(request)
         }
