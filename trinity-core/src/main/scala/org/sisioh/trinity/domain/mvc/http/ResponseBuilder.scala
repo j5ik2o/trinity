@@ -1,9 +1,11 @@
 package org.sisioh.trinity.domain.mvc.http
 
+import java.nio.charset.Charset
 import org.sisioh.dddbase.core.lifecycle.ValueObjectBuilder
 import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}
 import org.sisioh.trinity.domain.io.http._
 import scala.collection.mutable
+import scala.concurrent.Future
 
 case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilder] {
 
@@ -16,7 +18,6 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
   private var cookies: Seq[Cookie] = Seq.empty
 
   private var content: ChannelBuffer = ChannelBuffer.empty
-
 
   def withProtocolVersion(protocolVersion: ProtocolVersion.Value) = {
     addConfigurator(_.protocolVersion = protocolVersion)
@@ -33,8 +34,25 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
     getThis
   }
 
-  def withContentAsString(body: => String): ResponseBuilder =
-    withContent(ChannelBuffers.copiedBuffer(body, CharsetUtil.UTF_8))
+  def withContentType(contentType: String) = {
+    withHeader(HeaderNames.ContentType, contentType)
+  }
+
+  private def toCopiedBuffer(value: String, charset: Charset = CharsetUtil.UTF_8) = {
+    ChannelBuffers.copiedBuffer(value, charset)
+  }
+
+  def withTextHtml(html: String, charset: Charset = CharsetUtil.UTF_8) = {
+    withContent(toCopiedBuffer(html, charset)).withHeader(HeaderNames.ContentType, "text/html")
+  }
+
+  def withTextPlain(text: String, charset: Charset = CharsetUtil.UTF_8) = {
+    withContent(toCopiedBuffer(text, charset)).withHeader(HeaderNames.ContentType, "text/plain")
+  }
+
+  def withContent(body: => String, charset: Charset = CharsetUtil.UTF_8): ResponseBuilder =
+    withContent(toCopiedBuffer(body, charset))
+
 
   def withContent(body: => ChannelBuffer): ResponseBuilder = {
     addConfigurator(_.content = body)
@@ -71,6 +89,7 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
     getThis
   }
 
+
   protected def getThis: ResponseBuilder = this
 
   protected def newInstance: ResponseBuilder = new ResponseBuilder()
@@ -86,5 +105,7 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
     builder.withCookies(vo.cookies)
     builder.withContent(vo.content)
   }
+
+  def toFuture = Future.successful(build)
 
 }
