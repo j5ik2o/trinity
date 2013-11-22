@@ -3,6 +3,7 @@ package org.sisioh.trinity.domain.mvc.action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.{GlobalSettings, SimpleFilter}
 import scala.concurrent.{ExecutionContext, Future}
+import org.sisioh.scala.toolbox.LoggingEx
 
 /**
  * 例外をハンドリングするためのフィルター。
@@ -13,7 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 case class ExceptionHandleFilter
 (globalSettings: Option[GlobalSettings[Request, Response]] = None)
 (implicit executor: ExecutionContext)
-  extends SimpleFilter[Request, Response] {
+  extends SimpleFilter[Request, Response] with LoggingEx {
 
   /**
    * エラー発生時のリカバリを行うためのハンドラ。
@@ -33,6 +34,7 @@ case class ExceptionHandleFilter
   def apply(requestIn: Request, action: Action[Request, Response]): Future[Response] = {
     action(requestIn).recoverWith {
       case throwable =>
+        error("error", throwable)
         errorHandler(requestIn, throwable)
     }
   }

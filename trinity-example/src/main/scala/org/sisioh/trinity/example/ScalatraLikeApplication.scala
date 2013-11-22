@@ -2,7 +2,7 @@ package org.sisioh.trinity.example
 
 import org.json4s._
 import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeSupport
-import org.sisioh.trinity.domain.mvc.http.{JSON4SRender, ResponseBuilder}
+import org.sisioh.trinity.domain.mvc.http.{JSON4SRenderer, ResponseBuilder}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
 
@@ -20,7 +20,7 @@ object ScalatraLikeApplication extends App with ScalatraLikeSupport with Bootstr
       val jValue = JObject(
         JField("name", JString("value"))
       )
-      ResponseBuilder().withResponseRender(JSON4SRender(jValue)).toFuture
+      ResponseBuilder().withRenderer(JSON4SRenderer(jValue)).toFuture
   }
 
   get("/user/:userId") {
@@ -33,8 +33,7 @@ object ScalatraLikeApplication extends App with ScalatraLikeSupport with Bootstr
       ResponseBuilder().withTextPlain("name = " + request.routeParams("name")).toFuture
   }
 
-  override protected val routingFilter =
-    Some(RoutingFilter.createForControllers(Seq(this)))
+  override protected val routingFilter = Some(RoutingFilter.createForControllers(this))
 
   await(start())
 

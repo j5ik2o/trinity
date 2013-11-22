@@ -19,7 +19,7 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
 
   private var content: ChannelBuffer = ChannelBuffer.empty
 
-  def withResponseRender(responseRender: ResponseRender) = {
+  def withRenderer(responseRender: ResponseRenderer) = {
     responseRender.render(this)
     getThis
   }
@@ -37,6 +37,10 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
   def withCookies(cookies: Seq[Cookie]) = {
     addConfigurator(_.cookies = cookies)
     getThis
+  }
+
+  def withContentType(contentType: ContentType) = {
+    withHeader(HeaderNames.ContentType, contentType.toString)
   }
 
   def withContentType(contentType: String) = {
