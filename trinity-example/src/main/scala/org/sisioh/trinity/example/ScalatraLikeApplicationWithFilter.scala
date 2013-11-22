@@ -1,33 +1,29 @@
 package org.sisioh.trinity.example
 
+import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeSupport
-import org.sisioh.trinity.domain.mvc.http.{Request, Response}
+import org.sisioh.trinity.domain.mvc.http.{ResponseBuilder, Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.{SimpleFilter, Environment, Bootstrap}
 import scala.concurrent.Future
-import org.sisioh.trinity.domain.mvc.action.Action
 
-object ScalatraLikeApplication2 extends App with ScalatraLikeSupport with Bootstrap {
+object ScalatraLikeApplicationWithFilter extends App with ScalatraLikeSupport with Bootstrap {
 
   protected val environment = Environment.Development
 
   get("/hello") {
     request =>
-      Future.successful(Response().withContentAsString("Hello World!"))
+      ResponseBuilder().withTextPlain("Hello World!!").toFuture
   }
 
   get("/user/:userId") {
     request =>
-      Future.successful(
-        Response().withContentAsString("userId = " + request.routeParams("userId"))
-      )
+      ResponseBuilder().withTextPlain("userId = " + request.routeParams("userId")).toFuture
   }
 
   get( """/group/(.*)""".r, Seq("name")) {
     request =>
-      Future.successful(
-        Response().withContentAsString("name = " + request.routeParams("name"))
-      )
+      ResponseBuilder().withTextPlain("name = " + request.routeParams("name")).toFuture
   }
 
   override protected val routingFilter =
