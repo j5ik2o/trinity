@@ -21,7 +21,7 @@ object ScalatraLikeApplicationWithFilter extends App with ScalatraLikeSupport wi
       ResponseBuilder().withTextPlain("userId = " + request.routeParams("userId")).toFuture
   }
 
-  get( """/group/(.*)""".r, Seq("name")) {
+  get("/group/(.*)".r, Seq("name")) {
     request =>
       ResponseBuilder().withTextPlain("name = " + request.routeParams("name")).toFuture
   }
