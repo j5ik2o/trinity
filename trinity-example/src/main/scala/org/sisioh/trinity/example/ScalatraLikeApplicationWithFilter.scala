@@ -27,7 +27,7 @@ object ScalatraLikeApplicationWithFilter extends App with ScalatraLikeSupport wi
   }
 
   override protected val routingFilter =
-    Some(RoutingFilter.createForControllers(Seq(this)))
+    Some(RoutingFilter.createForControllers(this))
 
   server.registerFilter(new SimpleFilter[Request, Response] {
     def apply(requestIn: Request, action: Action[Request, Response]): Future[Response] = {

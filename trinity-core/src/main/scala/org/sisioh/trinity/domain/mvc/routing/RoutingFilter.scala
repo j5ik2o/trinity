@@ -4,7 +4,6 @@ import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc._
 import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, InternalServerErrorAction, Action}
-import org.sisioh.trinity.domain.mvc.controller.{ScalatraLikeSupport}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternParser, PathPatternParser}
 import scala.concurrent.{Future, ExecutionContext}
@@ -87,10 +86,10 @@ object RoutingFilter {
 
   private implicit val ctx = SyncEntityIOContext
 
-  def createForControllers(controllers: Seq[RouteDefHolder])
-                      (implicit executor: ExecutionContext,
-                       globalSettings: Option[GlobalSettings[Request, Response]] = None,
-                       pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
+  def createForControllers(controllers: RouteDefHolder*)
+                          (implicit executor: ExecutionContext,
+                           globalSettings: Option[GlobalSettings[Request, Response]] = None,
+                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
     createForActions {
       pathPatternParser =>
         controllers.flatMap(_.getRouteDefs)
@@ -98,9 +97,9 @@ object RoutingFilter {
   }
 
   def createForActions(routeDefs: (PathPatternParser) => Seq[RouteDef])
-            (implicit executor: ExecutionContext,
-             globalSettings: Option[GlobalSettings[Request, Response]] = None,
-             pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
+                      (implicit executor: ExecutionContext,
+                       globalSettings: Option[GlobalSettings[Request, Response]] = None,
+                       pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
     val routeRepository = RouteRepository.ofMemory
     routeDefs(pathPatternParser).foreach {
       case RouteDef(method, pathPattern, action) =>

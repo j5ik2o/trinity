@@ -145,6 +145,7 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity-view-scalate",
       libraryDependencies ++= Seq(
+        "org.scala-lang" % "scala-compiler" % "2.10.2",
         "org.fusesource.scalate" %% "scalate-core" % "1.6.1"
       )
     )

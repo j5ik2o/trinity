@@ -1,6 +1,6 @@
 package org.sisioh.trinity.domain.mvc.http
 
-trait ResponseRender {
+trait ResponseRenderer {
 
   def render(responseBuilder: ResponseBuilder)
 
