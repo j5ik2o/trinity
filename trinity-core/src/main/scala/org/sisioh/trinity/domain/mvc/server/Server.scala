@@ -8,19 +8,20 @@ import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
 
-trait Server {
+trait Server extends ServiceBuilder {
 
-  def registerFilters(filters: Seq[Filter[Request, Response, Request, Response]])
-                     (implicit executor: ExecutionContext): Unit
+  val serverConfig: ServerConfig
 
-  def registerFilter(filter: Filter[Request, Response, Request, Response])
-                    (implicit executor: ExecutionContext): Unit
+  val action: Option[Action[Request, Response]]
+
+  val filter: Option[Filter[Request, Response, Request, Response]]
 
   def start()(implicit executor: ExecutionContext): Future[Unit]
 
   def stop()(implicit executor: ExecutionContext): Future[Unit]
 
   def isStarted: Boolean
+
 }
 
 object Server {
