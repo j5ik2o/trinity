@@ -2,11 +2,10 @@ package org.sisioh.trinity.example
 
 import org.sisioh.trinity.domain.io.http.Method._
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
-import org.sisioh.trinity.domain.mvc.http.{ResponseBuilder, Response}
+import org.sisioh.trinity.domain.mvc.http.ResponseBuilder
 import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
-import scala.concurrent.Future
 
 object PlayLikeApplicationForController extends App with Bootstrap {
 
@@ -37,7 +36,7 @@ object PlayLikeApplicationForController extends App with Bootstrap {
       Seq(
         Get % "/hello" -> main.helloWorld,
         Get % "/user/:userId" -> main.getUser,
-        Get %( """/group/(.*)""".r, Seq("name")) -> {
+        Get % ("/group/(.*)".r -> Seq("name")) -> {
           request =>
             main.getGroup(request.routeParams("name"))(request)
         }

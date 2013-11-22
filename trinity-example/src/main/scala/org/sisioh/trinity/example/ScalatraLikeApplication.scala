@@ -19,7 +19,7 @@ object ScalatraLikeApplication extends App with ScalatraLikeSupport with Bootstr
       ResponseBuilder().withTextPlain("userId = " + request.routeParams("userId")).toFuture
   }
 
-  get( """/group/(.*)""".r, Seq("name")) {
+  get("/group/(.*)".r, Seq("name")) {
     request =>
       ResponseBuilder().withTextPlain("name = " + request.routeParams("name")).toFuture
   }
