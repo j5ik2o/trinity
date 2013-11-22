@@ -19,6 +19,11 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
 
   private var content: ChannelBuffer = ChannelBuffer.empty
 
+  def withResponseRender(responseRender: ResponseRender) = {
+    responseRender.render(this)
+    getThis
+  }
+
   def withProtocolVersion(protocolVersion: ProtocolVersion.Value) = {
     addConfigurator(_.protocolVersion = protocolVersion)
     getThis
