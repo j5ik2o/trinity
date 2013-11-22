@@ -1,7 +1,5 @@
 package org.sisioh.trinity.domain.io.buffer
 
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.nio._
 import java.nio.charset.Charset
 

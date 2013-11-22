@@ -9,7 +9,7 @@ import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util.matching.Regex
 
-trait ScalatraLikeController extends ResponseSupport {
+trait ScalatraLikeSupport extends ResponseSupport {
 
   protected val routeDefs = mutable.ListBuffer.empty[RouteDef]
 

@@ -21,17 +21,27 @@ import scala.util.Try
  */
 trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
+  private val httpClients = scala.collection.mutable.Map.empty[SocketAddress, Service[HttpRequest, HttpResponse]]
+
+  private val host = "localhost"
+
+  private val port = 7070
+
   protected def buildRequest
   (method: HttpMethod, path: String, content: Option[Content], headers: Map[HeaderName, String])
   (implicit executor: ExecutionContext): Try[Response] = {
     val request = newRequest(method, path, content, headers)
-    val address: SocketAddress = new InetSocketAddress(serverHost.getOrElse("localhost"), serverPort.getOrElse(7070))
-    val client: Service[HttpRequest, HttpResponse] =
+    val _host = serverHost.getOrElse(host)
+    val _port = serverPort.getOrElse(port)
+    val address: SocketAddress = new InetSocketAddress(_host, _port)
+    val client = httpClients.getOrElseUpdate(
+      address,
       ClientBuilder()
         .codec(Http())
         .hosts(address)
         .hostConnectionLimit(1)
         .build()
+    )
     Try {
       val finagleResponse = TAwait.result(client(request))
       val r = IOResponse(FinagleResponse(finagleResponse))

@@ -1,13 +1,13 @@
 package org.sisioh.trinity.example
 
-import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeController
+import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeSupport
 import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.{SimpleFilter, Environment, Bootstrap}
 import scala.concurrent.Future
 import org.sisioh.trinity.domain.mvc.action.Action
 
-object ScalatraLikeApplication2 extends App with ScalatraLikeController with Bootstrap {
+object ScalatraLikeApplication2 extends App with ScalatraLikeSupport with Bootstrap {
 
   protected val environment = Environment.Development
 

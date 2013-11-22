@@ -256,13 +256,12 @@ object ChannelBuffer {
 
   val empty: ChannelBuffer = NettyChannelBuffers.EMPTY_BUFFER
 
-  implicit def toNetty(target: ChannelBuffer): NettyChannelBuffer =
+  private[trinity] implicit def toNetty(target: ChannelBuffer): NettyChannelBuffer =
     target match {
       case ChannelBufferImpl(underlying, _) => underlying
       case _ => throw new IllegalArgumentException()
     }
 
-
-  implicit def toTrinity(underlying: NettyChannelBuffer): ChannelBuffer = ChannelBufferImpl(underlying)
+  private[trinity] implicit def toTrinity(underlying: NettyChannelBuffer): ChannelBuffer = ChannelBufferImpl(underlying)
 
 }

@@ -7,7 +7,6 @@ import com.twitter.finagle.http.RichHttp
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import com.twitter.finagle.tracing.{NullTracer, Tracer}
 import com.twitter.ostrich.admin._
-import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
@@ -17,12 +16,12 @@ import scala.concurrent._
 
 private[mvc]
 class ServerImpl
-(serverConfig: ServerConfig,
- action: Option[Action[Request, Response]],
- filter: Option[Filter[Request, Response, Request, Response]],
- protected val globalSettings: Option[GlobalSettings[Request, Response]])
+(val serverConfig: ServerConfig,
+ val action: Option[Action[Request, Response]],
+ val filter: Option[Filter[Request, Response, Request, Response]],
+ val globalSettings: Option[GlobalSettings[Request, Response]])
 (implicit executor: ExecutionContext)
-  extends Server with ServiceBuilder with LoggingEx {
+  extends Server with LoggingEx {
 
   private var finagleServer: Option[FinagleServer] = None
 
@@ -36,7 +35,7 @@ class ServerImpl
     AdminServiceFactory(
       httpPort = serverConfig.statsPort.getOrElse(9990),
       statsNodes = StatsFactory(
-        reporters = JsonStatsLoggerFactory(serviceName = Some("trinity")) ::
+        reporters = JsonStatsLoggerFactory(serviceName = serverConfig.name) ::
           TimeSeriesCollectorFactory() :: Nil
       ) :: Nil
     )(runtimeEnv)
@@ -58,38 +57,47 @@ class ServerImpl
   }
 
   def start()(implicit executor: ExecutionContext): Future[Unit] = future {
-    require(finagleServer.isEmpty)
-    if (serverConfig.statsEnabled) {
-      createAdminService(createRuntimeEnviroment)
-    }
+    withDebugScope("start") {
+      require(finagleServer.isEmpty)
+      if (serverConfig.statsEnabled) {
+        createAdminService(createRuntimeEnviroment)
+      }
 
-    val service = buildService(action)
+      val service = buildService(action)
 
-    finagleServer = Some(ServerBuilder()
-      .codec(createCodec)
-      .bindTo(serverConfig.bindAddress.getOrElse(Server.defaultBindAddress))
-      .tracer(createTracer)
-      .name(serverConfig.name.getOrElse(Server.defaultName))
-      .build(service))
+      val bindAddress = serverConfig.bindAddress.getOrElse(Server.defaultBindAddress)
+      scopedDebug(s"bindAddress = $bindAddress")
+      val name = serverConfig.name.getOrElse(Server.defaultName)
+      scopedDebug(s"name = $name")
 
-    globalSettings.foreach {
-      globalSettings =>
-        globalSettings.onStart(this)
+      finagleServer = Some(
+        ServerBuilder()
+          .codec(createCodec)
+          .bindTo(bindAddress)
+          .tracer(createTracer)
+          .name(name)
+          .build(service)
+      )
+
+      globalSettings.foreach {
+        _.onStart(this)
+      }
     }
   }
 
-  def stop()(implicit executor: ExecutionContext): Future[Unit] = {
-    require(finagleServer.isDefined)
-    finagleServer.map {
-      fs =>
-        val result = fs.close().toScala
-        globalSettings.foreach {
-          globalSettings =>
-            globalSettings.onStop(this)
-        }
-        finagleServer = None
-        result
-    }.get
+  def stop()(implicit executor: ExecutionContext): Future[Unit] = synchronized {
+    withDebugScope("stop") {
+      require(finagleServer.isDefined)
+      finagleServer.map {
+        fs =>
+          val result = fs.close().toScala
+          globalSettings.foreach {
+            _.onStop(this)
+          }
+          finagleServer = None
+          result
+      }.get
+    }
   }
 
   def isStarted: Boolean = finagleServer.isDefined

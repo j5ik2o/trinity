@@ -1,12 +1,12 @@
 package org.sisioh.trinity.example
 
-import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeController
+import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeSupport
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
 import scala.concurrent.Future
 
-object ScalatraLikeApplication extends App with ScalatraLikeController with Bootstrap {
+object ScalatraLikeApplication extends App with ScalatraLikeSupport with Bootstrap {
 
   protected val environment = Environment.Development
 
@@ -33,4 +33,5 @@ object ScalatraLikeApplication extends App with ScalatraLikeController with Boot
     Some(RoutingFilter.createForControllers(Seq(this)))
 
   await(start())
+
 }
