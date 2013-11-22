@@ -1,7 +1,7 @@
 package org.sisioh.trinity.test
 
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.{Response => FinagleResponse, Request => FinagleRequest}
-import com.twitter.finagle.{Filter => FinagleFilter, Service}
 import com.twitter.util.Await
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity.domain.io.http.{Response => IOResponse, HeaderName}
@@ -17,7 +17,6 @@ import scala.util.Try
  * 単体テストをサポートするためのトレイト。
  */
 trait ControllerUnitTestSupport extends ControllerTestSupport {
-
   self =>
 
   val routingFilter: RoutingFilter
