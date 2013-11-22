@@ -2,13 +2,13 @@ package org.sisioh.trinity.example
 
 import org.sisioh.trinity.domain.io.http.Method._
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
-import org.sisioh.trinity.domain.mvc.http.Response
+import org.sisioh.trinity.domain.mvc.http.{ResponseBuilder, Response}
 import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
 import scala.concurrent.Future
 
-object PlayLikeApplication2 extends App with Bootstrap {
+object PlayLikeApplicationForController extends App with Bootstrap {
 
   protected val environment: Environment.Value = Environment.Development
 
@@ -16,20 +16,17 @@ object PlayLikeApplication2 extends App with Bootstrap {
 
     def helloWorld = SimpleAction {
       request =>
-        throw new Exception
-        Future.successful(Response().withContentAsString("Hello World!"))
+        ResponseBuilder().withTextPlain("Hello World!!").toFuture
     }
 
     def getUser = SimpleAction {
       request =>
-        Future.successful(
-          Response().withContentAsString("userId = " + request.routeParams("userId"))
-        )
+        ResponseBuilder().withTextPlain("userId = " + request.routeParams("userId")).toFuture
     }
 
     def getGroup(name: String) = SimpleAction {
       request =>
-        Future.successful(Response().withContentAsString("name = " + name))
+        ResponseBuilder().withTextPlain("name = " + name).toFuture
     }
   }
 
