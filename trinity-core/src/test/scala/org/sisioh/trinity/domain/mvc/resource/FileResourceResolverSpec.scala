@@ -9,11 +9,11 @@ class FileResourceResolverSpec extends Specification {
   "FileResourceResolver" should {
     "be able to get input stream when development" in {
       val target = FileResourceResolver(Environment.Development, localBasePath)
-      target.getInputStream("index.txt") must beSuccessfulTry
+      target.getInputStream("/index.txt") must beSuccessfulTry
     }
     "be able to get input stream when product" in {
       val target = FileResourceResolver(Environment.Product, localBasePath)
-      target.getInputStream("index.txt") must beSuccessfulTry
+      target.getInputStream("/index.txt") must beSuccessfulTry
     }
   }
 }

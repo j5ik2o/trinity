@@ -5,12 +5,14 @@ import com.twitter.finagle.http.{Response => FinagleResponse, Request => Finagle
 import com.twitter.util.Await
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity.domain.io.http.{Response => IOResponse, HeaderName}
-import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.server.ServiceBuilder
+import org.sisioh.trinity.domain.mvc.{Filter, GlobalSettings}
+import org.specs2.specification.Scope
 import scala.concurrent.ExecutionContext
+import scala.language.reflectiveCalls
 import scala.util.Try
 
 /**
@@ -19,14 +21,19 @@ import scala.util.Try
 trait ControllerUnitTestSupport extends ControllerTestSupport {
   self =>
 
-  val routingFilter: RoutingFilter
+  case class UnitTestContext(routingFilter: RoutingFilter,
+                             filters: Seq[Filter[Request, Response, Request, Response]] = Seq.empty)
+                            (implicit val executor: ExecutionContext)
+    extends TestContext
 
   protected def buildRequest
   (method: HttpMethod,
    path: String,
    content: Option[Content],
    headers: Map[HeaderName, String])
-  (implicit executor: ExecutionContext): Try[Response] = {
+  (implicit testContext: TestContext): Try[Response] = {
+    implicit val executor = testContext.executor
+    val UnitTestContext(routingFilter, filters) = testContext
     val request = newRequest(method, path, content, headers)
     val serviceBuilder = new ServiceBuilder {
       val globalSettings: Option[GlobalSettings[Request, Response]] = self.globalSettings
@@ -36,6 +43,7 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
         buildService(action)(executor)
     }
     serviceBuilder.registerFilter(routingFilter)
+    serviceBuilder.registerFilters(filters)
     val service = serviceBuilder._buildService()
     Try {
       val finagleResponse = Await.result(service(request))
@@ -44,5 +52,9 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
     }
   }
 
+  protected abstract class WithTestScope(implicit executor: ExecutionContext) extends Scope {
+    val routingFilter: RoutingFilter
+    implicit lazy val testContext = UnitTestContext(routingFilter)
+  }
 
 }

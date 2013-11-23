@@ -1,18 +1,18 @@
 package org.sisioh.trinity.example
 
 import org.json4s._
-import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeSupport
+import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeControllerSupport
 import org.sisioh.trinity.domain.mvc.http.{JSON4SRenderer, ResponseBuilder}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
+import org.sisioh.trinity.domain.mvc.{BootstrapWithScalatraLikeControllerSupport, Environment, Bootstrap}
 
-object ScalatraLikeApplication extends App with ScalatraLikeSupport with Bootstrap {
+object ScalatraLikeControllerApplication extends App with BootstrapWithScalatraLikeControllerSupport {
 
   protected val environment = Environment.Development
 
   get("/hello") {
     request =>
-      ResponseBuilder().withTextPlain("Hello World!!").toFuture
+      responseBuilder.withTextPlain("Hello World!!").toFuture
   }
 
   get("/json") {
@@ -20,20 +20,18 @@ object ScalatraLikeApplication extends App with ScalatraLikeSupport with Bootstr
       val jValue = JObject(
         JField("name", JString("value"))
       )
-      ResponseBuilder().withRenderer(JSON4SRenderer(jValue)).toFuture
+      responseBuilder.withRenderer(JSON4SRenderer(jValue)).toFuture
   }
 
   get("/user/:userId") {
     request =>
-      ResponseBuilder().withTextPlain("userId = " + request.routeParams("userId")).toFuture
+      responseBuilder.withTextPlain("userId = " + request.routeParams("userId")).toFuture
   }
 
   get( """/group/(.*)""".r, Seq("name")) {
     request =>
       ResponseBuilder().withTextPlain("name = " + request.routeParams("name")).toFuture
   }
-
-  override protected val routingFilter = Some(RoutingFilter.createForControllers(this))
 
   await(start())
 

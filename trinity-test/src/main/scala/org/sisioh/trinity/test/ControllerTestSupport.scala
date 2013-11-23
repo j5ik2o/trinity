@@ -13,6 +13,10 @@ import org.sisioh.trinity.domain.io.http.HeaderName
 
 trait ControllerTestSupport extends LoggingEx {
 
+  trait TestContext {
+    val executor: ExecutionContext
+  }
+
   protected val serverHost: Option[String] = None
 
   protected val serverPort: Option[Int] = None
@@ -81,7 +85,7 @@ trait ControllerTestSupport extends LoggingEx {
    path: String,
    content: Option[Content],
    headers: Map[HeaderName, String])
-  (implicit executor: ExecutionContext): Try[Response]
+  (implicit textContext: TestContext): Try[Response]
 
   /**
    * GETメソッドをテストする。
@@ -94,7 +98,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testGet[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
-                          (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
+                          (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Get, path, content, headers))
   }
 
@@ -109,7 +113,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testPost[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
-                           (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
+                           (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Post, path, content, headers))
   }
 
@@ -124,7 +128,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testPut[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
-                          (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
+                          (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Put, path, content, headers))
   }
 
@@ -139,7 +143,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testDelete[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
-                             (f: Try[Response] => T)(implicit executor: ExecutionContext, routingFilter: RoutingFilter): T = {
+                             (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Delete, path, content, headers))
   }
 
@@ -154,12 +158,12 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testHead[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
-                           (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
+                           (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Head, path, content, headers))
   }
 
   protected def testPatch[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
-                            (f: Try[Response] => T)(implicit executor: ExecutionContext): T = {
+                            (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Patch, path, content, headers))
   }
 

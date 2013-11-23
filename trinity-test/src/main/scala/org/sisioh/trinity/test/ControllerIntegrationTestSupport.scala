@@ -7,7 +7,7 @@ import com.twitter.util.{Await => TAwait}
 import java.net.{SocketAddress, InetSocketAddress}
 import org.jboss.netty.handler.codec.http.{HttpResponse, HttpRequest, HttpMethod}
 import org.sisioh.trinity.domain.io.http.{Response => IOResponse, HeaderName}
-import org.sisioh.trinity.domain.mvc.http.Response
+import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import org.sisioh.trinity.domain.mvc.server.Server
 import org.specs2.execute.{Result, AsResult}
 import org.specs2.mutable.Around
@@ -15,11 +15,18 @@ import org.specs2.specification.Scope
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await => SAwait, ExecutionContext}
 import scala.util.Try
+import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
+import org.sisioh.trinity.domain.mvc.Filter
+import com.twitter.finagle.http.Request
 
 /**
  * インテグレーションテストをサポートするためのトレイト。
  */
 trait ControllerIntegrationTestSupport extends ControllerTestSupport {
+
+  case class IntegrationTestContext(implicit val executor: ExecutionContext)
+    extends TestContext
+
 
   private val httpClients = scala.collection.mutable.Map.empty[SocketAddress, Service[HttpRequest, HttpResponse]]
 
@@ -29,7 +36,8 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
   protected def buildRequest
   (method: HttpMethod, path: String, content: Option[Content], headers: Map[HeaderName, String])
-  (implicit executor: ExecutionContext): Try[Response] = {
+  (implicit testContext: TestContext): Try[Response] = {
+    implicit val executor = testContext.executor
     val request = newRequest(method, path, content, headers)
     val _host = serverHost.getOrElse(host)
     val _port = serverPort.getOrElse(port)
