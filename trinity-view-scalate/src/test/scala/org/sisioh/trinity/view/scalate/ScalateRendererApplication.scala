@@ -13,8 +13,6 @@ object ScalateRendererApplication extends App with BootstrapWithScalateSupport {
 
   override protected val applicationId = "trinity-view-scalate"
 
-  protected val environment = Environment.Development
-
   case class MainController() extends ControllerSupport {
 
     def helloWorld = SimpleAction {
