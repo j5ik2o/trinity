@@ -9,9 +9,9 @@ import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
 
 object PlayLikeApplicationForController extends App with Bootstrap {
 
-  protected val environment: Environment.Value = Environment.Development
+  protected val environment = Environment.Development
 
-  class MainController extends ControllerSupport {
+  case class MainController() extends ControllerSupport {
 
     def helloWorld = SimpleAction {
       request =>
@@ -29,20 +29,20 @@ object PlayLikeApplicationForController extends App with Bootstrap {
     }
   }
 
-  val main = new MainController
+  val mainController = MainController()
 
   override protected val routingFilter = Some(RoutingFilter.createForActions {
     implicit pathPatternParser =>
       Seq(
-        Get % "/hello" -> main.helloWorld,
-        Get % "/user/:userId" -> main.getUser,
+        Get % "/hello" -> mainController.helloWorld,
+        Get % "/user/:userId" -> mainController.getUser,
         Get % ("""/group/(.*)""".r -> Seq("name")) -> {
           request =>
-            main.getGroup(request.routeParams("name"))(request)
+            mainController.getGroup(request.routeParams("name"))(request)
         }
       )
   })
 
-  startWithAwait
+  startWithAwait()
 
 }

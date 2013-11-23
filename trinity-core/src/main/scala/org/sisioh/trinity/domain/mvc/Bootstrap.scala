@@ -21,9 +21,11 @@ trait Bootstrap {
 
   protected implicit val executor = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool())
 
+  protected val applicationId: String = "."
+
   protected val environment: Environment.Value
 
-  protected lazy val configuration = ServerConfigLoader.loadConfiguration(environment)
+  protected lazy val configuration = ServerConfigLoader.loadConfiguration(applicationId, environment)
 
   protected lazy val serverConfig = ServerConfigLoader.loadServerConfig(configuration)
 

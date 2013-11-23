@@ -10,9 +10,9 @@ import org.sisioh.trinity.domain.mvc.Environment
  */
 object ServerConfigLoader {
 
-  def loadConfiguration(enviroment: Environment.Value, serverConfigEventListener: Option[ServerConfigEventListener] = None): Configuration = {
+  def loadConfiguration(applicationId : String, enviroment: Environment.Value, serverConfigEventListener: Option[ServerConfigEventListener] = None): Configuration = {
     val configuration = Configuration.loadByMode(
-      new File("."),
+      new File(applicationId),
       if (enviroment == Environment.Product)
         ConfigurationMode.Prod
       else
