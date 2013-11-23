@@ -23,7 +23,7 @@ trait Bootstrap {
 
   protected val applicationId: String = "."
 
-  protected val environment: Environment.Value
+  protected val environment: Environment.Value = Environment.Development
 
   protected lazy val configuration = ServerConfigLoader.loadConfiguration(applicationId, environment)
 
