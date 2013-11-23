@@ -38,6 +38,6 @@ object PlayLikeApplicationForControllerLess extends App with BootstrapWithRespon
       )
   })
 
-  await(start())
+  startWithAwait
 
 }

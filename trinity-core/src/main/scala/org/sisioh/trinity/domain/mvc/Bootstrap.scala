@@ -1,20 +1,18 @@
 package org.sisioh.trinity.domain.mvc
 
 import java.util.concurrent.Executors
-
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.concurrent.duration.Duration
-
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.Request
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPatternParser
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.SinatraPathPatternParser
-import org.sisioh.trinity.domain.mvc.server.Server
-import org.sisioh.trinity.domain.mvc.server.ServerConfigLoader
+import org.sisioh.trinity.domain.mvc.server.{Server, ServerConfigLoader}
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+
 
 /**
  * サーバを起動させるためのトレイト。
@@ -25,7 +23,9 @@ trait Bootstrap {
 
   protected val environment: Environment.Value
 
-  protected lazy val serverConfig = ServerConfigLoader.load(environment)
+  protected lazy val configuration = ServerConfigLoader.loadConfiguration(environment)
+
+  protected lazy val serverConfig = ServerConfigLoader.loadServerConfig(configuration)
 
   protected implicit val globalSettings: Option[GlobalSettings[Request, Response]] = None
 
@@ -50,5 +50,7 @@ trait Bootstrap {
 
   def await(future: Future[Unit], duration: Duration = Duration.Inf): Unit =
     Await.result(future, duration)
+
+  def startWithAwait(): Unit = await(start())
 
 }

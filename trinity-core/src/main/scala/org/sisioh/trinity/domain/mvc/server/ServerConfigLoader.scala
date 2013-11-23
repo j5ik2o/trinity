@@ -10,7 +10,7 @@ import org.sisioh.trinity.domain.mvc.Environment
  */
 object ServerConfigLoader {
 
-  def load(enviroment: Environment.Value): ServerConfig = {
+  def loadConfiguration(enviroment: Environment.Value, serverConfigEventListener: Option[ServerConfigEventListener] = None): Configuration = {
     val configuration = Configuration.loadByMode(
       new File("."),
       if (enviroment == Environment.Product)
@@ -18,6 +18,14 @@ object ServerConfigLoader {
       else
         ConfigurationMode.Dev
     )
+    serverConfigEventListener.foreach {
+      el =>
+        el.onLoadedConfig(configuration)
+    }
+    configuration
+  }
+
+  def loadServerConfig(configuration: Configuration): ServerConfig = {
     val serverConfiguration = ServerConfig(
       name = configuration.getStringValue("name"),
       bindAddress = configuration.getStringValue("bindAddress").map {
