@@ -4,9 +4,10 @@ import org.json4s._
 import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeControllerSupport
 import org.sisioh.trinity.domain.mvc.http.{JSON4SRenderer, ResponseBuilder}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.{BootstrapWithScalatraLikeControllerSupport, Environment, Bootstrap}
+import org.sisioh.trinity.domain.mvc.{BootstrapWithScalatraLikeSupport, Environment, Bootstrap}
 
-object ScalatraLikeControllerApplication extends App with BootstrapWithScalatraLikeControllerSupport {
+object ScalatraLikeControllerApplication
+  extends App with BootstrapWithScalatraLikeSupport {
 
   protected val environment = Environment.Development
 
@@ -33,6 +34,6 @@ object ScalatraLikeControllerApplication extends App with BootstrapWithScalatraL
       ResponseBuilder().withTextPlain("name = " + request.routeParams("name")).toFuture
   }
 
-  await(start())
+  startWithAwait
 
 }

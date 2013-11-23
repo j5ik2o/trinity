@@ -5,7 +5,7 @@ import org.sisioh.trinity.domain.mvc.Environment
 import org.sisioh.trinity.domain.mvc.http.{ResponseBuilder, ResponseRenderer}
 
 case class ScalateRenderer(path: String, context: Map[String, AnyRef] = Map.empty)
-                          (implicit scalateContext: ScalateContext) extends ResponseRenderer {
+                          (implicit scalateContext: ScalateEngineContext) extends ResponseRenderer {
 
   private val engine = scalateContext.engine
 
