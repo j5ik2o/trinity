@@ -35,6 +35,6 @@ object ScalatraLikeControllerApplicationWithFilter
     }
   })
 
-  startWithAwait
+  startWithAwait()
 
 }

@@ -1,6 +1,7 @@
 package org.sisioh.trinity.domain.mvc.http
 
 import java.nio.charset.Charset
+import org.json4s.JValue
 import org.sisioh.dddbase.core.lifecycle.ValueObjectBuilder
 import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}
 import org.sisioh.trinity.domain.io.http._
@@ -18,6 +19,9 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
   private var cookies: Seq[Cookie] = Seq.empty
 
   private var content: ChannelBuffer = ChannelBuffer.empty
+
+  def withJson(jValue: JValue) =
+    withRenderer(JSON4SRenderer(jValue))
 
   def withRenderer(responseRender: ResponseRenderer) = {
     responseRender.render(this)

@@ -21,7 +21,7 @@ object ScalatraLikeControllerApplication
       val jValue = JObject(
         JField("name", JString("value"))
       )
-      responseBuilder.withRenderer(JSON4SRenderer(jValue)).toFuture
+      responseBuilder.withJson(jValue).toFuture
   }
 
   get("/user/:userId") {
@@ -34,6 +34,6 @@ object ScalatraLikeControllerApplication
       ResponseBuilder().withTextPlain("name = " + request.routeParams("name")).toFuture
   }
 
-  startWithAwait
+  startWithAwait()
 
 }
