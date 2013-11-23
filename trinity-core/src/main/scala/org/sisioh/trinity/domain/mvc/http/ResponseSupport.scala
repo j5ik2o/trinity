@@ -5,6 +5,8 @@ import org.sisioh.trinity.domain.io.http.{MimeTypes, ContentType, HeaderNames, R
 
 trait ResponseSupport {
 
+  protected def responseBuilder = ResponseBuilder()
+
   protected def redirect(location: String, response: Option[Response] = None): Future[Response] = {
     val responseBuilder = ResponseBuilder().
       withResponseStatus(ResponseStatus.MovedPermanently).

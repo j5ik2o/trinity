@@ -2,14 +2,13 @@ package org.sisioh.trinity.test
 
 import org.sisioh.trinity.domain.io.http.Method._
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
-import org.sisioh.trinity.domain.mvc.http.Response
+import org.sisioh.trinity.domain.mvc.http.ResponseBuilder
 import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.server.Server
 import org.specs2.mutable.Specification
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
 class ControllerIntegrationTestSupportSpec extends Specification with ControllerIntegrationTestSupport {
@@ -18,7 +17,7 @@ class ControllerIntegrationTestSupportSpec extends Specification with Controller
 
   def helloWorld = SimpleAction {
     request =>
-      Future.successful(Response().withContentAsString("Hello World!"))
+      ResponseBuilder().withContent("Hello World!").toFuture
   }
 
   val routingFilter = RoutingFilter.createForActions {
@@ -27,6 +26,8 @@ class ControllerIntegrationTestSupportSpec extends Specification with Controller
         Get % "/hello" -> helloWorld
       )
   }
+
+  implicit val testContext = IntegrationTestContext()
 
   "integration-test" should {
     "test get method" in new WithServer(Server(filter = Some(routingFilter))) {
