@@ -9,8 +9,6 @@ import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
 
 object PlayLikeApplicationForController extends App with Bootstrap {
 
-  protected val environment = Environment.Development
-
   case class MainController() extends ControllerSupport {
 
     def helloWorld = SimpleAction {
