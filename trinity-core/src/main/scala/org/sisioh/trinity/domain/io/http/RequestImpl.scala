@@ -6,11 +6,11 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import org.sisioh.trinity.domain.io.http.Methods.toNetty
 import org.sisioh.trinity.domain.io.http.Methods.toTrintiy
 import org.sisioh.trinity.domain.io.http.ProtocolVersion.toNetty
-import org.sisioh.trinity.domain.io.http._
 
 
 private[trinity]
-class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest)
+case class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest,
+                       attributes: Map[String, Any] = Map.empty[String, Any])
   extends AbstractMessage(toUnderlyingAsFinagle) with Request {
 
   def isRequest: Boolean = true
@@ -19,20 +19,21 @@ class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest)
            uri: String,
            headers: Seq[(String, Any)] = Seq.empty,
            cookies: Seq[Cookie] = Seq.empty,
+           attributes: Map[String, Any] = Map.empty[String, Any],
            content: ChannelBuffer = ChannelBuffer.empty,
            protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11) = {
-    this(FinagleRequest(protocolVersion, method, uri))
+    this(FinagleRequest(protocolVersion, method, uri), attributes)
     setHeaders(headers)
     setCookies(cookies)
     setContent(content)
   }
 
-  protected def createInstance(message: AbstractMessage): this.type =
-    new RequestImpl(message.toUnderlyingAsFinagle.asInstanceOf[FinagleRequest]).asInstanceOf[this.type]
+  protected def createInstance(message: this.type, attributes: Map[String, Any]): this.type =
+    new RequestImpl(message.toUnderlyingAsFinagle.asInstanceOf[FinagleRequest], attributes).asInstanceOf[this.type]
 
   protected def mutateAsRequest(f: (NettyRequest) => Unit): this.type = {
     val cloned = if (!isMutable) {
-      createInstance(this)
+      createInstance(this, attributes)
     } else {
       this
     }

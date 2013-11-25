@@ -12,7 +12,18 @@ class ResponseImpl(override val underlying: IOResponse)
 
   val toUnderlyingAsFinagle = underlying.toUnderlyingAsFinagle
 
-  protected def createInstance(message: this.type): this.type =
-    new ResponseImpl(message.underlying).asInstanceOf[this.type]
+  protected def createInstance(message: this.type, attributes: Map[String, Any]): this.type =
+    new ResponseImpl(message.underlying.withAttributes(attributes)).asInstanceOf[this.type]
+
+  val attributes: Map[String, Any] = underlying.attributes
+
+  def withAttributes(_attributes: Map[String, Any]): this.type =
+    new ResponseImpl(underlying.withAttributes(_attributes)).asInstanceOf[this.type]
+
+  def withAttributes(_attributes: (String, Any)*): this.type =
+    new ResponseImpl(underlying.withAttributes(_attributes: _*)).asInstanceOf[this.type]
+
+  def withoutAllAttributes(): this.type =
+    new ResponseImpl(underlying.withoutAllAttributes()).asInstanceOf[this.type]
 
 }
