@@ -3,6 +3,7 @@ package org.sisioh.trinity.domain.mvc.resource
 import java.io.{FileInputStream, File, InputStream}
 import org.sisioh.trinity.domain.mvc.Environment
 import scala.util.{Failure, Success, Try}
+import org.sisioh.trinity.infrastructure.util.ResourceUtil
 
 /**
  * ファイルリソースを解決するためのクラス。
@@ -22,19 +23,9 @@ case class FileResourceResolver(environment: Environment.Value, localBasePath: F
 
   def getInputStream(path: String): Try[InputStream] = {
     if (environment == Environment.Product) {
-      getResourceInputStream(path)
+      ResourceUtil.getResourceInputStream(path)
     } else {
       getLocalInputStream(path)
-    }
-  }
-
-  private def getResourceInputStream(path: String): Try[InputStream] = {
-    Try(getClass.getResourceAsStream(path)).flatMap {
-      stream =>
-        Option(stream).map {
-          s =>
-            Success(s)
-        }.getOrElse(Failure(new Exception))
     }
   }
 
@@ -44,7 +35,7 @@ case class FileResourceResolver(environment: Environment.Value, localBasePath: F
   }
 
   private def hasResourceFile(path: String): Boolean = {
-    getResourceInputStream(path).map {
+    ResourceUtil.getResourceInputStream(path).map {
       _ =>
         true
     }.getOrElse(false)
