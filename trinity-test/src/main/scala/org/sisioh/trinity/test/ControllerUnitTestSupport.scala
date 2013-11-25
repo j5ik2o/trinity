@@ -9,7 +9,7 @@ import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.server.ServiceBuilder
-import org.sisioh.trinity.domain.mvc.{Filter, GlobalSettings}
+import org.sisioh.trinity.domain.mvc.{Environment, Filter, GlobalSettings}
 import org.specs2.specification.Scope
 import scala.concurrent.ExecutionContext
 import scala.language.reflectiveCalls
@@ -40,7 +40,7 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
 
       def _buildService(action: Option[Action[Request, Response]] = None)
                        (implicit executor: ExecutionContext): Service[FinagleRequest, FinagleResponse] =
-        buildService(action)(executor)
+        buildService(Environment.Development, action)(executor)
     }
     serviceBuilder.registerFilter(routingFilter)
     serviceBuilder.registerFilters(filters)

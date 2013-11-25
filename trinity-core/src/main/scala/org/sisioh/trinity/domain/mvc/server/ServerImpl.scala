@@ -79,7 +79,7 @@ class ServerImpl
       if (serverConfig.statsEnabled) {
         createAdminService(createRuntimeEnviroment)
       }
-      val service = buildService(action)
+      val service = buildService(environment, action)
       val bindAddress = serverConfig.bindAddress.getOrElse(Server.defaultBindAddress)
       scopedDebug(s"bindAddress = $bindAddress")
       val name = serverConfig.name.getOrElse(Server.defaultName)
