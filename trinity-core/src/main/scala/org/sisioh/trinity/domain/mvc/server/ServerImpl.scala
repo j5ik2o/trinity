@@ -10,9 +10,10 @@ import com.twitter.ostrich.admin._
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
-import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings, Filter}
+import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
 import org.sisioh.trinity.infrastructure.util.FutureConverters._
 import scala.concurrent._
+import org.sisioh.trinity.domain.mvc.filter.Filter
 
 private[mvc]
 class ServerImpl

@@ -1,15 +1,14 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.filter
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.{Future => SFuture}
-
+import com.twitter.finagle.Service
+import com.twitter.finagle.{Filter => FinagleFilter}
+import com.twitter.util.{Future => TFuture}
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.infrastructure.util.FutureConverters.SFutureToTFuture
 import org.sisioh.trinity.infrastructure.util.FutureConverters.TFutureToSFuture
+import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future => SFuture}
 
-import com.twitter.finagle.{Filter => FinagleFilter}
-import com.twitter.finagle.Service
-import com.twitter.util.{Future => TFuture}
 
 /**
  * Trinity独自のフィルター。
@@ -26,7 +25,7 @@ trait Filter[-ReqIn, +RepOut, +ReqOut, -RepIn]
 
 }
 
-trait SimpleFilter[Req, Rep] extends Filter[Req, Rep, Req, Rep]
+
 
 object Filter {
 

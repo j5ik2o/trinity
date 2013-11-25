@@ -1,9 +1,10 @@
 package org.sisioh.trinity.domain.mvc.action
 
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
-import org.sisioh.trinity.domain.mvc.{GlobalSettings, SimpleFilter}
+import org.sisioh.trinity.domain.mvc.{GlobalSettings}
 import scala.concurrent.{ExecutionContext, Future}
 import org.sisioh.scala.toolbox.LoggingEx
+import org.sisioh.trinity.domain.mvc.filter.SimpleFilter
 
 /**
  * 例外をハンドリングするためのフィルター。

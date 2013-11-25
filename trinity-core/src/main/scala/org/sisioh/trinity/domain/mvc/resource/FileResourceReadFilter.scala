@@ -6,9 +6,10 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
 import org.sisioh.trinity.domain.io.http.{MimeTypes, HeaderNames, ResponseStatus}
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Request, Response}
-import org.sisioh.trinity.domain.mvc.{Environment, SimpleFilter}
+import org.sisioh.trinity.domain.mvc.{Environment}
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
+import org.sisioh.trinity.domain.mvc.filter.SimpleFilter
 
 class FileResourceReadFilter(environment: Environment.Value, localPath: File) extends SimpleFilter[Request, Response] {
 
