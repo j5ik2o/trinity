@@ -17,7 +17,7 @@ object RequestDumpUtil {
                          indent: String) {
     val headers = request.headers.map {
       e =>
-        Seq(indent, "[header]", e._1, "=", e._2, lf).mkString(" ")
+        Seq(indent, "[header]", e._1.asString, "=", e._2, lf).mkString(" ")
     }.mkString
     sb.append(headers)
   }
