@@ -32,11 +32,13 @@ class ServerImpl
   filter.foreach(registerFilter)
 
   private def createAdminService(runtimeEnv: RuntimeEnvironment) = withDebugScope("createAdminService") {
+    val httpPort = serverConfig.statsPort.getOrElse(9990)
+    val serviceName = serverConfig.name
+    scopedDebug(s"startPort = $httpPort, serviceName = $serviceName")
     AdminServiceFactory(
-      httpPort = serverConfig.statsPort.getOrElse(9990),
+      httpPort,
       statsNodes = StatsFactory(
-        reporters = JsonStatsLoggerFactory(serviceName = serverConfig.name) ::
-          TimeSeriesCollectorFactory() :: Nil
+        reporters = JsonStatsLoggerFactory(serviceName = serverConfig.name) :: TimeSeriesCollectorFactory() :: Nil
       ) :: Nil
     )(runtimeEnv)
   }
@@ -59,21 +61,25 @@ class ServerImpl
   def start(environment: Environment.Value = Environment.Development)
            (implicit executor: ExecutionContext): Future[Unit] = future {
     withDebugScope("start") {
+      require(finagleServer.isEmpty)
       if (environment == Environment.Development) {
         info( """
                 |********************************************************************
                 |*** WARNING: Trinity is running in DEVELOPMENT mode.             ***
-                |***                               ^^^^^^^^^^^                    ***
+                |***                                ^^^^^^^^^^^                   ***
+                |********************************************************************
+              """.stripMargin)
+      } else {
+        info( """
+                |********************************************************************
+                |*** Trinity is running in Product mode.                          ***
                 |********************************************************************
               """.stripMargin)
       }
-      require(finagleServer.isEmpty)
       if (serverConfig.statsEnabled) {
         createAdminService(createRuntimeEnviroment)
       }
-
       val service = buildService(action)
-
       val bindAddress = serverConfig.bindAddress.getOrElse(Server.defaultBindAddress)
       scopedDebug(s"bindAddress = $bindAddress")
       val name = serverConfig.name.getOrElse(Server.defaultName)

@@ -9,8 +9,6 @@ import org.sisioh.trinity.domain.mvc.{BootstrapWithResponseSupport, Environment,
 
 object PlayLikeApplicationForControllerLess extends App with BootstrapWithResponseSupport {
 
-  protected val environment = Environment.Development
-
   def helloWorld = SimpleAction {
     request =>
       responseBuilder.withTextPlain("Hello World!!").toFuture
