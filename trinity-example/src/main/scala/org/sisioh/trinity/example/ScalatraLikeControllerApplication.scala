@@ -9,8 +9,6 @@ import org.sisioh.trinity.domain.mvc.{BootstrapWithScalatraLikeSupport, Environm
 object ScalatraLikeControllerApplication
   extends App with BootstrapWithScalatraLikeSupport {
 
-  protected val environment = Environment.Development
-
   get("/hello") {
     request =>
       responseBuilder.withTextPlain("Hello World!!").toFuture

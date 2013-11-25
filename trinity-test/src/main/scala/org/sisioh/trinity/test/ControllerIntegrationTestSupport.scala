@@ -16,7 +16,7 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await => SAwait, ExecutionContext}
 import scala.util.Try
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.Filter
+import org.sisioh.trinity.domain.mvc.{Environment, Filter}
 import com.twitter.finagle.http.Request
 
 /**
@@ -62,7 +62,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
     private def running[T](block: => T): T = {
       synchronized {
-        val future = server.start().map {
+        val future = server.start(Environment.Development).map {
           _ =>
             block
         }.flatMap {

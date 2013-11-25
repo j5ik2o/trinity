@@ -8,8 +8,6 @@ import scala.concurrent.Future
 object ScalatraLikeControllerApplicationWithFilter
   extends App with BootstrapWithScalatraLikeSupport {
 
-  protected val environment = Environment.Development
-
   get("/hello") {
     request =>
       responseBuilder.withTextPlain("Hello World!!").toFuture

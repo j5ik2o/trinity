@@ -10,6 +10,7 @@ import org.specs2.mutable.Specification
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
+import org.sisioh.trinity.domain.mvc.Environment
 
 class ControllerIntegrationTestSupportSpec extends Specification with ControllerIntegrationTestSupport {
 
@@ -41,7 +42,7 @@ class ControllerIntegrationTestSupportSpec extends Specification with Controller
     }
     "test get method without WithServer Scope" in {
       val server = Server(filter = Some(routingFilter))
-      val f = server.start().map {
+      val f = server.start(Environment.Development).map {
         _ =>
           testGet("/hello") {
             result =>
