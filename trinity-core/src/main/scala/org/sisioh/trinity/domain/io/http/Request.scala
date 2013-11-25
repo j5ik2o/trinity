@@ -27,9 +27,9 @@ trait Request extends Message {
   override def hashCode: Int =
     31 * (super.hashCode + method.## + uri.##)
 
-  def method: Method.Value
+  def method: Methods.Value
 
-  def withMethod(method: Method.Value): this.type
+  def withMethod(method: Methods.Value): this.type
 
   def uri: String
 
@@ -42,7 +42,7 @@ object Request {
   def apply(request: FinagleRequest): Request =
     new RequestImpl(request)
 
-  def apply(method: Method.Value, uri: String,
+  def apply(method: Methods.Value, uri: String,
             protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11): Request =
     new RequestImpl(method, uri, protocolVersion = protocolVersion)
 

@@ -1,6 +1,6 @@
 package org.sisioh.trinity.example
 
-import org.sisioh.trinity.domain.io.http.Method._
+import org.sisioh.trinity.domain.io.http.Methods._
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import org.sisioh.trinity.domain.mvc.http.{ResponseSupport, ResponseBuilder}
 import org.sisioh.trinity.domain.mvc.routing.RouteDsl._

@@ -148,7 +148,7 @@ object Request {
       errorOpt
     )
 
-  def apply(method: Method.Value = Method.Get,
+  def apply(method: Methods.Value = Methods.Get,
             uri: String = "/",
             actionOpt: Option[Action[Request, Response]] = None,
             routeParams: Map[String, String] = Map.empty,

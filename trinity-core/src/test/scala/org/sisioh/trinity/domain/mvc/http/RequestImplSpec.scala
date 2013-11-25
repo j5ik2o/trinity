@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.mvc.http
 
 import org.junit.runner.RunWith
-import org.sisioh.trinity.domain.io.http.{ProtocolVersion, Method}
+import org.sisioh.trinity.domain.io.http.{ProtocolVersion, Methods}
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
@@ -12,7 +12,7 @@ class RequestImplSpec extends Specification {
 
   "request" should {
     "has action as some" in {
-      val method = Method.Get
+      val method = Methods.Get
       val uri = "/"
       val action = Some(new SimpleAction {
         def apply(request: Request): Future[Response] = Future.successful(Response())
@@ -32,7 +32,7 @@ class RequestImplSpec extends Specification {
       request.protocolVersion must_== version
     }
     "execute action" in {
-      val method = Method.Get
+      val method = Methods.Get
       val uri = "/"
       val responseFuture = Future.successful(Response())
       val action = new SimpleAction {
@@ -47,7 +47,7 @@ class RequestImplSpec extends Specification {
       request.execute(action) must_== responseFuture
     }
     "be changed action" in {
-      val method = Method.Get
+      val method = Methods.Get
       val uri = "/"
       val responseFuture = Future.successful(Response())
       val action = Some(new SimpleAction {
@@ -65,7 +65,7 @@ class RequestImplSpec extends Specification {
       newRequest must_!= request
     }
     "be changed error" in {
-      val method = Method.Get
+      val method = Methods.Get
       val uri = "/"
       val responseFuture = Future.successful(Response())
       val actionOpt = Some(new SimpleAction {
@@ -84,7 +84,7 @@ class RequestImplSpec extends Specification {
       newRequest must_!= request
     }
     "be changed routeParams" in {
-      val method = Method.Get
+      val method = Methods.Get
       val uri = "/"
       val responseFuture = Future.successful(Response())
       val action = Some(new SimpleAction {
