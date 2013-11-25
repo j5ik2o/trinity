@@ -1,8 +1,6 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import org.sisioh.trinity.domain.io.http.{Response => IOResponse}
-import org.sisioh.trinity.domain.io.http.{ResponseStatus, ProtocolVersion}
-import org.sisioh.trinity.domain.io.infrastructure.http.AbstractResponseProxy
+import org.sisioh.trinity.domain.io.http.{Response => IOResponse, AbstractResponseProxy, ResponseStatus, ProtocolVersion}
 
 private[http]
 class ResponseImpl(override val underlying: IOResponse)

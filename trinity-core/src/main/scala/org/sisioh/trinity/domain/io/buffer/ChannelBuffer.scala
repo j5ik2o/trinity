@@ -11,7 +11,6 @@ import scala.util.Try
 
 import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
 import org.jboss.netty.buffer.{ChannelBuffers => NettyChannelBuffers}
-import org.sisioh.trinity.domain.io.infrastructure.buffer.ChannelBufferImpl
 
 trait ChannelBuffer {
 

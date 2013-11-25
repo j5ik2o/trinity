@@ -1,9 +1,8 @@
-package org.sisioh.trinity.domain.io.infrastructure.buffer
+package org.sisioh.trinity.domain.io.buffer
 
 import java.nio.charset.Charset
 import java.nio.{ByteBuffer, ByteOrder}
-import org.jboss.netty.buffer.{ChannelBuffers => NettyChannelBuffers, ChannelBuffer => NettyChannelBuffer, ChannelBufferFactory => NettyChannelBufferFactory}
-import org.sisioh.trinity.domain.io.buffer.{ChannelBufferFactory, ChannelBuffer, ChannelBuffers}
+import org.jboss.netty.buffer.{ChannelBuffers => NettyChannelBuffers}
 
 object ChannelBuffersImpl extends ChannelBuffers {
 

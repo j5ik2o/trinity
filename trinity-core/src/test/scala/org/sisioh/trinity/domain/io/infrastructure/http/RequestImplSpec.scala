@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.io.infrastructure.http
 
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.domain.io.http.{HeaderNames, CharsetUtil, Method, ProtocolVersion}
+import org.sisioh.trinity.domain.io.http._
 import org.specs2.mutable.Specification
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner

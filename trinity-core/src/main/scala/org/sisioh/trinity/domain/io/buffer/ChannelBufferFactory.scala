@@ -6,7 +6,6 @@ import java.nio.ByteOrder
 import scala.language.implicitConversions
 
 import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
-import org.sisioh.trinity.domain.io.infrastructure.buffer.ChannelBufferFactoryImpl
 
 /**
  * [[org.sisioh.trinity.domain.io.buffer.ChannelBuffer]]のためのファクトリ。

@@ -1,8 +1,7 @@
-package org.sisioh.trinity.domain.io.infrastructure.buffer
+package org.sisioh.trinity.domain.io.buffer
 
-import org.sisioh.trinity.domain.io.buffer.{ChannelBuffer, ChannelBufferFactory}
-import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
 import java.nio.{ByteBuffer, ByteOrder}
+import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
 
 private[trinity]
 case class ChannelBufferFactoryImpl(underlying: NettyChannelBufferFactory)
