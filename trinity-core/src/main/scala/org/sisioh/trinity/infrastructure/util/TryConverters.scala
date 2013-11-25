@@ -17,6 +17,8 @@ package org.sisioh.trinity.infrastructure.util
 
 import com.twitter.util.{Try => TTry}
 import scala.util.{Try => STry}
+import scala.concurrent.Future
+import scala.language.implicitConversions
 
 /**
  * `scala.util.Try` と `com.twitter.util.Try` を相互に変換するためのユーティリティ。
@@ -55,6 +57,28 @@ object TryConverters {
      */
     def toTwitter = TTry(sTry.get)
 
+  }
+
+
+  /**
+   * `scala.util.Try`を`scala.concurrent.Future`に変換する。
+   *
+   * @param sTry `scala.util.Try`
+   * @tparam T 値の型
+   * @return `scala.concurrent.Future`
+   */
+  implicit def tryToFuture[T](sTry: STry[T]) = new {
+    def toFuture: Future[T] = sTry.map {
+      e => Future.successful(e)
+    }.recover {
+      case ex => Future.failed(ex)
+    }.get
+  }
+
+  implicit def tryFutureToFuture[T](sTry: STry[Future[T]]) = new {
+    def toFuture: Future[T] = sTry.recover {
+      case ex =>  Future.failed(ex)
+    }.get
   }
 
 }
