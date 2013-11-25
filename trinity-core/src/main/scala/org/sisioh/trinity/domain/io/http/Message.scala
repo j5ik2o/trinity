@@ -109,13 +109,17 @@ trait Message {
       xs =>
         cookieEncoder.addCookie(xs)
     }
-    withHeader(cookieHeaderName, cookieEncoder.encode)
+    if (!cookies.isEmpty) {
+      withHeader(cookieHeaderName, cookieEncoder.encode)
+    } else this
   }
 
   def cookies: Seq[Cookie] = {
     val decoder = new CookieDecoder()
-    val header = getHeader(cookieHeaderName).get
-    decoder.decode(header).asScala.map(toTrinity).toSeq
+    getHeader(cookieHeaderName).map {
+      header =>
+        decoder.decode(header).asScala.map(toTrinity).toSeq
+    }.getOrElse(Seq.empty)
   }
 
   def allow: Option[String] = toUnderlyingAsFinagle.allow
