@@ -12,6 +12,7 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
+import org.sisioh.config.Configuration
 
 
 /**
@@ -25,7 +26,7 @@ trait Bootstrap {
 
   protected val environment: Environment.Value = Environment.Development
 
-  protected lazy val configuration = ServerConfigLoader.loadConfiguration(applicationId, environment)
+  protected lazy val configuration: Configuration = ServerConfigLoader.loadConfiguration(applicationId, environment).get
 
   protected lazy val serverConfig = ServerConfigLoader.loadServerConfig(configuration)
 
