@@ -1,6 +1,5 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import java.nio.charset.Charset
 import org.json4s.JValue
 import org.sisioh.dddbase.core.lifecycle.ValueObjectBuilder
 import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}
@@ -20,7 +19,7 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
 
   private var content: ChannelBuffer = ChannelBuffer.empty
 
-  def withJson(jValue: JValue, charset: Charset = CharsetUtil.UTF_8) =
+  def withJson(jValue: JValue, charset: Charset = Charsets.UTF_8) =
     withRenderer(JSON4SRenderer(jValue, charset))
 
   def withRenderer(responseRender: ResponseRenderer) = {
@@ -51,19 +50,19 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
     withHeader(HeaderNames.ContentType, contentType)
   }
 
-  private def toCopiedBuffer(value: String, charset: Charset = CharsetUtil.UTF_8) = {
+  private def toCopiedBuffer(value: String, charset: Charset = Charsets.UTF_8) = {
     ChannelBuffers.copiedBuffer(value, charset)
   }
 
-  def withTextHtml(html: String, charset: Charset = CharsetUtil.UTF_8) = {
+  def withTextHtml(html: String, charset: Charset = Charsets.UTF_8) = {
     withContent(toCopiedBuffer(html, charset)).withHeader(HeaderNames.ContentType, "text/html")
   }
 
-  def withTextPlain(text: String, charset: Charset = CharsetUtil.UTF_8) = {
+  def withTextPlain(text: String, charset: Charset = Charsets.UTF_8) = {
     withContent(toCopiedBuffer(text, charset)).withHeader(HeaderNames.ContentType, "text/plain")
   }
 
-  def withContent(body: => String, charset: Charset = CharsetUtil.UTF_8): ResponseBuilder =
+  def withContent(body: => String, charset: Charset = Charsets.UTF_8): ResponseBuilder =
     withContent(toCopiedBuffer(body, charset))
 
 

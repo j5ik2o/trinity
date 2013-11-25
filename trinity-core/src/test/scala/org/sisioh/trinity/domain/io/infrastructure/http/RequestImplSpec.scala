@@ -28,7 +28,7 @@ class RequestImplSpec extends Specification {
     }
     "contains header" in {
       val target = new RequestImpl(Methods.Get, "/index", protocolVersion = ProtocolVersion.Http11)
-      target.withContent(ChannelBuffers.copiedBuffer("test", CharsetUtil.UTF_8)).content.toString(CharsetUtil.UTF_8) must_== "test"
+      target.withContent(ChannelBuffers.copiedBuffer("test", Charsets.UTF_8)).content.toString(Charsets.UTF_8) must_== "test"
     }
     "not have headerNames" in {
       val target = new RequestImpl(Methods.Get, "/index", protocolVersion = ProtocolVersion.Http11)

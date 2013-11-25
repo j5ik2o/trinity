@@ -1,8 +1,8 @@
 package org.sisioh.trinity.domain.io.buffer
 
-import java.nio.charset.Charset
 import java.nio.{ByteBuffer, ByteOrder}
 import org.jboss.netty.buffer.{ChannelBuffers => NettyChannelBuffers}
+import org.sisioh.trinity.domain.io.http.Charset
 
 object ChannelBuffersImpl extends ChannelBuffers {
 
@@ -102,27 +102,27 @@ object ChannelBuffersImpl extends ChannelBuffers {
     ChannelBuffer.toTrinity(NettyChannelBuffers.copiedBuffer(buffers: _*))
 
   def copiedBuffer(string: CharSequence, charset: Charset): ChannelBuffer =
-    NettyChannelBuffers.copiedBuffer(string, charset)
+    NettyChannelBuffers.copiedBuffer(string, charset.toObject)
 
   def copiedBuffer(string: CharSequence, offset: Int, length: Int, charset: Charset): ChannelBuffer =
-    NettyChannelBuffers.copiedBuffer(string, offset, length, charset)
+    NettyChannelBuffers.copiedBuffer(string, offset, length, charset.toObject)
 
   def copiedBuffer(endianness: ByteOrder, string: CharSequence, charset: Charset): ChannelBuffer =
-    NettyChannelBuffers.copiedBuffer(endianness, string, charset)
+    NettyChannelBuffers.copiedBuffer(endianness, string, charset.toObject)
 
   def copiedBuffer(endianness: ByteOrder, string: CharSequence, offset: Int, length: Int, charset: Charset): ChannelBuffer =
-    NettyChannelBuffers.copiedBuffer(endianness, string, offset, length, charset)
+    NettyChannelBuffers.copiedBuffer(endianness, string, offset, length, charset.toObject)
 
   def copiedBuffer(array: Array[Char], charset: Charset): ChannelBuffer =
-    NettyChannelBuffers.copiedBuffer(array, charset)
+    NettyChannelBuffers.copiedBuffer(array, charset.toObject)
 
   def copiedBuffer(array: Array[Char], offset: Int, length: Int, charset: Charset): ChannelBuffer =
-    NettyChannelBuffers.copiedBuffer(array, offset, length, charset)
+    NettyChannelBuffers.copiedBuffer(array, offset, length, charset.toObject)
 
   def copiedBuffer(endianness: ByteOrder, array: Array[Char], charset: Charset): ChannelBuffer =
-    NettyChannelBuffers.copiedBuffer(endianness, array, charset)
+    NettyChannelBuffers.copiedBuffer(endianness, array, charset.toObject)
 
   def copiedBuffer(endianness: ByteOrder, array: Array[Char], offset: Int, length: Int, charset: Charset): ChannelBuffer =
-    NettyChannelBuffers.copiedBuffer(endianness, array, offset, length, charset)
+    NettyChannelBuffers.copiedBuffer(endianness, array, offset, length, charset.toObject)
 
 }

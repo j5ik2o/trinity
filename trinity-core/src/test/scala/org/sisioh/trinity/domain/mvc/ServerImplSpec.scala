@@ -4,7 +4,7 @@ import org.specs2.mutable.{Around, Specification}
 import scala.concurrent.{Await => SAwait, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.domain.io.http.CharsetUtil
+import org.sisioh.trinity.domain.io.http.Charsets
 import com.twitter.finagle.builder.ClientBuilder
 import com.twitter.finagle.http.{Request => FinagleRequest, Http, RichHttp}
 import java.net.InetSocketAddress
@@ -58,7 +58,7 @@ class ServerImplSpec extends Specification {
     "404 NOT FOUND" in new Setup(None) {
       val responseFuture = client(FinagleRequest())
       TAwait.result(responseFuture).getStatusCode() must_== 404
-      TAwait.result(responseFuture).getContent().toString(CharsetUtil.UTF_8) must_== ""
+      TAwait.result(responseFuture).getContent().toString(Charsets.UTF_8.toObject) must_== ""
     }
     "200 OK" in new Setup(
       Some(
@@ -74,7 +74,7 @@ class ServerImplSpec extends Specification {
     ) {
       val responseFuture = client(FinagleRequest())
       TAwait.result(responseFuture).getStatusCode() must_== 200
-      TAwait.result(responseFuture).getContent().toString(CharsetUtil.UTF_8) must_== body
+      TAwait.result(responseFuture).getContent().toString(Charsets.UTF_8.toObject) must_== body
     }
   }
 
