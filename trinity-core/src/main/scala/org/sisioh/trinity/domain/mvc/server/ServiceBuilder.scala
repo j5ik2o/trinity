@@ -3,9 +3,11 @@ package org.sisioh.trinity.domain.mvc.server
 import com.twitter.finagle.http.{Response => FinagleResponse, Request => FinagleRequest}
 import com.twitter.finagle.{Filter => FinagleFilter, Service}
 import org.sisioh.trinity.domain.io.FinagleToIOFilter
-import org.sisioh.trinity.domain.mvc.action.{ExceptionHandleFilter, Action, ActionExecuteService}
+import org.sisioh.trinity.domain.mvc._
+import org.sisioh.trinity.domain.mvc.action.Action
+import org.sisioh.trinity.domain.mvc.action.ActionExecuteService
+import org.sisioh.trinity.domain.mvc.action.ExceptionHandleFilter
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
-import org.sisioh.trinity.domain.mvc.{RequestDumpFilter, GlobalSettings, Filter, GatewayFilter}
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext
 
@@ -51,14 +53,21 @@ trait ServiceBuilder {
     registerFinagleFilter(Filter.toFinagleFilter(filter))
   }
 
-  protected def buildService(action: Option[Action[Request, Response]] = None)(implicit executor: ExecutionContext) = {
+  protected def buildService(environment: Environment.Value, action: Option[Action[Request, Response]] = None)(implicit executor: ExecutionContext) = {
     val actionExecuteService = ActionExecuteService(globalSettings)
+    def applyFilter() = {
+      if (environment == Environment.Development)
+        Filter.toFinagleFilter(RequestDumpFilter()) andThen
+          Filter.toFinagleFilter(ExceptionHandleFilter(globalSettings)) andThen
+          applyFinagleFilters(actionExecuteService)
+      else
+        Filter.toFinagleFilter(ExceptionHandleFilter(globalSettings)) andThen
+          applyFinagleFilters(actionExecuteService)
+    }
     val service: Service[FinagleRequest, FinagleResponse] =
       FinagleToIOFilter() andThen
-        GatewayFilter(action) andThen
-        Filter.toFinagleFilter(RequestDumpFilter()) andThen
-        Filter.toFinagleFilter(ExceptionHandleFilter(globalSettings)) andThen
-        applyFinagleFilters(actionExecuteService)
+        GatewayFilter(action) andThen applyFilter
+
     service
   }
 
