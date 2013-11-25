@@ -1,7 +1,6 @@
 package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Response => FinagleResponse}
-import org.sisioh.trinity.domain.io.infrastructure.http.ResponseImpl
 import scala.language.implicitConversions
 
 trait Response extends Message {

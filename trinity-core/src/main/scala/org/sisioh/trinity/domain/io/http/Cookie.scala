@@ -3,7 +3,6 @@ package org.sisioh.trinity.domain.io.http
 import scala.language.implicitConversions
 
 import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie}
-import org.sisioh.trinity.domain.io.infrastructure.http.CookieImpl
 
 import com.twitter.finagle.http.{Cookie => FinagleCookie}
 

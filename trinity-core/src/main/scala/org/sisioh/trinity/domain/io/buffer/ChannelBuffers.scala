@@ -6,8 +6,6 @@ import java.nio.charset.Charset
 import scala.language.implicitConversions
 
 import org.jboss.netty.buffer.{ ChannelBufferFactory => NettyChannelBufferFactory }
-import org.sisioh.trinity.domain.io.infrastructure.buffer.ChannelBufferFactoryImpl
-import org.sisioh.trinity.domain.io.infrastructure.buffer.ChannelBuffersImpl
 
 trait ChannelBuffers {
 

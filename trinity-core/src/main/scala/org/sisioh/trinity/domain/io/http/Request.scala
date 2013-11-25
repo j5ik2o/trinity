@@ -1,8 +1,7 @@
 package org.sisioh.trinity.domain.io.http
 
-import scala.language.implicitConversions
-import org.sisioh.trinity.domain.io.infrastructure.http.RequestImpl
 import com.twitter.finagle.http.{Request => FinagleRequest}
+import scala.language.implicitConversions
 
 trait Request extends Message {
 
@@ -39,7 +38,7 @@ trait Request extends Message {
 }
 
 object Request {
-  
+
   def apply(request: FinagleRequest): Request =
     new RequestImpl(request)
 

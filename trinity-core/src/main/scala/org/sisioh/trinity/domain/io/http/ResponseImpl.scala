@@ -1,11 +1,9 @@
-package org.sisioh.trinity.domain.io.infrastructure.http
+package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Response => FinagleResponse}
 import org.jboss.netty.handler.codec.http.{HttpResponse => NettyResponse}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import org.sisioh.trinity.domain.io.http.ResponseStatus.{toNetty, toTrinity}
-import org.sisioh.trinity.domain.io.http.{Cookie, ProtocolVersion, Response, ResponseStatus}
-
 
 /**
  * Netty Requestのラッパー。

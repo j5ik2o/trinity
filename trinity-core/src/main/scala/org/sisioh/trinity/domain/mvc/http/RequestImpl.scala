@@ -2,10 +2,7 @@ package org.sisioh.trinity.domain.mvc.http
 
 import org.jboss.netty.handler.codec.http.multipart.{MixedFileUpload, HttpPostRequestDecoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
-import org.sisioh.trinity.domain.io.http.Method
-import org.sisioh.trinity.domain.io.http.ProtocolVersion
-import org.sisioh.trinity.domain.io.http.{Request => IORequest}
-import org.sisioh.trinity.domain.io.infrastructure.http.AbstractRequestProxy
+import org.sisioh.trinity.domain.io.http.{Request => IORequest, AbstractRequestProxy, Method, ProtocolVersion}
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
 import scala.collection.JavaConverters._

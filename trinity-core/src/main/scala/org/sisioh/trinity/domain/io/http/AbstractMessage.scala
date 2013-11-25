@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.io.infrastructure.http
+package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Message => FinagleMessage}
 import org.jboss.netty.handler.codec.http.{HttpMessage => NettyMessage, CookieEncoder}
