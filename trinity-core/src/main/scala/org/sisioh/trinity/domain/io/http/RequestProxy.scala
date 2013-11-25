@@ -4,9 +4,9 @@ trait RequestProxy extends Request with MessageProxy {
 
   val underlying: Request
 
-  def method: Method.Value = underlying.method
+  def method: Methods.Value = underlying.method
 
-  def withMethod(method: Method.Value): this.type = mutate {
+  def withMethod(method: Methods.Value): this.type = mutate {
     _.underlying.withMethod(method)
   }
 

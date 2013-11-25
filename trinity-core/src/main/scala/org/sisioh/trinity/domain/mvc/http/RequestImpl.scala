@@ -2,7 +2,7 @@ package org.sisioh.trinity.domain.mvc.http
 
 import org.jboss.netty.handler.codec.http.multipart.{MixedFileUpload, HttpPostRequestDecoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
-import org.sisioh.trinity.domain.io.http.{Request => IORequest, AbstractRequestProxy, Method, ProtocolVersion}
+import org.sisioh.trinity.domain.io.http.{Request => IORequest, AbstractRequestProxy, Methods, ProtocolVersion}
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
 import scala.collection.JavaConverters._
@@ -18,7 +18,7 @@ class RequestImpl
  val error: Option[Throwable])
   extends AbstractRequestProxy(underlying) with Request {
 
-  def this(method: Method.Value,
+  def this(method: Methods.Value,
            uri: String,
            action: Option[Action[Request, Response]],
            routeParams: Map[String, String],
@@ -40,7 +40,7 @@ class RequestImpl
 
 
   def multiParams: Try[Map[String, MultiPartItem]] = Try {
-    if (method == Method.Post) {
+    if (method == Methods.Post) {
       content.markReaderIndex()
       val httpPostRequestDecoder = new HttpPostRequestDecoder(toUnderlyingAsFinagle)
       val m = if (httpPostRequestDecoder.isMultipart) {

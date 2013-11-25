@@ -1,6 +1,6 @@
 package org.sisioh.trinity.domain.mvc.routing
 
-import org.sisioh.trinity.domain.io.http.Method
+import org.sisioh.trinity.domain.io.http.Methods
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPatternParser, PathPattern}
@@ -9,7 +9,7 @@ import scala.util.matching.Regex
 
 object RouteDsl {
 
-  case class PathPatternDef(method: Method.Value, pathPattern: PathPattern) {
+  case class PathPatternDef(method: Methods.Value, pathPattern: PathPattern) {
 
     def ->(action: Action[Request, Response]): RouteDef =
       RouteDef(method, pathPattern, action)
@@ -19,7 +19,7 @@ object RouteDsl {
 
   }
 
-  implicit class MethodDef(val method: Method.Value) extends AnyVal {
+  implicit class MethodDef(val method: Methods.Value) extends AnyVal {
 
     def %(path: String)(implicit pathPatternParser: PathPatternParser): PathPatternDef =
       PathPatternDef(method, pathPatternParser(path))

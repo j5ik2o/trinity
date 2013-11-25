@@ -3,8 +3,8 @@ package org.sisioh.trinity.domain.io.http
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import org.jboss.netty.handler.codec.http.{HttpRequest => NettyRequest}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.http.Method.toNetty
-import org.sisioh.trinity.domain.io.http.Method.toTrintiy
+import org.sisioh.trinity.domain.io.http.Methods.toNetty
+import org.sisioh.trinity.domain.io.http.Methods.toTrintiy
 import org.sisioh.trinity.domain.io.http.ProtocolVersion.toNetty
 import org.sisioh.trinity.domain.io.http._
 
@@ -15,7 +15,7 @@ class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest)
 
   def isRequest: Boolean = true
 
-  def this(method: Method.Value,
+  def this(method: Methods.Value,
            uri: String,
            headers: Seq[(String, Any)] = Seq.empty,
            cookies: Seq[Cookie] = Seq.empty,
@@ -42,9 +42,9 @@ class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest)
 
   def response: Response = Response(toUnderlyingAsFinagle.response)
 
-  def method: Method.Value = toUnderlyingAsFinagle.getMethod()
+  def method: Methods.Value = toUnderlyingAsFinagle.getMethod()
 
-  def withMethod(method: Method.Value): this.type = mutateAsRequest {
+  def withMethod(method: Methods.Value): this.type = mutateAsRequest {
     _.setMethod(method)
   }
 

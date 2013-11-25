@@ -2,7 +2,7 @@ package org.sisioh.trinity.domain.mvc.routing
 
 import java.util.concurrent.atomic.AtomicLong
 import org.sisioh.dddbase.core.model.{EntityCloneable, Entity}
-import org.sisioh.trinity.domain.io.http.Method
+import org.sisioh.trinity.domain.io.http.Methods
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPatternParser, PathPattern}
 import scala.concurrent.Future
@@ -60,7 +60,7 @@ object Route {
    * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]
    * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
-  def apply[Req, Rep](method: Method.Value, pathPattern: PathPattern, action: Action[Req, Rep]): Route[Req, Rep] =
+  def apply[Req, Rep](method: Methods.Value, pathPattern: PathPattern, action: Action[Req, Rep]): Route[Req, Rep] =
     new RouteImpl(RouteId(method, pathPattern), action)
 
   /**
@@ -72,7 +72,7 @@ object Route {
    * @param pathPatternParser [[org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPatternParser]]
    * @return [[org.sisioh.trinity.domain.mvc.routing.Route]]
    */
-  def apply[Req, Rep](method: Method.Value, path: String, action: Action[Req, Rep])
+  def apply[Req, Rep](method: Methods.Value, path: String, action: Action[Req, Rep])
                      (implicit pathPatternParser: PathPatternParser): Route[Req, Rep] = {
     val pathPattern = pathPatternParser(path)
     new RouteImpl(RouteId(method, pathPattern), action)

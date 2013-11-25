@@ -1,6 +1,6 @@
 package org.sisioh.trinity.view.scalate
 
-import org.sisioh.trinity.domain.io.http.Method._
+import org.sisioh.trinity.domain.io.http.Methods._
 import org.sisioh.trinity.domain.mvc.Environment
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import org.sisioh.trinity.domain.mvc.controller.ControllerSupport
