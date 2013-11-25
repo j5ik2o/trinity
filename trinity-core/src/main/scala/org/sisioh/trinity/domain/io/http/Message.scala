@@ -1,7 +1,6 @@
 package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Message => FinagleMessage}
-import java.nio.charset.Charset
 import org.jboss.netty.handler.codec.http.CookieDecoder
 import org.jboss.netty.handler.codec.http.CookieEncoder
 import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}
@@ -58,9 +57,9 @@ trait Message {
 
   def withContent(content: ChannelBuffer): this.type
 
-  def contentAsString(charset: Charset = CharsetUtil.UTF_8): String = content.toString(charset)
+  def contentAsString(charset: Charset = Charsets.UTF_8): String = content.toString(charset)
 
-  def withContentAsString(body: String, charset: Charset = CharsetUtil.UTF_8): this.type =
+  def withContentAsString(body: String, charset: Charset = Charsets.UTF_8): this.type =
     withContent(ChannelBuffers.copiedBuffer(body, charset))
 
   def withHeader(name: HeaderName, value: Any): this.type

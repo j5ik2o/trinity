@@ -4,12 +4,12 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.ScatteringByteChannel
-import java.nio.charset.Charset
 import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toTrinity
 import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
 import scala.util.Try
+import org.sisioh.trinity.domain.io.http.Charset
 
 
 case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = false) extends ChannelBuffer {
@@ -406,9 +406,9 @@ case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = 
 
   def arrayOffset: Int = underlying.arrayOffset()
 
-  def toString(charset: Charset): String = underlying.toString(charset)
+  def toString(charset: Charset): String = underlying.toString(charset.toObject)
 
-  def toString(index: Int, length: Int, charset: Charset): String = underlying.toString(index, length, charset)
+  def toString(index: Int, length: Int, charset: Charset): String = underlying.toString(index, length, charset.toObject)
 
   def compareTo(buffer: ChannelBuffer): Int = underlying.compareTo(buffer)
 
