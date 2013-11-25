@@ -36,7 +36,7 @@ class ServerImplSpec extends Specification {
     private def running[T](server: Server)(block: => T): T = {
       synchronized {
         try {
-          SAwait.result(server.start, Duration(3, TimeUnit.SECONDS))
+          SAwait.result(server.start(Environment.Development), Duration(3, TimeUnit.SECONDS))
           block
         } finally {
           SAwait.result(server.stop, Duration(3, TimeUnit.SECONDS))
