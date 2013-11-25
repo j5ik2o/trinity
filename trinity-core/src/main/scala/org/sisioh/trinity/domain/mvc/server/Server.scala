@@ -2,7 +2,7 @@ package org.sisioh.trinity.domain.mvc.server
 
 import java.net.InetSocketAddress
 import java.util.concurrent.TimeUnit
-import org.sisioh.trinity.domain.mvc.{GlobalSettings, Filter}
+import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings, Filter}
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import scala.concurrent.duration.Duration
@@ -16,7 +16,7 @@ trait Server extends ServiceBuilder {
 
   val filter: Option[Filter[Request, Response, Request, Response]]
 
-  def start()(implicit executor: ExecutionContext): Future[Unit]
+  def start(environment: Environment.Value)(implicit executor: ExecutionContext): Future[Unit]
 
   def stop()(implicit executor: ExecutionContext): Future[Unit]
 

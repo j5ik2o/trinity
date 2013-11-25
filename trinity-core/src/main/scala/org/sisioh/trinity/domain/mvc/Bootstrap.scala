@@ -46,7 +46,7 @@ trait Bootstrap {
 
   protected lazy val server = createServer
 
-  def start(): Future[Unit] = server.start()
+  def start(): Future[Unit] = server.start(environment)
 
   def stop(): Future[Unit] = server.stop()
 
