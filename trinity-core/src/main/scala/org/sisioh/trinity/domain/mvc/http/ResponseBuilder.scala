@@ -20,8 +20,8 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
 
   private var content: ChannelBuffer = ChannelBuffer.empty
 
-  def withJson(jValue: JValue) =
-    withRenderer(JSON4SRenderer(jValue))
+  def withJson(jValue: JValue, charset: Charset = CharsetUtil.UTF_8) =
+    withRenderer(JSON4SRenderer(jValue, charset))
 
   def withRenderer(responseRender: ResponseRenderer) = {
     responseRender.render(this)
