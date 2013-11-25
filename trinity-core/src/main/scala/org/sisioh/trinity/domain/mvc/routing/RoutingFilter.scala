@@ -7,6 +7,7 @@ import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, InternalServe
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternParser, PathPatternParser}
 import scala.concurrent.{Future, ExecutionContext}
+import org.sisioh.trinity.domain.mvc.filter.Filter
 
 /**
  * ルーティング用フィルター。

@@ -1,11 +1,11 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.filter
 
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.io.util.RequestDumpUtil
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 case class RequestDumpFilter(implicit executor: ExecutionContext) extends SimpleFilter[Request, Response] with LoggingEx {
 

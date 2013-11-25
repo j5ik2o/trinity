@@ -2,11 +2,12 @@ package org.sisioh.trinity.domain.mvc.server
 
 import java.net.InetSocketAddress
 import java.util.concurrent.TimeUnit
-import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings, Filter}
+import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
+import org.sisioh.trinity.domain.mvc.filter.Filter
 
 trait Server extends ServiceBuilder {
 
