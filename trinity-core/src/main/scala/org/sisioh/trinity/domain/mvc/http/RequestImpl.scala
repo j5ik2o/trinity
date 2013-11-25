@@ -2,12 +2,12 @@ package org.sisioh.trinity.domain.mvc.http
 
 import org.jboss.netty.handler.codec.http.multipart.{MixedFileUpload, HttpPostRequestDecoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
+import org.sisioh.trinity.domain.io.http
 import org.sisioh.trinity.domain.io.http.{Request => IORequest, AbstractRequestProxy, Methods, ProtocolVersion}
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.action.Action
 import scala.collection.JavaConverters._
 import scala.util.Try
-import org.sisioh.trinity.domain.io.http
 
 private[http]
 class RequestImpl
@@ -29,9 +29,9 @@ class RequestImpl
 
   val toUnderlyingAsFinagle = underlying.toUnderlyingAsFinagle
 
-  protected def createInstance(message: this.type): this.type =
+  protected def createInstance(message: this.type, attributes: Map[String, Any]): this.type =
     new RequestImpl(
-      message.underlying,
+      message.underlying.withAttributes(attributes),
       message.action,
       message.routeParams,
       message.globalSettings,
@@ -65,5 +65,17 @@ class RequestImpl
 
   def withError(error: Throwable): this.type =
     new RequestImpl(underlying, action, routeParams, globalSettings, Some(error)).asInstanceOf[this.type]
+
+  val attributes: Map[String, Any] = underlying.attributes
+
+  def withAttributes(attributes: Map[String, Any]): this.type =
+    new RequestImpl(underlying.withAttributes(attributes), action, routeParams, globalSettings, error).asInstanceOf[this.type]
+
+  def withAttributes(attributes: (String, Any)*): this.type =
+    new RequestImpl(underlying.withAttributes(attributes:_*), action, routeParams, globalSettings, error).asInstanceOf[this.type]
+
+  def withoutAllAttributes(): this.type =
+    new RequestImpl(underlying.withoutAllAttributes(), action, routeParams, globalSettings, error).asInstanceOf[this.type]
+
 
 }

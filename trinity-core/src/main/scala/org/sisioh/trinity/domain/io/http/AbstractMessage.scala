@@ -3,13 +3,24 @@ package org.sisioh.trinity.domain.io.http
 import com.twitter.finagle.http.{Message => FinagleMessage}
 import org.jboss.netty.handler.codec.http.{HttpMessage => NettyMessage, CookieEncoder}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
-import org.sisioh.trinity.domain.io.http._
 import scala.collection.JavaConversions._
 
 private[trinity]
 abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extends Message {
 
-  protected def createInstance(message: AbstractMessage): this.type
+  def withAttributes(_attributes: Map[String, Any]): this.type = {
+    createInstance(this, this.attributes ++ _attributes)
+  }
+
+  def withAttributes(_attributes: (String, Any)*): this.type = {
+    createInstance(this, this.attributes ++ _attributes)
+  }
+
+ // protected def createInstance(message: AbstractMessage, attributes: Map[String, Any]): this.type
+
+  def withoutAllAttributes(): this.type =
+    createInstance(this, Map.empty)
+
 
   protected def setHeaders(headers: Seq[(String, Any)]) {
     headers.foreach {
@@ -38,8 +49,8 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
     toUnderlyingAsFinagle.setContent(content)
   }
 
-  protected def mutate(f: (NettyMessage) => Unit): this.type = {
-    val cloned = createInstance(this)
+  protected def mutateAsNettyMessage(f: (NettyMessage) => Unit): this.type = {
+    val cloned = createInstance(this, attributes)
     f(cloned.toUnderlyingAsFinagle)
     cloned
   }
@@ -58,7 +69,7 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
 
   def protocolVersion: ProtocolVersion.Value = toUnderlyingAsFinagle.getProtocolVersion
 
-  def withProtocolVersion(version: ProtocolVersion.Value) = mutate {
+  def withProtocolVersion(version: ProtocolVersion.Value) = mutateAsNettyMessage {
     _.setProtocolVersion(version)
   }
 
@@ -68,25 +79,25 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
     _.setContent(content)
   }
 
-  def withHeader(name: HeaderName, value: Any) = mutate {
+  def withHeader(name: HeaderName, value: Any) = mutateAsNettyMessage {
     _.addHeader(name.asString, value)
   }
 
-  def withHeader(name: HeaderName, values: Seq[_]) = mutate {
+  def withHeader(name: HeaderName, values: Seq[_]) = mutateAsNettyMessage {
     _.setHeader(name.asString, values)
   }
 
-  def withoutHeader(name: HeaderName) = mutate {
+  def withoutHeader(name: HeaderName) = mutateAsNettyMessage {
     _.removeHeader(name.asString)
   }
 
-  def withoutAllHeaders = mutate {
+  def withoutAllHeaders = mutateAsNettyMessage {
     _.clearHeaders()
   }
 
   def isChunked: Boolean = toUnderlyingAsFinagle.isChunked
 
-  def withChunked(chunked: Boolean) = mutate {
+  def withChunked(chunked: Boolean) = mutateAsNettyMessage {
     _.setChunked(chunked)
   }
 

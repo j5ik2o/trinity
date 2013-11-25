@@ -11,15 +11,17 @@ import org.sisioh.trinity.domain.io.http.ResponseStatus.{toNetty, toTrinity}
  * @param toUnderlyingAsFinagle
  */
 private[trinity]
-case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse)
+case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse,
+                        attributes: Map[String, Any] = Map.empty[String, Any])
   extends AbstractMessage(toUnderlyingAsFinagle) with Response {
 
   def this(status: ResponseStatus.Value,
            headers: Seq[(String, Any)] = Seq.empty,
            cookies: Seq[Cookie] = Seq.empty,
+           attributes: Map[String, Any] = Map.empty[String, Any],
            content: ChannelBuffer = ChannelBuffer.empty,
            protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11) = {
-    this(FinagleResponse(protocolVersion, status))
+    this(FinagleResponse(protocolVersion, status), attributes)
     setHeaders(headers)
     setCookies(cookies)
     setContent(content)
@@ -27,12 +29,12 @@ case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse)
 
   def isRequest: Boolean = false
 
-  protected def createInstance(message: AbstractMessage): this.type =
-    new ResponseImpl(message.toUnderlyingAsFinagle.asInstanceOf[FinagleResponse]).asInstanceOf[this.type]
+  protected def createInstance(message: this.type, attributes: Map[String, Any]): this.type =
+    new ResponseImpl(message.toUnderlyingAsFinagle.asInstanceOf[FinagleResponse], attributes).asInstanceOf[this.type]
 
   protected def mutateAsResponse(f: (NettyResponse) => Unit): this.type = {
     val cloned = if (!isMutable) {
-      createInstance(this)
+      createInstance(this, attributes)
     } else {
       this
     }
