@@ -101,14 +101,14 @@ trait ChannelBuffers {
 
 object ChannelBuffers extends ChannelBuffers {
 
-  implicit def toNetty(target: ChannelBufferFactory): NettyChannelBufferFactory = target match {
+  private[buffer] implicit def toNetty(target: ChannelBufferFactory): NettyChannelBufferFactory = target match {
     case ncb: ChannelBufferFactoryImpl =>
       ncb.underlying
     case _ =>
       throw new IllegalArgumentException()
   }
 
-  private val impl: ChannelBuffers = ChannelBuffersImpl
+  private[buffer] val impl: ChannelBuffers = ChannelBuffersImpl
 
   def buffer(capacity: Int): ChannelBuffer = impl.buffer(capacity)
 

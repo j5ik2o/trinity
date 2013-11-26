@@ -10,7 +10,7 @@ object ScalateRendererApplication
 
   import Implicits._
 
-  override protected val applicationId = "trinity-view-scalate"
+  override protected lazy val applicationId = "trinity-view-scalate"
 
   case class MainController() extends ControllerSupport {
 

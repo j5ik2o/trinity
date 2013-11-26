@@ -1,16 +1,15 @@
 package test
 
 import org.sisioh.trinity._
-import org.sisioh.trinity.infrastructure.util.TrinityDaemon
-import org.sisioh.trinity.domain.mvc.application.ScalatraLikeApplicationSupport
+import org.sisioh.trinity.daemon._
 
-class TrinityDaemonImpl extends TrinityDaemon {
+class TestDaemon extends Daemon {
 
-  case class MyApplication(environment: Environment.Value)
+  case class TestDaemonApplication(environment: Environment.Value)
     extends DaemonApplication with ScalatraLikeApplicationSupport {
     get("/test") {
       request =>
-        responseBuilder.withContent("").toFuture
+        responseBuilder.withContent("test").toFuture
     }
   }
 
@@ -19,7 +18,7 @@ class TrinityDaemonImpl extends TrinityDaemon {
       Environment.Development
     else
       Environment.Product
-    MyApplication(env)
+    TestDaemonApplication(env)
   }
 
 }

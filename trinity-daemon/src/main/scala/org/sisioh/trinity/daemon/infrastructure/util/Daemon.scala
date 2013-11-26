@@ -1,12 +1,12 @@
-package org.sisioh.trinity.infrastructure.util
+package org.sisioh.trinity.daemon.infrastructure.util
 
-import org.apache.commons.daemon.{DaemonContext, Daemon}
+import org.apache.commons.daemon.{DaemonContext, Daemon => CommonsDaemon}
 import org.sisioh.scala.toolbox.LoggingEx
+import org.sisioh.trinity._
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import org.sisioh.trinity._
 
-trait TrinityDaemon extends Daemon with LoggingEx {
+trait Daemon extends CommonsDaemon with LoggingEx {
 
   trait DaemonApplication extends Application with Bootstrap
 
@@ -19,26 +19,26 @@ trait TrinityDaemon extends Daemon with LoggingEx {
   private var context: DaemonContext = _
 
   def init(context: DaemonContext) {
-    withInfoScope("TrinityDaemon#init") {
+    withInfoScope("Daemon#init") {
       application = createApplication(context.getArguments)
       this.context = context
     }
   }
 
   def start() {
-    withInfoScope("TrinityDaemon#start") {
+    withInfoScope("Daemon#start") {
       Await.result(application.start(), Duration.Inf)
     }
   }
 
   def stop() {
-    withInfoScope("TrinityDaemon#stop") {
+    withInfoScope("Daemon#stop") {
       Await.result(application.stop(), Duration.Inf)
     }
   }
 
   def destroy() {
-    withInfoScope("TrinityDaemon#destroy") {
+    withInfoScope("Daemon#destroy") {
     }
   }
 

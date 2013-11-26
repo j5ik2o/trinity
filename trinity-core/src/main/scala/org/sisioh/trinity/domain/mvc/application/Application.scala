@@ -9,7 +9,7 @@ import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 
 trait Application {
 
-  protected val applicationId: String = "."
+  protected lazy val applicationId: String = "."
 
   protected val environment: Environment.Value
 
