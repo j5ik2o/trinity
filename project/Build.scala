@@ -1,7 +1,23 @@
-import sbt.Keys._
 import sbt._
+import sbt.Keys._
+import sbtassembly.Plugin._
+import AssemblyKeys._
 
 object TrinityBuild extends Build {
+
+  val myAssemblySettings = mergeStrategy in assembly <<= (mergeStrategy in assembly) {
+  (old) => {
+    case "rootdoc.txt" | "readme.txt" => MergeStrategy.discard
+    case PathList("META-INF", xs @ _*) if (xs.length != 0) => {
+      xs.last.split("\\.").last.toUpperCase match {
+        case "MF" | "SF" | "DSA" | "RSA" => MergeStrategy.discard
+        case _ => MergeStrategy.first
+      }
+    }
+    case PathList("com", "twitter", "common", "args", "apt", "cmdline.arg.info.txt.1") => MergeStrategy.first
+    case _ => MergeStrategy.first
+  }
+  }
 
   val commonSettings = Project.defaultSettings ++ Seq(
     organization := "org.sisioh",
@@ -24,6 +40,7 @@ object TrinityBuild extends Build {
       "org.specs2" %% "specs2" % "2.0" % "test",
       "org.seasar.util" % "s2util" % "0.0.1"
     ),
+    fork in Test := true,
     publishMavenStyle := true,
     publishArtifact in Test := false,
     pomIncludeRepository := {
@@ -185,6 +202,14 @@ object TrinityBuild extends Build {
     )
   ) dependsOn (core)
 
+  lazy val daemonTest = Project(
+    id = "trinity-daemon-test",
+    base = file("trinity-daemon-test"),
+    settings = commonSettings ++ assemblySettings ++ Seq(
+      name := "trinity-daemon-test",
+      myAssemblySettings
+    )
+  ) dependsOn (daemon)
 
   val root = Project(
     id = "trinity",

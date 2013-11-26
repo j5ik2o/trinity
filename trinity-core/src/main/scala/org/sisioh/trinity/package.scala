@@ -13,9 +13,11 @@ package object trinity {
   type RoutingFilter = org.sisioh.trinity.domain.mvc.routing.RoutingFilter
   val RoutingFilter = org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 
+  type Bootstrap = org.sisioh.trinity.domain.mvc.application.Bootstrap
+
   type ControllerSupport = org.sisioh.trinity.domain.mvc.controller.ControllerSupport
   type ConsoleApplicationSupport = org.sisioh.trinity.domain.mvc.application.ConsoleApplicationSupport
-
+  type SmallApplicationSupport = org.sisioh.trinity.domain.mvc.application.SmallApplicationSupport
   type ScalatraLikeControllerSupport = org.sisioh.trinity.domain.mvc.controller.ScalatraLikeControllerSupport
 
   type ResponseBuilder = org.sisioh.trinity.domain.mvc.http.ResponseBuilder

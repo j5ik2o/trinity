@@ -8,10 +8,12 @@ import org.sisioh.trinity._
 
 trait TrinityDaemon extends Daemon with LoggingEx {
 
-  protected def createApplication(args: Array[String]): Application
+  trait DaemonApplication extends Application with Bootstrap
+
+  protected def createApplication(args: Array[String]): DaemonApplication
 
   @volatile
-  private var application: Application = _
+  private var application: DaemonApplication = _
 
   @volatile
   private var context: DaemonContext = _
