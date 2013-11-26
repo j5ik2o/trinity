@@ -9,11 +9,12 @@ import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.server.ServiceBuilder
-import org.sisioh.trinity.domain.mvc.{Environment, Filter, GlobalSettings}
+import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
 import org.specs2.specification.Scope
 import scala.concurrent.ExecutionContext
 import scala.language.reflectiveCalls
 import scala.util.Try
+import org.sisioh.trinity.domain.mvc.filter.Filter
 
 /**
  * 単体テストをサポートするためのトレイト。

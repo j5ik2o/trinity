@@ -106,40 +106,40 @@ object TrinityBuild extends Build {
     )
   ) dependsOn (core)
 
-/*
-  lazy val viewFreeMarker = Project(
-    id = "trinity-view-freemarker",
-    base = file("trinity-view-freemarker"),
-    settings = commonSettings ++ Seq(
-      name := "trinity-view-freemarker",
-      libraryDependencies ++= Seq(
-        "org.freemarker" % "freemarker" % "2.3.19"
+  /*
+    lazy val viewFreeMarker = Project(
+      id = "trinity-view-freemarker",
+      base = file("trinity-view-freemarker"),
+      settings = commonSettings ++ Seq(
+        name := "trinity-view-freemarker",
+        libraryDependencies ++= Seq(
+          "org.freemarker" % "freemarker" % "2.3.19"
+        )
       )
-    )
-  ) dependsOn (view)
+    ) dependsOn (view)
 
-  lazy val viewVelocity = Project(
-    id = "trinity-view-velocity",
-    base = file("trinity-view-velocity"),
-    settings = commonSettings ++ Seq(
-      name := "trinity-view-velocity",
-      libraryDependencies ++= Seq(
-        "velocity" % "velocity" % "1.5"
+    lazy val viewVelocity = Project(
+      id = "trinity-view-velocity",
+      base = file("trinity-view-velocity"),
+      settings = commonSettings ++ Seq(
+        name := "trinity-view-velocity",
+        libraryDependencies ++= Seq(
+          "velocity" % "velocity" % "1.5"
+        )
       )
-    )
-  ) dependsOn (view)
+    ) dependsOn (view)
 
-  lazy val viewThymeleaf = Project(
-    id = "trinity-view-thymeleaf",
-    base = file("trinity-view-thymeleaf"),
-    settings = commonSettings ++ Seq(
-      name := "trinity-view-thymeleaf",
-      libraryDependencies ++= Seq(
-        "org.thymeleaf" % "thymeleaf" % "2.0.17"
+    lazy val viewThymeleaf = Project(
+      id = "trinity-view-thymeleaf",
+      base = file("trinity-view-thymeleaf"),
+      settings = commonSettings ++ Seq(
+        name := "trinity-view-thymeleaf",
+        libraryDependencies ++= Seq(
+          "org.thymeleaf" % "thymeleaf" % "2.0.17"
+        )
       )
-    )
-  ) dependsOn (view)
-*/
+    ) dependsOn (view)
+  */
 
   lazy val viewScalate = Project(
     id = "trinity-view-scalate",
@@ -174,12 +174,24 @@ object TrinityBuild extends Build {
     )
   ) dependsOn(core, viewScalate) //, viewThymeleaf, viewVelocity, viewFreeMarker)
 
+  lazy val daemon = Project(
+    id = "trinity-daemon",
+    base = file("trinity-daemon"),
+    settings = commonSettings ++ Seq(
+      name := "trinity-daemon",
+      libraryDependencies ++= Seq(
+        "commons-daemon" % "commons-daemon" % "1.0.15"
+      )
+    )
+  ) dependsOn (core)
+
+
   val root = Project(
     id = "trinity",
     base = file("."),
     settings = commonSettings ++ Seq(
       name := "trinity"
     )
-  ) aggregate(core, view, viewScalate) //, viewThymeleaf, viewVelocity, viewFreeMarker, test, example)
+  ) aggregate(core, daemon, view, viewScalate) //, viewThymeleaf, viewVelocity, viewFreeMarker, test, example)
 
 }

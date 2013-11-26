@@ -1,13 +1,12 @@
 package org.sisioh.trinity.view.scalate
 
-import org.sisioh.trinity.domain.io.http.Methods._
-import org.sisioh.trinity.domain.mvc.Environment
-import org.sisioh.trinity.domain.mvc.action.SimpleAction
-import org.sisioh.trinity.domain.mvc.controller.ControllerSupport
-import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
-import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
+import org.sisioh.trinity._
+import org.sisioh.trinity.Methods._
+import org.sisioh.trinity.RouteDsl._
 
-object ScalateRendererApplication extends App with BootstrapWithScalateSupport {
+object ScalateRendererApplication
+  extends ConsoleApplication with ConsoleApplicationSupport
+  with ScalateApplicationSupport {
 
   import Implicits._
 

@@ -16,7 +16,7 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await => SAwait, ExecutionContext}
 import scala.util.Try
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.{Environment, Filter}
+import org.sisioh.trinity.domain.mvc.{Environment}
 import com.twitter.finagle.http.Request
 
 /**

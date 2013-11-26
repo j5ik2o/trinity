@@ -1,13 +1,11 @@
 package org.sisioh.trinity.example
 
-import org.sisioh.trinity.domain.mvc.action.Action
-import org.sisioh.trinity.domain.mvc.http.{Request, Response}
-import org.sisioh.trinity.domain.mvc.{BootstrapWithScalatraLikeSupport, Environment}
+import org.sisioh.trinity._
 import scala.concurrent.Future
-import org.sisioh.trinity.domain.mvc.filter.SimpleFilter
 
 object ScalatraLikeControllerApplicationWithFilter
-  extends App with BootstrapWithScalatraLikeSupport {
+  extends ConsoleApplication with ConsoleApplicationSupport
+  with ScalatraLikeControllerSupport {
 
   get("/hello") {
     request =>

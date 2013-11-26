@@ -1,13 +1,12 @@
 package org.sisioh.trinity.example
 
-import org.sisioh.trinity.domain.io.http.Methods._
-import org.sisioh.trinity.domain.mvc.action.SimpleAction
-import org.sisioh.trinity.domain.mvc.http.{ResponseSupport, ResponseBuilder}
-import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
-import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.{BootstrapWithResponseSupport, Environment, Bootstrap}
+import org.sisioh.trinity._
+import org.sisioh.trinity.Methods._
+import org.sisioh.trinity.RouteDsl._
 
-object PlayLikeApplicationForControllerLess extends App with BootstrapWithResponseSupport {
+object PlayLikeApplicationForControllerLess
+  extends ConsoleApplication with ConsoleApplicationSupport
+  with ControllerSupport {
 
   def helloWorld = SimpleAction {
     request =>
