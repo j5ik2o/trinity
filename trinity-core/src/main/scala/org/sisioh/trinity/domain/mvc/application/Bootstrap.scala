@@ -23,9 +23,9 @@ trait Bootstrap {
 
   protected implicit val pathPatternParser: PathPatternParser = SinatraPathPatternParser()
 
-  protected val routingFilter: Option[RoutingFilter] = None
+  protected lazy val routingFilter: Option[RoutingFilter] = None
 
-  protected val action: Option[Action[Request, Response]] = None
+  protected lazy val action: Option[Action[Request, Response]] = None
 
   protected def createServer: Server = Server(
     serverConfig = serverConfig,

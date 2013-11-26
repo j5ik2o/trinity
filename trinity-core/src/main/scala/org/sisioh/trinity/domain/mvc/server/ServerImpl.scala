@@ -77,6 +77,7 @@ class ServerImpl
                 |********************************************************************
               """.stripMargin)
       }
+      info(s"aciton = $action, routingFilter = $filter")
       if (serverConfig.statsEnabled) {
         createAdminService(createRuntimeEnviroment)
       }

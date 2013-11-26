@@ -3,10 +3,9 @@ package org.sisioh.trinity.example
 import org.json4s._
 import org.sisioh.trinity._
 
-
 object ScalatraLikeControllerApplication
   extends ConsoleApplication with ConsoleApplicationSupport
-  with ScalatraLikeControllerSupport {
+  with ScalatraLikeApplicationSupport {
 
   get("/hello") {
     request =>

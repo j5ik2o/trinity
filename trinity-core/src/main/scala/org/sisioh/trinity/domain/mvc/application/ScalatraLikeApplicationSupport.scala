@@ -6,7 +6,7 @@ import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 trait ScalatraLikeApplicationSupport extends Bootstrap with ScalatraLikeControllerSupport {
   this: Application =>
 
-  override protected val routingFilter =
+  override protected lazy val routingFilter =
     Some(RoutingFilter.createForControllers(this))
 
 }
