@@ -1,13 +1,11 @@
 package org.sisioh.trinity.example
 
-import org.sisioh.trinity.domain.io.http.Methods._
-import org.sisioh.trinity.domain.mvc.action.SimpleAction
-import org.sisioh.trinity.domain.mvc.controller.ControllerSupport
-import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
-import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
+import org.sisioh.trinity._
+import org.sisioh.trinity.Methods._
+import org.sisioh.trinity.RouteDsl._
 
-object PlayLikeApplicationForController extends App with Bootstrap {
+object PlayLikeApplicationForController
+  extends ConsoleApplication with ConsoleApplicationSupport {
 
   case class MainController() extends ControllerSupport {
 

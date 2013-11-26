@@ -1,4 +1,4 @@
-package org.sisioh.trinity.domain.mvc
+package org.sisioh.trinity.domain.mvc.application
 
 import java.util.concurrent.Executors
 import org.sisioh.trinity.domain.mvc.action.Action
@@ -7,30 +7,19 @@ import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPatternParser
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.SinatraPathPatternParser
-import org.sisioh.trinity.domain.mvc.server.{Server, ServerConfigLoader}
+import org.sisioh.trinity.domain.mvc.server.Server
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
-import org.sisioh.config.Configuration
-
 
 /**
  * サーバを起動させるためのトレイト。
  */
 trait Bootstrap {
+  this: Application =>
 
   protected implicit val executor = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool())
-
-  protected val applicationId: String = "."
-
-  protected val environment: Environment.Value = Environment.Development
-
-  protected lazy val configuration: Configuration = ServerConfigLoader.loadConfiguration(applicationId, environment).get
-
-  protected lazy val serverConfig = ServerConfigLoader.loadServerConfig(configuration)
-
-  protected implicit val globalSettings: Option[GlobalSettings[Request, Response]] = None
 
   protected implicit val pathPatternParser: PathPatternParser = SinatraPathPatternParser()
 
@@ -47,7 +36,9 @@ trait Bootstrap {
 
   protected lazy val server = createServer
 
-  def start(): Future[Unit] = server.start(environment)
+  def start(): Future[Unit] = {
+    server.start(environment)
+  }
 
   def stop(): Future[Unit] = server.stop()
 
