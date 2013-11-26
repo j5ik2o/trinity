@@ -23,7 +23,7 @@ object PlayLikeApplicationForControllerLess
       responseBuilder.withTextPlain("name = " + name).toFuture
   }
 
-  override protected val routingFilter = Some(RoutingFilter.createForActions {
+  override protected lazy val routingFilter = Some(RoutingFilter.createForActions {
     implicit pathPatternParser =>
       Seq(
         Get % "/hello" -> helloWorld,

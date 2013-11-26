@@ -16,13 +16,14 @@ package object trinity {
   type Bootstrap = org.sisioh.trinity.domain.mvc.application.Bootstrap
 
   type ControllerSupport = org.sisioh.trinity.domain.mvc.controller.ControllerSupport
-  type ConsoleApplicationSupport = org.sisioh.trinity.domain.mvc.application.ConsoleApplicationSupport
-  type SmallApplicationSupport = org.sisioh.trinity.domain.mvc.application.SmallApplicationSupport
   type ScalatraLikeControllerSupport = org.sisioh.trinity.domain.mvc.controller.ScalatraLikeControllerSupport
+
+  type ConsoleApplicationSupport = org.sisioh.trinity.domain.mvc.application.ConsoleApplicationSupport
+  type ScalatraLikeApplicationSupport = org.sisioh.trinity.domain.mvc.application.ScalatraLikeApplicationSupport
+  type SmallApplicationSupport = org.sisioh.trinity.domain.mvc.application.SmallApplicationSupport
 
   type ResponseBuilder = org.sisioh.trinity.domain.mvc.http.ResponseBuilder
   val ResponseBuilder = org.sisioh.trinity.domain.mvc.http.ResponseBuilder
-
 
   type Request = org.sisioh.trinity.domain.mvc.http.Request
   type Response = org.sisioh.trinity.domain.mvc.http.Response

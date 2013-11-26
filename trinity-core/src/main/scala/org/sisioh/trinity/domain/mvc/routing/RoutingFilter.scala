@@ -83,17 +83,19 @@ case class RoutingFilter
 /**
  * コンパニオンオブジェクト。
  */
-object RoutingFilter {
+object RoutingFilter extends LoggingEx {
 
   private implicit val ctx = SyncEntityIOContext
 
   def createForControllers(controllers: RouteDefHolder*)
                           (implicit executor: ExecutionContext,
                            globalSettings: Option[GlobalSettings[Request, Response]] = None,
-                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = {
+                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = withDebugScope("createForControllers"){
     createForActions {
       pathPatternParser =>
-        controllers.flatMap(_.getRouteDefs)
+        val result = controllers.flatMap(_.getRouteDefs)
+        debug(s"result = $result")
+        result
     }
   }
 
