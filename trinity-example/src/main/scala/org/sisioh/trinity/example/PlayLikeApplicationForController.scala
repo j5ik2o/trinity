@@ -4,8 +4,7 @@ import org.sisioh.trinity._
 import org.sisioh.trinity.Methods._
 import org.sisioh.trinity.RouteDsl._
 
-object PlayLikeApplicationForController
-  extends ConsoleApplication with ConsoleApplicationSupport {
+object PlayLikeApplicationForController extends ConsoleApplication {
 
   case class MainController() extends ControllerSupport {
 

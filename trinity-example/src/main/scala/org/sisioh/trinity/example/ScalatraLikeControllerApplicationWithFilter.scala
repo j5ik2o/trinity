@@ -3,9 +3,7 @@ package org.sisioh.trinity.example
 import org.sisioh.trinity._
 import scala.concurrent.Future
 
-object ScalatraLikeControllerApplicationWithFilter
-  extends ConsoleApplication with ConsoleApplicationSupport
-  with ScalatraLikeControllerSupport {
+object ScalatraLikeControllerApplicationWithFilter extends ConsoleApplication with ScalatraLikeControllerSupport {
 
   get("/hello") {
     request =>

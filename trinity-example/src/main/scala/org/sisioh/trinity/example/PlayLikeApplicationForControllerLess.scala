@@ -4,9 +4,7 @@ import org.sisioh.trinity._
 import org.sisioh.trinity.Methods._
 import org.sisioh.trinity.RouteDsl._
 
-object PlayLikeApplicationForControllerLess
-  extends ConsoleApplication with ConsoleApplicationSupport
-  with ControllerSupport {
+object PlayLikeApplicationForControllerLess extends ConsoleApplication  with ControllerSupport {
 
   def helloWorld = SimpleAction {
     request =>
