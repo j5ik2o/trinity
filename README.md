@@ -165,7 +165,7 @@ class ControllerUnitTestSupportSpec extends Specification with ControllerUnitTes
       Seq(Get % "/hello" -> helloWorld)
   }
 
-  implicit lazy val testContext = UnitTestContext(routingFilter)
+  implicit val testContext = UnitTestContext(routingFilter)
 
   "helloWorld" should {
     "be able to get response" in {
