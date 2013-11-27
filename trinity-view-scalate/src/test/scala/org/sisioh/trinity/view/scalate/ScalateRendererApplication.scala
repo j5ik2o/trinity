@@ -1,12 +1,10 @@
 package org.sisioh.trinity.view.scalate
 
-import org.sisioh.trinity._
 import org.sisioh.trinity.Methods._
 import org.sisioh.trinity.RouteDsl._
+import org.sisioh.trinity._
 
-object ScalateRendererApplication
-  extends ConsoleApplication with ConsoleApplicationSupport
-  with ScalateApplicationSupport {
+object ScalateRendererApplication extends ConsoleApplication with ScalateApplicationSupport {
 
   import Implicits._
 
