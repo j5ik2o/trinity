@@ -181,6 +181,60 @@ class ControllerUnitTestSupportSpec extends Specification with ControllerUnitTes
 }
 ```
 
+#### for Integration Testing
+
+```scala
+
+class ControllerIntegrationTestSupportSpec extends Specification with ControllerIntegrationTestSupport {
+
+  def helloWorld = SimpleAction {
+    request =>
+      ResponseBuilder().withContent("Hello World!").toFuture
+  }
+
+  val routingFilter = RoutingFilter.createForActions {
+    implicit pathPatternParser =>
+      Seq(
+        Get % "/hello" -> helloWorld
+      )
+  }
+
+  implicit val testContext = IntegrationTestContext()
+
+  "HelloWorld" should {
+    "be able to get response" in new WithServer(Server(filter = Some(routingFilter))) {
+      testGet("/hello") {
+        result =>
+          result must beSuccessfulTry.like {
+            case response =>
+              response.contentAsString() must_== "Hello World!"
+          }
+      }
+    }
+    
+    "be able to get response, when without server" in {
+      val server = Server(filter = Some(routingFilter))
+      val f = server.start(Environment.Development).map {
+        _ =>
+          testGet("/hello") {
+            result =>
+              result must beSuccessfulTry.like {
+                case response =>
+                  response.contentAsString() must_== "Hello World!"
+              }
+          }
+      }.flatMap {
+        result =>
+          server.stop.map(_ => result)
+      }
+      Await.result(f, Duration.Inf)
+    }
+
+  }
+}
+```
+
+
 ### Build 
 
 ```sh
