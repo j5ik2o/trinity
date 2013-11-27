@@ -148,6 +148,37 @@ object PlayLikeApplicationForController extends App with Bootstrap {
 }
 ```
 
+### Test
+
+#### for Unit Testing
+
+```scala
+class ControllerUnitTestSupportSpec extends Specification with ControllerUnitTestSupport {
+
+  def helloWorld = SimpleAction {
+    request =>
+      responseBuilder.withContent("Hello World!").toFuture
+  }
+
+  val routingFilter = RoutingFilter.createForActions {
+    implicit pathPatternParser =>
+      Seq(Get % "/hello" -> helloWorld)
+  }
+
+  "helloWorld" should {
+    "be able to get response" in {
+      testGet("/hello") {
+        result =>
+          result must beSuccessfulTry.like {
+            case response =>
+              response.contentAsString() must_== "Hello World!"
+          }
+      }
+    }
+  }
+}
+```
+
 ### Build 
 
 ```sh
