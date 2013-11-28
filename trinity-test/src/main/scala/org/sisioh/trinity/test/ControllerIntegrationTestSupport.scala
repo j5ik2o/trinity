@@ -4,6 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.builder.ClientBuilder
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse, Http}
 import com.twitter.util.{Await => TAwait}
+import com.twitter.util.{Duration => TDuration}
 import java.net.{SocketAddress, InetSocketAddress}
 import java.util.concurrent.TimeUnit
 import org.jboss.netty.handler.codec.http.{HttpResponse, HttpRequest, HttpMethod}
@@ -17,7 +18,7 @@ import org.specs2.specification.Scope
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await => SAwait, ExecutionContext}
 import scala.util.Try
-
+import org.sisioh.trinity.infrastructure.util.DurationConverters._
 /**
  * インテグレーションテストをサポートするためのトレイト。
  */
@@ -34,7 +35,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
   private val port = 7070
 
   protected def buildRequest
-  (method: HttpMethod, path: String, content: Option[Content], headers: Map[HeaderName, String])
+  (method: HttpMethod, path: String, content: Option[Content], headers: Map[HeaderName, String], timeout: Duration)
   (implicit testContext: TestContext): Try[Response] = {
     implicit val executor = testContext.executor
     val request = newRequest(method, path, content, headers)
@@ -50,7 +51,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
         .build()
     )
     Try {
-      val finagleResponse = TAwait.result(client(request))
+      val finagleResponse = TAwait.result(client(request), timeout.toTwitter)
       val r = IOResponse(FinagleResponse(finagleResponse))
       Response(r)
     }

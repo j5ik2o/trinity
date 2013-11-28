@@ -15,6 +15,8 @@ import scala.concurrent.ExecutionContext
 import scala.language.reflectiveCalls
 import scala.util.Try
 import org.sisioh.trinity.domain.mvc.filter.Filter
+import scala.concurrent.duration.Duration
+import org.sisioh.trinity.infrastructure.util.DurationConverters._
 
 /**
  * 単体テストをサポートするためのトレイト。
@@ -31,7 +33,7 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
   (method: HttpMethod,
    path: String,
    content: Option[Content],
-   headers: Map[HeaderName, String])
+   headers: Map[HeaderName, String], timeout: Duration)
   (implicit testContext: TestContext): Try[Response] = {
     implicit val executor = testContext.executor
     val UnitTestContext(routingFilter, filters) = testContext
@@ -47,7 +49,7 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
     serviceBuilder.registerFilters(filters)
     val service = serviceBuilder._buildService()
     Try {
-      val finagleResponse = Await.result(service(request))
+      val finagleResponse = Await.result(service(request), timeout.toTwitter)
       val r = IOResponse(finagleResponse)
       Response(r)
     }
