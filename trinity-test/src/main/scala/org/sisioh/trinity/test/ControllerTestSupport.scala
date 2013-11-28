@@ -1,15 +1,16 @@
 package org.sisioh.trinity.test
 
 import com.twitter.finagle.http.{Request => FinagleRequest, Method}
+import java.util.concurrent.TimeUnit
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.handler.codec.http.multipart.{HttpPostRequestEncoder, DefaultHttpDataFactory}
 import org.sisioh.scala.toolbox.LoggingEx
-import scala.util.Try
+import org.sisioh.trinity.domain.io.http.HeaderName
 import org.sisioh.trinity.domain.mvc.GlobalSettings
 import org.sisioh.trinity.domain.mvc.http.{Request, Response}
-import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import scala.concurrent.ExecutionContext
-import org.sisioh.trinity.domain.io.http.HeaderName
+import scala.concurrent.duration.Duration
+import scala.util.Try
 
 trait ControllerTestSupport extends LoggingEx {
 
@@ -84,7 +85,8 @@ trait ControllerTestSupport extends LoggingEx {
   (method: HttpMethod,
    path: String,
    content: Option[Content],
-   headers: Map[HeaderName, String])
+   headers: Map[HeaderName, String],
+   timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
   (implicit textContext: TestContext): Try[Response]
 
   /**
@@ -97,9 +99,10 @@ trait ControllerTestSupport extends LoggingEx {
    * @tparam T 関数の戻り値の型
    * @return 関数の戻り値
    */
-  protected def testGet[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
+  protected def testGet[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
+                           timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
                           (f: Try[Response] => T)(implicit testContext: TestContext): T = {
-    f(buildRequest(Method.Get, path, content, headers))
+    f(buildRequest(Method.Get, path, content, headers, timeout))
   }
 
   /**
@@ -112,9 +115,10 @@ trait ControllerTestSupport extends LoggingEx {
    * @tparam T 関数の戻り値の型
    * @return 関数の戻り値
    */
-  protected def testPost[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
+  protected def testPost[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
+                            timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
                            (f: Try[Response] => T)(implicit testContext: TestContext): T = {
-    f(buildRequest(Method.Post, path, content, headers))
+    f(buildRequest(Method.Post, path, content, headers, timeout))
   }
 
   /**
@@ -127,9 +131,10 @@ trait ControllerTestSupport extends LoggingEx {
    * @tparam T 関数の戻り値の型
    * @return 関数の戻り値
    */
-  protected def testPut[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
+  protected def testPut[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
+                           timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
                           (f: Try[Response] => T)(implicit testContext: TestContext): T = {
-    f(buildRequest(Method.Put, path, content, headers))
+    f(buildRequest(Method.Put, path, content, headers, timeout))
   }
 
   /**
@@ -142,9 +147,10 @@ trait ControllerTestSupport extends LoggingEx {
    * @tparam T 関数の戻り値の型
    * @return 関数の戻り値
    */
-  protected def testDelete[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
+  protected def testDelete[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
+                              timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
                              (f: Try[Response] => T)(implicit testContext: TestContext): T = {
-    f(buildRequest(Method.Delete, path, content, headers))
+    f(buildRequest(Method.Delete, path, content, headers, timeout))
   }
 
   /**
@@ -157,14 +163,16 @@ trait ControllerTestSupport extends LoggingEx {
    * @tparam T 関数の戻り値の型
    * @return 関数の戻り値
    */
-  protected def testHead[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
+  protected def testHead[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
+                            timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
                            (f: Try[Response] => T)(implicit testContext: TestContext): T = {
-    f(buildRequest(Method.Head, path, content, headers))
+    f(buildRequest(Method.Head, path, content, headers, timeout))
   }
 
-  protected def testPatch[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map())
+  protected def testPatch[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
+                             timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
                             (f: Try[Response] => T)(implicit testContext: TestContext): T = {
-    f(buildRequest(Method.Patch, path, content, headers))
+    f(buildRequest(Method.Patch, path, content, headers, timeout))
   }
 
 }
