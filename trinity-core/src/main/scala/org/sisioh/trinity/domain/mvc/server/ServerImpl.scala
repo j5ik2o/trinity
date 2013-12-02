@@ -63,20 +63,6 @@ class ServerImpl
            (implicit executor: ExecutionContext): Future[Unit] = future {
     withDebugScope("start") {
       require(finagleServer.isEmpty)
-      if (environment == Environment.Development) {
-        info( """
-                |********************************************************************
-                |*** WARNING: Trinity is running in DEVELOPMENT mode.             ***
-                |***                                ^^^^^^^^^^^                   ***
-                |********************************************************************
-              """.stripMargin)
-      } else {
-        info( """
-                |********************************************************************
-                |*** Trinity is running in Product mode.                          ***
-                |********************************************************************
-              """.stripMargin)
-      }
       info(s"aciton = $action, routingFilter = $filter")
       if (serverConfig.statsEnabled) {
         createAdminService(createRuntimeEnviroment)
@@ -98,6 +84,21 @@ class ServerImpl
 
       globalSettings.foreach {
         _.onStart(this)
+      }
+
+      if (environment == Environment.Development) {
+        info( """
+                |********************************************************************
+                |*** WARNING: Trinity is running in DEVELOPMENT mode.             ***
+                |***                                ^^^^^^^^^^^                   ***
+                |********************************************************************
+              """.stripMargin)
+      } else {
+        info( """
+                |********************************************************************
+                |*** Trinity is running in Product mode.                          ***
+                |********************************************************************
+              """.stripMargin)
       }
     }
   }
