@@ -7,13 +7,19 @@ import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Success
 
-case class RequestDumpFilter(implicit executor: ExecutionContext) extends SimpleFilter[Request, Response] with LoggingEx {
+/**
+ * [[org.sisioh.trinity.domain.io.http.Request]]をログにダンプするためのフィルター。
+ *
+ * @param executor [[scala.concurrent.ExecutionContext]]
+ */
+case class RequestDumpFilter(implicit executor: ExecutionContext)
+  extends SimpleFilter[Request, Response] with LoggingEx {
 
   private val INDENT = "  "
 
   private val LF = System.getProperty("line.separator")
 
-  def dumpBefore(request: Request): Future[Request] = {
+  private def dumpBefore(request: Request): Future[Request] = {
     val sb = new StringBuilder
     sb.append(LF)
     sb.append(LF)
@@ -29,19 +35,18 @@ case class RequestDumpFilter(implicit executor: ExecutionContext) extends Simple
     Future.successful(request)
   }
 
-  def dumpAfter(request: Request, response: Response): Future[Request] = {
+  private def dumpAfter(request: Request, response: Response): Future[Request] = {
     val sb = new StringBuilder
     sb.append(LF)
     sb.append(LF)
     sb.append("** after *****************************************: ")
     sb.append(request.path)
     sb.append(LF)
-    RequestDumpUtil.dumpResponseProperties(sb, response, LF, INDENT);
-    RequestDumpUtil.dumpRequestParameters(sb, request, LF, INDENT);
-    RequestDumpUtil.dumpRequestAttributes(sb, request, LF, INDENT);
-    RequestDumpUtil.dumpCookies(sb, request, LF, INDENT);
-    RequestDumpUtil.dumpRequestHeaders(sb, request, LF, INDENT);
-
+    RequestDumpUtil.dumpResponseProperties(sb, response, LF, INDENT)
+    RequestDumpUtil.dumpRequestParameters(sb, request, LF, INDENT)
+    RequestDumpUtil.dumpRequestAttributes(sb, request, LF, INDENT)
+    RequestDumpUtil.dumpCookies(sb, request, LF, INDENT)
+    RequestDumpUtil.dumpRequestHeaders(sb, request, LF, INDENT)
     debug(sb.toString())
     Future.successful(request)
   }
