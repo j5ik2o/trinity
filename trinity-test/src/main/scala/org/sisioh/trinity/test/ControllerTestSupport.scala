@@ -24,6 +24,8 @@ trait ControllerTestSupport extends LoggingEx {
 
   protected val globalSettings: Option[GlobalSettings[Request, Response]] = None
 
+  protected val requestTimeout = Duration(10, TimeUnit.SECONDS)
+
   /**
    * HTTPリクエストを生成する。
    *
@@ -86,7 +88,7 @@ trait ControllerTestSupport extends LoggingEx {
    path: String,
    content: Option[Content],
    headers: Map[HeaderName, String],
-   timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
+   timeout: Duration = requestTimeout)
   (implicit textContext: TestContext): Try[Response]
 
   /**
@@ -100,7 +102,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testGet[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
-                           timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
+                           timeout: Duration = requestTimeout)
                           (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Get, path, content, headers, timeout))
   }
@@ -116,7 +118,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testPost[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
-                            timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
+                            timeout: Duration = requestTimeout)
                            (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Post, path, content, headers, timeout))
   }
@@ -132,7 +134,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testPut[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
-                           timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
+                           timeout: Duration = requestTimeout)
                           (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Put, path, content, headers, timeout))
   }
@@ -148,7 +150,7 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testDelete[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
-                              timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
+                              timeout: Duration = requestTimeout)
                              (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Delete, path, content, headers, timeout))
   }
@@ -164,13 +166,13 @@ trait ControllerTestSupport extends LoggingEx {
    * @return 関数の戻り値
    */
   protected def testHead[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
-                            timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
+                            timeout: Duration = requestTimeout)
                            (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Head, path, content, headers, timeout))
   }
 
   protected def testPatch[T](path: String, content: Option[Content] = None, headers: Map[HeaderName, String] = Map(),
-                             timeout: Duration = Duration(10, TimeUnit.MILLISECONDS))
+                             timeout: Duration = requestTimeout)
                             (f: Try[Response] => T)(implicit testContext: TestContext): T = {
     f(buildRequest(Method.Patch, path, content, headers, timeout))
   }
