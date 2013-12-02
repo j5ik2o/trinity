@@ -217,6 +217,6 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity"
     )
-  ) aggregate(core, daemon, view, viewScalate) //, viewThymeleaf, viewVelocity, viewFreeMarker, test, example)
+  ) aggregate(core, daemon, view, viewScalate, test) //, viewThymeleaf, viewVelocity, viewFreeMarker, test, example)
 
 }
