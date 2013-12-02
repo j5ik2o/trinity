@@ -1,13 +1,12 @@
 package org.sisioh.trinity.domain.mvc.action
 
-import java.io.{IOException, InputStream, PrintWriter, StringWriter}
+import java.io.{PrintWriter, StringWriter}
 import org.apache.commons.io.IOUtils
 import org.sisioh.trinity.domain.io.http.{HeaderNames, ResponseStatus, ProtocolVersion}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+import org.sisioh.trinity.util.ResourceUtil
 import scala.concurrent.Future
-import scala.util.{Failure, Success, Try}
-import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.infrastructure.util.ResourceUtil
+import scala.util.Try
 
 /**
  * INTERNAL_SERVER_ERROR(500)を返す[[org.sisioh.trinity.domain.mvc.action.Action]]。

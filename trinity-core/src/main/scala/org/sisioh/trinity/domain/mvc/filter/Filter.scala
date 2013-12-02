@@ -4,8 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.finagle.{Filter => FinagleFilter}
 import com.twitter.util.{Future => TFuture}
 import org.sisioh.trinity.domain.mvc.action.Action
-import org.sisioh.trinity.infrastructure.util.FutureConverters.SFutureToTFuture
-import org.sisioh.trinity.infrastructure.util.FutureConverters.TFutureToSFuture
+import org.sisioh.trinity.util.FutureConverters._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.{Future => SFuture}
 
@@ -24,7 +23,6 @@ trait Filter[-ReqIn, +RepOut, +ReqOut, -RepIn]
   def apply(requestIn: ReqIn, action: Action[ReqOut, RepIn]): SFuture[RepOut]
 
 }
-
 
 
 object Filter {
