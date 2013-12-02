@@ -3,13 +3,10 @@ package org.sisioh.trinity.domain.mvc.action
 import com.twitter.finagle.Service
 import com.twitter.util.Future
 import org.sisioh.scala.toolbox.LoggingEx
-import org.sisioh.trinity.domain.TrinityException
 import org.sisioh.trinity.domain.mvc._
-import org.sisioh.trinity.infrastructure.util.FutureConverters._
-import scala.Some
-import scala.concurrent.ExecutionContext
-import scala.util.Try
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+import org.sisioh.trinity.util.FutureConverters._
+import scala.concurrent.ExecutionContext
 
 /**
  * リクエストに関連づくアクションを実行するためのサービス。

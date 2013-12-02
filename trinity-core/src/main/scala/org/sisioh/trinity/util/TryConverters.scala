@@ -13,12 +13,12 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.sisioh.trinity.infrastructure.util
+package org.sisioh.trinity.util
 
 import com.twitter.util.{Try => TTry}
-import scala.util.{Try => STry}
 import scala.concurrent.Future
 import scala.language.implicitConversions
+import scala.util.{Try => STry}
 
 /**
  * `scala.util.Try` と `com.twitter.util.Try` を相互に変換するためのユーティリティ。

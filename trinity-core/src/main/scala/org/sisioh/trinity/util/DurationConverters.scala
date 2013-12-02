@@ -1,8 +1,8 @@
-package org.sisioh.trinity.infrastructure.util
+package org.sisioh.trinity.util
 
 import com.twitter.util.{Duration => TDuration}
-import scala.concurrent.duration.{Duration => SDuration, _}
 import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.{Duration => SDuration}
 
 object DurationConverters {
 

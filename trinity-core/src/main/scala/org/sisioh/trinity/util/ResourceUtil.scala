@@ -1,7 +1,7 @@
-package org.sisioh.trinity.infrastructure.util
+package org.sisioh.trinity.util
 
-import scala.util.{Failure, Success, Try}
 import java.io.InputStream
+import scala.util.{Failure, Success, Try}
 
 private[trinity]
 object ResourceUtil {

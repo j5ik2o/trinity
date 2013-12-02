@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.sisioh.trinity.infrastructure.util
+package org.sisioh.trinity.util
 
 import TryConverters._
 import com.twitter.util.{Future => TFuture, Promise => TPromise, Try => TTry}

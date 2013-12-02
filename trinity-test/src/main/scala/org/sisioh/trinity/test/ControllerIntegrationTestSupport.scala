@@ -18,7 +18,8 @@ import org.specs2.specification.Scope
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await => SAwait, ExecutionContext}
 import scala.util.Try
-import org.sisioh.trinity.infrastructure.util.DurationConverters._
+import org.sisioh.trinity.util.DurationConverters
+import DurationConverters._
 /**
  * インテグレーションテストをサポートするためのトレイト。
  */

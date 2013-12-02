@@ -1,7 +1,7 @@
-package org.sisioh.trinity.infrastructure.util
+package org.sisioh.trinity.util
 
-import scala.language.implicitConversions
 import com.twitter.util.{Try => TTry}
+import scala.language.implicitConversions
 import scala.util.{Try => STry}
 
 object TryConversation {

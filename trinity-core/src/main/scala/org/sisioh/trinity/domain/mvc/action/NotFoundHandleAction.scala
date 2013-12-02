@@ -1,11 +1,10 @@
 package org.sisioh.trinity.domain.mvc.action
 
-import java.io.{PrintWriter, StringWriter}
 import java.lang.String
 import org.apache.commons.io.IOUtils
 import org.sisioh.trinity.domain.io.http.{HeaderNames, ResponseStatus, ProtocolVersion}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
-import org.sisioh.trinity.infrastructure.util.ResourceUtil
+import org.sisioh.trinity.util.ResourceUtil
 import scala.concurrent.Future
 import scala.util.Try
 

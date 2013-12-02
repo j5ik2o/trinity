@@ -3,7 +3,7 @@ package org.sisioh.trinity.domain.mvc.resource
 import java.io.{FileInputStream, File, InputStream}
 import org.sisioh.trinity.domain.mvc.Environment
 import scala.util.{Failure, Success, Try}
-import org.sisioh.trinity.infrastructure.util.ResourceUtil
+import org.sisioh.trinity.util.ResourceUtil
 
 /**
  * ファイルリソースを解決するためのクラス。

@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.mvc.stats
 
 import com.twitter.ostrich.stats.{Stats => SStats}
-import org.sisioh.trinity.infrastructure.util.FutureConversation._
+import org.sisioh.trinity.util.FutureConversation._
 import scala.concurrent.{ExecutionContext, Future}
 
 object Stats {

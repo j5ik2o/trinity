@@ -1,9 +1,9 @@
-package org.sisioh.trinity.infrastructure.util
+package org.sisioh.trinity.util
 
-import scala.language.implicitConversions
 import TryConversation._
 import com.twitter.util.{Future => TFuture, Promise => TPromise, Try => TTry}
 import scala.concurrent.{Future => SFuture, promise => SPromise, ExecutionContext}
+import scala.language.implicitConversions
 import scala.util.{Try => STry}
 
 object FutureConversation {

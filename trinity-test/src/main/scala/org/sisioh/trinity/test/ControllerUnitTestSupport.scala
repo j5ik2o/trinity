@@ -16,7 +16,8 @@ import scala.language.reflectiveCalls
 import scala.util.Try
 import org.sisioh.trinity.domain.mvc.filter.Filter
 import scala.concurrent.duration.Duration
-import org.sisioh.trinity.infrastructure.util.DurationConverters._
+import org.sisioh.trinity.util.DurationConverters
+import DurationConverters._
 
 /**
  * 単体テストをサポートするためのトレイト。
