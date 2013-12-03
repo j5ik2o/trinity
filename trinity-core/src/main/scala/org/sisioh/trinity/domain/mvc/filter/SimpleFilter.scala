@@ -1,10 +1,9 @@
 package org.sisioh.trinity.domain.mvc.filter
 
 /**
- * Created with IntelliJ IDEA.
- * User: junichi
- * Date: 2013/11/26
- * Time: 3:27
- * To change this template use File | Settings | File Templates.
+ * シンプルな[[org.sisioh.trinity.domain.mvc.filter.Filter]]。
+ *
+ * @tparam Req リクエストの型
+ * @tparam Rep レスポンスの型
  */
 trait SimpleFilter[Req, Rep] extends Filter[Req, Rep, Req, Rep]
