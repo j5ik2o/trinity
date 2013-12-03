@@ -1,20 +1,35 @@
+/*
+ * Copyright 2013 Sisioh Project and others. (http://sisioh.org/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 package org.sisioh.trinity.domain.mvc.routing
 
 import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc._
 import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, InternalServerErrorAction, Action}
+import org.sisioh.trinity.domain.mvc.filter.Filter
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternParser, PathPatternParser}
 import scala.concurrent.{Future, ExecutionContext}
-import org.sisioh.trinity.domain.mvc.filter.Filter
 
 /**
  * ルーティング用フィルター。
  *
- * @param routeRepository
- * @param globalSettings
- * @param executor
+ * @param routeRepository [[org.sisioh.trinity.domain.mvc.routing.RouteRepository]]
+ * @param globalSettings [[org.sisioh.trinity.domain.mvc.GlobalSettings]]
+ * @param executor [[org.sisioh.trinity.domain.mvc.GlobalSettings]]
  */
 case class RoutingFilter
 (routeRepository: RouteRepository,
@@ -90,7 +105,7 @@ object RoutingFilter extends LoggingEx {
   def createForControllers(controllers: RouteDefHolder*)
                           (implicit executor: ExecutionContext,
                            globalSettings: Option[GlobalSettings[Request, Response]] = None,
-                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = withDebugScope("createForControllers"){
+                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = withDebugScope("createForControllers") {
     createForActions {
       pathPatternParser =>
         val result = controllers.flatMap(_.getRouteDefs)
