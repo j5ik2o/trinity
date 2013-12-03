@@ -3,22 +3,37 @@ package test
 import org.sisioh.trinity._
 import org.sisioh.trinity.daemon._
 
-class TestDaemon extends Daemon {
+/**
+ * アプリケーション。
+ *
+ * @param environment
+ */
+case class TestApplication(environment: Environment.Value)
+  extends Application with Bootstrap with ScalatraLikeApplicationSupport {
 
-  case class TestDaemonApplication(environment: Environment.Value)
-    extends DaemonApplication with ScalatraLikeApplicationSupport {
-    get("/test") {
-      request =>
-        responseBuilder.withContent("test").toFuture
-    }
+  get("/test") {
+    request =>
+      responseBuilder.withContent("test").toFuture
   }
 
-  protected def createApplication(args: Array[String]): DaemonApplication = {
-    val env = if (args.size > 1 && args(1) == Environment.Development.toString)
-      Environment.Development
-    else
-      Environment.Product
-    TestDaemonApplication(env)
+}
+
+/**
+ * コンソールアプリケーション用エントリポイント。
+ */
+object TestApplication extends App {
+
+  TestApplication(Environment.Development).startWithAwait()
+
+}
+
+/**
+ * デーモン用エントリポイント。
+ */
+class TestDaemon extends Daemon {
+
+  protected def createApplication(args: Array[String]): Application = {
+    TestApplication(Environment.Product)
   }
 
 }

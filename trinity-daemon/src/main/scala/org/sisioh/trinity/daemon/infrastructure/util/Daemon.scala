@@ -8,12 +8,11 @@ import scala.concurrent.duration.Duration
 
 trait Daemon extends CommonsDaemon with LoggingEx {
 
-  trait DaemonApplication extends Application with Bootstrap
 
-  protected def createApplication(args: Array[String]): DaemonApplication
+  protected def createApplication(args: Array[String]): Application
 
   @volatile
-  private var application: DaemonApplication = _
+  private var application: Application = _
 
   @volatile
   private var context: DaemonContext = _
