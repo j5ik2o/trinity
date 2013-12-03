@@ -16,13 +16,15 @@
 package org.sisioh.trinity.domain.mvc.application
 
 import java.util.concurrent.Executors
+import org.sisioh.config.Configuration
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.Request
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPatternParser
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.SinatraPathPatternParser
-import org.sisioh.trinity.domain.mvc.server.Server
+import org.sisioh.trinity.domain.mvc.server.{ServerConfigLoader, Server}
+import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -37,6 +39,20 @@ trait Bootstrap {
   protected implicit val executor = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool())
 
   protected implicit val pathPatternParser: PathPatternParser = SinatraPathPatternParser()
+
+  protected val environment: Environment.Value
+
+  protected lazy val configuration: Configuration = withDebugScope("configuration") {
+    scopedDebug(s"applicationId = $applicationId, environment = $environment")
+    ServerConfigLoader.loadConfiguration(applicationId, environment).get
+  }
+
+  protected lazy val serverConfig = withDebugScope("serverConfig") {
+    scopedDebug(s"applicationId = $applicationId, configuration = $configuration")
+    ServerConfigLoader.loadServerConfig(configuration)
+  }
+
+  protected implicit val globalSettings: Option[GlobalSettings[Request, Response]] = None
 
   protected lazy val routingFilter: Option[RoutingFilter] = None
 
