@@ -7,52 +7,52 @@ case class RailsPathPatternParser() extends RegexPathPatternParser {
 
   def apply(pattern: String): PathPattern =
     parseAll(target, pattern) match {
-      case Success(target, _) => target
+      case Success(t, _) => t
       case _ =>
         throw new IllegalArgumentException("Invalid path pattern: " + pattern)
     }
 
-  private def target = expr ^^ {
+  private lazy val target = expr ^^ {
     e => PartialPathPattern("\\A" + e.regex + "\\Z", e.captureGroupNames).toPathPattern
   }
 
-  private def expr = rep1(token) ^^ {
+  private lazy val expr = rep1(token) ^^ {
     _.reduceLeft {
       _ + _
     }
   }
 
-  private def token = param | glob | optional | static
+  private lazy val token = param | glob | optional | static
 
-  private def param = ":" ~> identifier ^^ {
+  private lazy val param = ":" ~> identifier ^^ {
     name => PartialPathPattern("([^#/.?]+)", List(name))
   }
 
-  private def identifier = """[a-zA-Z_]\w*""".r
+  private lazy val identifier = """[a-zA-Z_]\w*""".r
 
-  private def glob = "*" ~> identifier ^^ {
+  private lazy val glob = "*" ~> identifier ^^ {
     name => PartialPathPattern("(.+)", List(name))
   }
 
-  private def optional: Parser[PartialPathPattern] = "(" ~> expr <~ ")" ^^ {
+  private lazy val optional: Parser[PartialPathPattern] = "(" ~> expr <~ ")" ^^ {
     e => PartialPathPattern("(?:" + e.regex + ")?", e.captureGroupNames)
   }
 
-  private def static = (escaped | char) ^^ {
+  private lazy val static = (escaped | char) ^^ {
     str => PartialPathPattern(str)
   }
 
-  private def escaped = literal("\\") ~> (char | paren)
+  private lazy val escaped = literal("\\") ~> (char | paren)
 
-  private def char = metachar | stdchar
+  private lazy val char = metachar | stdchar
 
-  private def metachar = """[.^$|?+*{}\\\[\]-]""".r ^^ {
+  private lazy val metachar = """[.^$|?+*{}\\\[\]-]""".r ^^ {
     "\\" + _
   }
 
-  private def stdchar = """[^()]""".r
+  private lazy val stdchar = """[^()]""".r
 
-  private def paren = ("(" | ")") ^^ {
+  private lazy val paren = ("(" | ")") ^^ {
     "\\" + _
   }
 }
