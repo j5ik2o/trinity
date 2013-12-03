@@ -24,10 +24,10 @@ trait Request extends Message with RequestProxy with LoggingEx {
     case _ => false
   }
 
-  override def hashCode(): Int =
+  override def hashCode: Int =
     31 * (super.hashCode + toUnderlyingAsFinagle.## + action.## + routeParams.## + globalSettings.## + error.##)
 
-  override def toString() =
+  override def toString =
     Seq(
       s"protocolVersion = $protocolVersion",
       s"method = $method",
@@ -47,7 +47,6 @@ trait Request extends Message with RequestProxy with LoggingEx {
   def encodeBytes: Array[Byte] = toUnderlyingAsFinagle.encodeBytes()
 
   def encodeString: String = toUnderlyingAsFinagle.encodeString()
-
 
   def routeParams: Map[String, String]
 
@@ -84,8 +83,6 @@ trait Request extends Message with RequestProxy with LoggingEx {
   }
 
   val globalSettings: Option[GlobalSettings[Request, Response]]
-
-
 
 }
 
