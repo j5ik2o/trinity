@@ -6,7 +6,7 @@ COLOR_GREEN=$'\e[0;32m'
 COLOR_RESET=$'\e[0m'
 
 THIS_DIR="$(dirname "${0}")"
-DAEMON_CLASS_NAME=test.TrinityDaemonImpl
+DAEMON_CLASS_NAME=test.TestDaemon
 
 if [ ! -f ${THIS_DIR}/env.sh ]; then
   echo "[error] ${COLOR_RED}failed${COLOR_RESET}: env file is not exist"
