@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 
-Trinity is a lightweight MVC framework based on Finagle, written in Scala.
+Trinity is a lightweight MVC framework based on Finagle, written in Scala.  
+Since May 2013
 
 ## Concepts
 - Provide MVC functions not supported by Finagle.
