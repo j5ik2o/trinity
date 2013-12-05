@@ -25,12 +25,12 @@ import org.sisioh.trinity.domain.io.http.{Charset, Charsets}
  * @param jValue `org.json4s.JValue`
  * @param charset [[org.sisioh.trinity.domain.io.http.Charset]]
  */
-case class JSON4SRenderer(jValue: JValue, charset: Charset = Charsets.UTF_8) extends ResponseRenderer {
+case class JSON4SRenderer(jValue: JValue, charset: Option[Charset] = None) extends ResponseRenderer {
 
   def render(responseBuilder: ResponseBuilder): Unit =
     responseBuilder.
-      withContent(compact(jValue), charset).
-      withContentType(JSON4SRenderer.ContentTypeName + charset.toString().toLowerCase)
+      withContent(compact(jValue), charset.getOrElse(Charsets.UTF_8)).
+      withContentType(JSON4SRenderer.ContentTypeName + charset.map("; charset=" + _.toObject.name().toLowerCase).getOrElse(""))
 
 }
 
@@ -39,6 +39,6 @@ case class JSON4SRenderer(jValue: JValue, charset: Charset = Charsets.UTF_8) ext
  */
 object JSON4SRenderer {
 
-  private val ContentTypeName = "application/json; charset="
+  private val ContentTypeName = "application/json"
 
 }
