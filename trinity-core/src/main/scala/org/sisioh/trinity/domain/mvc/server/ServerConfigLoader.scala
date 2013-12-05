@@ -21,10 +21,12 @@ import org.sisioh.config.{ConfigurationMode, Configuration}
 import org.sisioh.trinity.domain.mvc.Environment
 import scala.util.{Failure, Try}
 
+object ServerConfigLoader extends ServerConfigLoader
+
 /**
  * サーバ用設定ファイルを読み込むためのサービス。
  */
-object ServerConfigLoader {
+class ServerConfigLoader {
 
   def loadConfiguration(applicationId: String,
                         enviroment: Environment.Value,
@@ -46,18 +48,40 @@ object ServerConfigLoader {
       Failure(new FileNotFoundException(s"Configuration file is not found. please set config path to -Dconfig.file or -Dconfig.resource, -Dconfig.url. (applicationId = $applicationId, environment = $enviroment)"))
   }
 
-  def loadServerConfig(configuration: Configuration): ServerConfig = {
+  private def getKeyName(keyName: String, prefix: Option[String] = None) =
+    prefix.map(_ + keyName).getOrElse(keyName)
+
+  protected def loadTlsConfig(configuration: Configuration, prefix: Option[String]): Option[TlsConfig] = {
+    configuration.getConfiguration(getKeyName("tls", prefix)).map {
+      c =>
+        val certificatePath = c.getStringValue("certificatePath").get
+        val keyPath = c.getStringValue("keyPath").get
+        val caCertificatePath = c.getStringValue("caCertificatePath")
+        val ciphers = c.getStringValue("ciphers")
+        val nextProtos = c.getStringValue("nextProtos")
+        TlsConfig(certificatePath, keyPath, caCertificatePath, ciphers, nextProtos)
+    }
+  }
+
+  def loadServerConfig(configuration: Configuration, prefix: Option[String] = None): ServerConfig = {
     val serverConfiguration = ServerConfig(
-      name = configuration.getStringValue("name"),
-      bindAddress = configuration.getStringValue("bindAddress").map {
+      name = configuration.
+        getStringValue(getKeyName("name", prefix)),
+      bindAddress = configuration.
+        getStringValue(getKeyName("bindAddress", prefix)).map {
         bindAddress =>
           val splits = bindAddress.split(":")
-          val host = splits(0)
-          val port = splits(1).toInt
-          new InetSocketAddress(host, port)
+          if (splits.size > 0) {
+            val host = splits(0)
+            val port = splits(1).toInt
+            new InetSocketAddress(host, port)
+          } else {
+            new InetSocketAddress(bindAddress.toInt)
+          }
       },
-      statsEnabled = configuration.getBooleanValue("stats.Enabled").getOrElse(false),
-      statsPort = configuration.getIntValue("stats.port")
+      statsEnabled = configuration.getBooleanValue(getKeyName("stats.Enabled", prefix)).getOrElse(false),
+      statsPort = configuration.getIntValue(getKeyName("stats.port", prefix)),
+      tlsConfig = loadTlsConfig(configuration, prefix)
     )
     serverConfiguration
   }

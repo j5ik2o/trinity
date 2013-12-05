@@ -16,7 +16,19 @@
 package org.sisioh.trinity.domain.mvc.server
 
 import java.net.SocketAddress
+import javax.net.ssl.SSLEngine
 import scala.concurrent.duration.Duration
+
+case class TlsConfig
+(certificatePath: String,
+ keyPath: String,
+ caCertificatePath: Option[String],
+ ciphers: Option[String],
+ nextProtos: Option[String])
+
+case class Engine(self: SSLEngine,
+                  handlesRenegotiation: Boolean = false,
+                  certId: String = "<unknown>")
 
 case class ServerConfig
 (name: Option[String] = None,
@@ -29,6 +41,8 @@ case class ServerConfig
  maxConcurrentRequests: Option[Int] = None,
  hostConnectionMaxIdleTime: Option[Duration] = None,
  hostConnectionMaxLifeTime: Option[Duration] = None,
- requestTimeout: Option[Int] = None)
+ requestTimeout: Option[Int] = None,
+ newSSLEngine: Option[() => Engine] = None,
+ tlsConfig: Option[TlsConfig] = None)
 
 
