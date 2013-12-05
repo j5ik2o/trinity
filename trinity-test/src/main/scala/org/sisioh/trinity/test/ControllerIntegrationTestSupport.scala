@@ -2,9 +2,8 @@ package org.sisioh.trinity.test
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse, Http}
+import com.twitter.finagle.http.{Response => FinagleResponse, Http}
 import com.twitter.util.{Await => TAwait}
-import com.twitter.util.{Duration => TDuration}
 import java.net.{SocketAddress, InetSocketAddress}
 import java.util.concurrent.TimeUnit
 import org.jboss.netty.handler.codec.http.{HttpResponse, HttpRequest, HttpMethod}
@@ -28,21 +27,22 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
   case class IntegrationTestContext(implicit val executor: ExecutionContext)
     extends TestContext
 
-
   private val httpClients = scala.collection.mutable.Map.empty[SocketAddress, Service[HttpRequest, HttpResponse]]
 
-  private val host = "localhost"
+  private val defaultHost = "localhost"
 
-  private val port = 7070
+  private val defaultPort = 7070
+
+  protected val serverAwaitDuration =  Duration(5, TimeUnit.MINUTES)
 
   protected def buildRequest
   (method: HttpMethod, path: String, content: Option[Content], headers: Map[HeaderName, String], timeout: Duration)
   (implicit testContext: TestContext): Try[Response] = {
     implicit val executor = testContext.executor
     val request = newRequest(method, path, content, headers)
-    val _host = serverHost.getOrElse(host)
-    val _port = serverPort.getOrElse(port)
-    val address: SocketAddress = new InetSocketAddress(_host, _port)
+    val host = serverHost.getOrElse(defaultHost)
+    val port = serverPort.getOrElse(defaultPort)
+    val address: SocketAddress = new InetSocketAddress(host, port)
     val client = httpClients.getOrElseUpdate(
       address,
       ClientBuilder()
@@ -60,7 +60,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
   protected class WithServer(server: Server,
                              environment: Environment.Value = Environment.Product,
-                             awaitDuration: Duration = Duration(5, TimeUnit.MINUTES))
+                             awaitDuration: Duration = serverAwaitDuration)
                             (implicit executor: ExecutionContext)
     extends Around with Scope {
 
