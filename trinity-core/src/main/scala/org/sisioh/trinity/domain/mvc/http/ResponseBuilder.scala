@@ -34,7 +34,7 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
 
   private var content: ChannelBuffer = ChannelBuffer.empty
 
-  def withJson(jValue: JValue, charset: Charset = Charsets.UTF_8) =
+  def withJson(jValue: JValue, charset: Option[Charset] = None) =
     withRenderer(JSON4SRenderer(jValue, charset))
 
   def withRenderer(responseRender: ResponseRenderer) = {
