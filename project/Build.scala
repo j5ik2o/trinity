@@ -209,7 +209,7 @@ object TrinityBuild extends Build {
       name := "trinity-daemon-test",
       myAssemblySettings
     )
-  ) dependsOn (daemon)
+  ) dependsOn (daemon, test % "test")
 
   val root = Project(
     id = "trinity",
