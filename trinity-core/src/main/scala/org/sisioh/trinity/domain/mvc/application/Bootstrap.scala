@@ -42,6 +42,8 @@ trait Bootstrap {
 
   protected val environment: Environment.Value
 
+  protected val configPrefixName: Option[String] = None
+
   protected lazy val configuration: Configuration = withDebugScope("configuration") {
     scopedDebug(s"applicationId = $applicationId, environment = $environment")
     ServerConfigLoader.loadConfiguration(applicationId, environment).get
@@ -49,7 +51,7 @@ trait Bootstrap {
 
   protected lazy val serverConfig = withDebugScope("serverConfig") {
     scopedDebug(s"applicationId = $applicationId, configuration = $configuration")
-    ServerConfigLoader.loadServerConfig(configuration)
+    ServerConfigLoader.loadServerConfig(configuration, configPrefixName)
   }
 
   protected implicit val globalSettings: Option[GlobalSettings[Request, Response]] = None
