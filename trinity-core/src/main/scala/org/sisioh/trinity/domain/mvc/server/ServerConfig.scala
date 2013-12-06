@@ -30,6 +30,23 @@ case class Engine(self: SSLEngine,
                   handlesRenegotiation: Boolean = false,
                   certId: String = "<unknown>")
 
+/**
+ * [[org.sisioh.trinity.domain.mvc.server.Server]]のための設定。
+ *
+ * @param name
+ * @param bindAddress
+ * @param awaitDuration
+ * @param statsEnabled
+ * @param statsPort
+ * @param maxRequestSize
+ * @param maxResponseSize
+ * @param maxConcurrentRequests
+ * @param hostConnectionMaxIdleTime
+ * @param hostConnectionMaxLifeTime
+ * @param requestTimeout
+ * @param newSSLEngine
+ * @param tlsConfig
+ */
 case class ServerConfig
 (name: Option[String] = None,
  bindAddress: Option[SocketAddress] = None,

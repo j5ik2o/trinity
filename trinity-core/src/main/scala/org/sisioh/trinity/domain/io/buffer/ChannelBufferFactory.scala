@@ -2,10 +2,9 @@ package org.sisioh.trinity.domain.io.buffer
 
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-
+import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
 import scala.language.implicitConversions
 
-import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
 
 /**
  * [[org.sisioh.trinity.domain.io.buffer.ChannelBuffer]]のためのファクトリ。

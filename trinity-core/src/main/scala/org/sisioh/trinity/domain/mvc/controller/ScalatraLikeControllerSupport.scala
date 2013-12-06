@@ -17,9 +17,9 @@ package org.sisioh.trinity.domain.mvc.controller
 
 import org.sisioh.trinity.domain.io.http.Methods
 import org.sisioh.trinity.domain.mvc.action.Action
-import org.sisioh.trinity.domain.mvc.http.{ResponseSupport, Request, Response}
-import org.sisioh.trinity.domain.mvc.routing.{RouteDefHolder, RouteDef}
+import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPattern, PathPatternParser}
+import org.sisioh.trinity.domain.mvc.routing.{RouteDefHolder, RouteDef}
 import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util.matching.Regex

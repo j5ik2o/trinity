@@ -11,14 +11,14 @@ import org.sisioh.trinity.domain.io.http.{Response => IOResponse, HeaderName}
 import org.sisioh.trinity.domain.mvc.Environment
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.server.Server
+import org.sisioh.trinity.util.DurationConverters._
 import org.specs2.execute.{Result, AsResult}
 import org.specs2.mutable.Around
 import org.specs2.specification.Scope
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await => SAwait, ExecutionContext}
 import scala.util.Try
-import org.sisioh.trinity.util.DurationConverters
-import DurationConverters._
+
 /**
  * インテグレーションテストをサポートするためのトレイト。
  */
@@ -33,7 +33,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
   private val defaultPort = 7070
 
-  protected val serverAwaitDuration =  Duration(5, TimeUnit.MINUTES)
+  protected val serverAwaitDuration = Duration(5, TimeUnit.MINUTES)
 
   protected def buildRequest
   (method: HttpMethod, path: String, content: Option[Content], headers: Map[HeaderName, String], timeout: Duration)

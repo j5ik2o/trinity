@@ -1,6 +1,7 @@
 package org.sisioh.trinity.test
 
 import org.sisioh.trinity.domain.io.http.Methods._
+import org.sisioh.trinity.domain.mvc.Environment
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import org.sisioh.trinity.domain.mvc.http.ResponseBuilder
 import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
@@ -10,7 +11,6 @@ import org.specs2.mutable.Specification
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
-import org.sisioh.trinity.domain.mvc.Environment
 
 class ControllerIntegrationTestSupportSpec extends Specification with ControllerIntegrationTestSupport {
 

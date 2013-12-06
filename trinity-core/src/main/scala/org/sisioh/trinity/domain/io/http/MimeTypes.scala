@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.io.http
 
-import javax.activation.MimetypesFileTypeMap
 import java.io.File
+import javax.activation.MimetypesFileTypeMap
 
 object MimeTypes {
 

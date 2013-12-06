@@ -17,8 +17,6 @@ package org.sisioh.trinity.domain.mvc.http
 
 import com.google.common.base.Splitter
 import com.twitter.finagle.http.{Request => FinagleRequest}
-import java.net.InetAddress
-import java.net.InetSocketAddress
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.io.http.{Request => IORequest, _}
 import org.sisioh.trinity.domain.mvc.GlobalSettings

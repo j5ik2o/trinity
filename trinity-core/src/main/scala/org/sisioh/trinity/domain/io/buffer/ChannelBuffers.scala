@@ -1,11 +1,10 @@
 package org.sisioh.trinity.domain.io.buffer
 
 import java.nio._
-
-import scala.language.implicitConversions
-
 import org.jboss.netty.buffer.{ ChannelBufferFactory => NettyChannelBufferFactory }
 import org.sisioh.trinity.domain.io.http.Charset
+import scala.language.implicitConversions
+
 
 trait ChannelBuffers {
 

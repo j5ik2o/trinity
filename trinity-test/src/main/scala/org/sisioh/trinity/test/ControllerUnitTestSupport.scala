@@ -6,18 +6,17 @@ import com.twitter.util.Await
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity.domain.io.http.{Response => IOResponse, HeaderName}
 import org.sisioh.trinity.domain.mvc.action.Action
+import org.sisioh.trinity.domain.mvc.filter.Filter
 import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.server.ServiceBuilder
 import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
+import org.sisioh.trinity.util.DurationConverters._
 import org.specs2.specification.Scope
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.Duration
 import scala.language.reflectiveCalls
 import scala.util.Try
-import org.sisioh.trinity.domain.mvc.filter.Filter
-import scala.concurrent.duration.Duration
-import org.sisioh.trinity.util.DurationConverters
-import DurationConverters._
 
 /**
  * 単体テストをサポートするためのトレイト。
