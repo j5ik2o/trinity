@@ -22,10 +22,10 @@ import org.sisioh.trinity.domain.mvc._
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.action.ActionExecuteService
 import org.sisioh.trinity.domain.mvc.action.ExceptionHandleFilter
+import org.sisioh.trinity.domain.mvc.filter.{RequestDumpFilter, GatewayFilter, Filter}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext
-import org.sisioh.trinity.domain.mvc.filter.{RequestDumpFilter, GatewayFilter, Filter}
 
 /**
  * Finagleサービスを作成するためのビルダー責務。

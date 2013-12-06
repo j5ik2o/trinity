@@ -1,8 +1,8 @@
 package org.sisioh.trinity.domain.io.http
 
+import org.jboss.netty.handler.codec.http.HttpMethod
 import scala.language.implicitConversions
 
-import org.jboss.netty.handler.codec.http.HttpMethod
 
 object Methods extends Enumeration {
 

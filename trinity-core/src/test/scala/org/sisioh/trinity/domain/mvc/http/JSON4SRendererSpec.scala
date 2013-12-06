@@ -1,8 +1,8 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import org.specs2.mutable.Specification
 import org.json4s._
 import org.sisioh.trinity.domain.io.http.{Charsets, HeaderNames}
+import org.specs2.mutable.Specification
 
 class JSON4SRendererSpec extends Specification {
 

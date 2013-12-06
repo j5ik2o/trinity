@@ -1,10 +1,9 @@
 package org.sisioh.trinity.domain.io.http
 
+import com.twitter.finagle.http.{Cookie => FinagleCookie}
+import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie}
 import scala.language.implicitConversions
 
-import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie}
-
-import com.twitter.finagle.http.{Cookie => FinagleCookie}
 
 trait Cookie {
 

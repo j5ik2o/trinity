@@ -8,8 +8,8 @@ import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toNetty
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toTrinity
 import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
-import scala.util.Try
 import org.sisioh.trinity.domain.io.http.Charset
+import scala.util.Try
 
 
 case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = false) extends ChannelBuffer {

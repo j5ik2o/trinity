@@ -1,8 +1,8 @@
 package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Request => FinagleRequest}
-import scala.language.implicitConversions
 import java.net.{InetAddress, InetSocketAddress}
+import scala.language.implicitConversions
 
 trait Request extends Message {
 

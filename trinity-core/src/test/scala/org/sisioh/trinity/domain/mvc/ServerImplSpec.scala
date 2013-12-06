@@ -1,23 +1,22 @@
 package org.sisioh.trinity.domain.mvc
 
-import org.specs2.mutable.{Around, Specification}
-import scala.concurrent.{Await => SAwait, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
-import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
-import org.sisioh.trinity.domain.io.http.Charsets
 import com.twitter.finagle.builder.ClientBuilder
 import com.twitter.finagle.http.{Request => FinagleRequest, Http, RichHttp}
-import java.net.InetSocketAddress
-import org.specs2.specification.Scope
-import org.specs2.execute.{Result, AsResult}
-import scala.concurrent.duration.Duration
 import com.twitter.util.{Await => TAwait}
+import java.net.InetSocketAddress
+import java.util.concurrent.TimeUnit
+import org.junit.runner.RunWith
+import org.sisioh.trinity.domain.io.http.Charsets
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.server.{ServerConfig, Server}
-import java.util.concurrent.TimeUnit
-import org.junit.runner.RunWith
+import org.specs2.execute.{Result, AsResult}
+import org.specs2.mutable.{Around, Specification}
 import org.specs2.runner.JUnitRunner
+import org.specs2.specification.Scope
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await => SAwait, Future}
 
 @RunWith(classOf[JUnitRunner])
 class ServerImplSpec extends Specification {

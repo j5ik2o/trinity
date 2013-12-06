@@ -17,13 +17,16 @@ package org.sisioh.trinity.domain.mvc.server
 
 import java.net.InetSocketAddress
 import java.util.concurrent.TimeUnit
-import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
 import org.sisioh.trinity.domain.mvc.action.Action
+import org.sisioh.trinity.domain.mvc.filter.Filter
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
-import org.sisioh.trinity.domain.mvc.filter.Filter
 
+/**
+ * サーバーを表すトレイト。
+ */
 trait Server extends ServiceBuilder {
 
   val serverConfig: ServerConfig
@@ -40,6 +43,9 @@ trait Server extends ServiceBuilder {
 
 }
 
+/**
+ * コンパニオンオブジェクト。
+ */
 object Server {
 
   val defaultName = "trinity"

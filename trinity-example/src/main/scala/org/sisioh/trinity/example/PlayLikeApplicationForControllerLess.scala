@@ -1,8 +1,8 @@
 package org.sisioh.trinity.example
 
-import org.sisioh.trinity._
 import org.sisioh.trinity.Methods._
 import org.sisioh.trinity.RouteDsl._
+import org.sisioh.trinity._
 
 object PlayLikeApplicationForControllerLess extends ConsoleApplication  with ControllerSupport {
 
