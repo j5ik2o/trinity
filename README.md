@@ -77,7 +77,7 @@ object AppBuild extends Build {
 
 ```scala
 object ScalatraLikeControllerApplication
-  extends App with BootstrapWithScalatraLikeSupport {
+  extends ConsoleApplication {
 
   get("/hello") {
     request =>
@@ -110,7 +110,7 @@ object ScalatraLikeControllerApplication
 #### Play2 like controller
 
 ```scala
-object PlayLikeApplicationForController extends App with Bootstrap {
+object PlayLikeApplicationForController extends ConsoleApplication {
 
   case class MainController() extends ControllerSupport {
 
