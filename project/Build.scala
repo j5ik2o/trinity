@@ -1,7 +1,7 @@
-import AssemblyKeys._
 import sbt.Keys._
 import sbt._
 import sbtassembly.Plugin._
+import AssemblyKeys._
 
 object TrinityBuild extends Build {
 
