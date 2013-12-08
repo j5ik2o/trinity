@@ -106,7 +106,7 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
     addConfigurator {
       _.headers.remove(name)
     }
-
+    getThis
   }
 
   def withoutAllHeaders = {
