@@ -17,7 +17,7 @@ package org.sisioh.trinity.domain.mvc.action
 
 import java.lang.String
 import org.apache.commons.io.IOUtils
-import org.sisioh.trinity.domain.io.http.{HeaderNames, ResponseStatus, ProtocolVersion}
+import org.sisioh.trinity.domain.io.http.{ContentType, ResponseStatus}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.util.ResourceUtil
 import scala.concurrent.Future
@@ -37,9 +37,8 @@ case object NotFoundHandleAction extends Action[Request, Response] {
       val html = new String(bytes)
       Future.successful(
         Response(
-          ResponseStatus.NotFound,
-          ProtocolVersion.Http11
-        ).withHeader(HeaderNames.ContentType, "text/html").withContentAsString(html)
+          ResponseStatus.NotFound
+        ).withContentType(ContentType.TextHtml).withContentAsString(html)
       )
     }).get
   }

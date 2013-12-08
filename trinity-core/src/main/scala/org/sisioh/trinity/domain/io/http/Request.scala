@@ -3,6 +3,7 @@ package org.sisioh.trinity.domain.io.http
 import com.twitter.finagle.http.{Request => FinagleRequest}
 import java.net.{InetAddress, InetSocketAddress}
 import scala.language.implicitConversions
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 trait Request extends Message {
 
@@ -89,11 +90,17 @@ trait Request extends Message {
 
 object Request {
 
-  def apply(request: FinagleRequest): Request =
+  private[trinity] def apply(request: FinagleRequest): Request =
     new RequestImpl(request)
 
-  def apply(method: Methods.Value, uri: String,
+  def apply(method: Methods.Value,
+            uri: String,
+            headers: Seq[(HeaderName, Any)] = Seq.empty,
+            cookies: Seq[Cookie] = Seq.empty,
+            attributes: Map[String, Any] = Map.empty,
+            content: ChannelBuffer = ChannelBuffer.empty,
+            isMutable: Boolean = false,
             protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11): Request =
-    new RequestImpl(method, uri, protocolVersion = protocolVersion)
+    new RequestImpl(method, uri, headers, cookies, attributes, content, isMutable, protocolVersion)
 
 }

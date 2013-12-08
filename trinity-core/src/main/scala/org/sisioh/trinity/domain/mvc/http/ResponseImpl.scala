@@ -15,15 +15,21 @@
  */
 package org.sisioh.trinity.domain.mvc.http
 
-import org.sisioh.trinity.domain.io.http.{Response => IOResponse, AbstractResponseProxy, ResponseStatus, ProtocolVersion}
+import org.sisioh.trinity.domain.io.http.{Response => IOResponse, _}
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 private[http]
 class ResponseImpl(override val underlying: IOResponse)
   extends AbstractResponseProxy(underlying) with Response {
 
   def this(responseStatus: ResponseStatus.Value = ResponseStatus.Ok,
+           headers: Seq[(HeaderName, Any)] = Seq.empty,
+           cookies: Seq[Cookie] = Seq.empty,
+           attributes: Map[String, Any] = Map.empty[String, Any],
+           content: ChannelBuffer = ChannelBuffer.empty,
+           isMutable: Boolean = false,
            protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11) =
-    this(IOResponse(responseStatus, protocolVersion))
+    this(IOResponse(responseStatus, headers, cookies, attributes, content, isMutable, protocolVersion))
 
   val toUnderlyingAsFinagle = underlying.toUnderlyingAsFinagle
 

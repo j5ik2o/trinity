@@ -16,18 +16,18 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
     createInstance(this, this.attributes ++ _attributes)
   }
 
- // protected def createInstance(message: AbstractMessage, attributes: Map[String, Any]): this.type
+  // protected def createInstance(message: AbstractMessage, attributes: Map[String, Any]): this.type
 
   def withoutAllAttributes(): this.type =
     createInstance(this, Map.empty)
 
 
-  protected def setHeaders(headers: Seq[(String, Any)]) {
+  protected def setHeaders(headers: Seq[(HeaderName, Any)]) {
     headers.foreach {
       case (key, value) =>
         value match {
-          case values: Iterable[_] => toUnderlyingAsFinagle.setHeader(key, values)
-          case _ => toUnderlyingAsFinagle.setHeader(key, value)
+          case values: Iterable[_] => toUnderlyingAsFinagle.setHeader(key.asString, values)
+          case _ => toUnderlyingAsFinagle.setHeader(key.asString, value)
         }
     }
   }
@@ -50,7 +50,11 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
   }
 
   protected def mutateAsNettyMessage(f: (NettyMessage) => Unit): this.type = {
-    val cloned = createInstance(this, attributes)
+    val cloned = if (isMutable) {
+      this.asInstanceOf[this.type]
+    } else {
+      createInstance(this, attributes)
+    }
     f(cloned.toUnderlyingAsFinagle)
     cloned
   }

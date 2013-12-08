@@ -32,6 +32,8 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
 
   private var cookies: Seq[Cookie] = Seq.empty
 
+  private val attributes = mutable.Map.empty[String, Any]
+
   private var content: ChannelBuffer = ChannelBuffer.empty
 
   def withJson(jValue: JValue, charset: Option[Charset] = None) =
@@ -122,7 +124,7 @@ case class ResponseBuilder() extends ValueObjectBuilder[Response, ResponseBuilde
   protected def newInstance: ResponseBuilder = new ResponseBuilder()
 
   protected def createValueObject: Response = {
-    Response(responseStatus, protocolVersion).withHeaders(headers.toSeq).withCookies(cookies).withContent(content)
+    Response(responseStatus, headers.toSeq, cookies, attributes.toMap, content, false, protocolVersion)
   }
 
   protected def apply(vo: Response, builder: ResponseBuilder): Unit = {

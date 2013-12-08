@@ -24,7 +24,11 @@ import org.sisioh.trinity.domain.mvc.action.Action
 import scala.collection.JavaConversions.iterableAsScalaIterable
 import scala.concurrent.Future
 import scala.util.{Try, Sorting}
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
+/**
+ * MVCのために拡張された[[org.sisioh.trinity.domain.io.http.Request]]。
+ */
 trait Request extends Message with RequestProxy with LoggingEx {
 
   override def equals(obj: Any): Boolean = obj match {
@@ -38,7 +42,8 @@ trait Request extends Message with RequestProxy with LoggingEx {
   }
 
   override def hashCode: Int =
-    31 * (super.hashCode + toUnderlyingAsFinagle.## + action.## + routeParams.## + globalSettings.## + error.##)
+    31 * (super.hashCode + toUnderlyingAsFinagle.## +
+      action.## + routeParams.## + globalSettings.## + error.##)
 
   override def toString =
     Seq(
@@ -99,13 +104,16 @@ trait Request extends Message with RequestProxy with LoggingEx {
 
 }
 
+/**
+ * コンパニオンオブジェクト。
+ */
 object Request {
 
-  def fromUnderlying(underlying: IORequest,
-                     actionOpt: Option[Action[Request, Response]] = None,
-                     routeParams: Map[String, String] = Map.empty,
-                     globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
-                     errorOpt: Option[Throwable] = None): Request =
+  private[trinity] def fromUnderlying(underlying: IORequest,
+                                      actionOpt: Option[Action[Request, Response]] = None,
+                                      routeParams: Map[String, String] = Map.empty,
+                                      globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
+                                      errorOpt: Option[Throwable] = None): Request =
     new RequestImpl(
       underlying,
       actionOpt,
@@ -116,18 +124,29 @@ object Request {
 
   def apply(method: Methods.Value = Methods.Get,
             uri: String = "/",
-            actionOpt: Option[Action[Request, Response]] = None,
+            headers: Seq[(HeaderName, Any)] = Seq.empty,
+            cookies: Seq[Cookie] = Seq.empty,
+            attributes: Map[String, Any] = Map.empty,
+            content: ChannelBuffer = ChannelBuffer.empty,
+            action: Option[Action[Request, Response]] = None,
             routeParams: Map[String, String] = Map.empty,
-            globalSettingsOpt: Option[GlobalSettings[Request, Response]] = None,
-            errorOpt: Option[Throwable] = None,
-            protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11): Request =
+            globalSettings: Option[GlobalSettings[Request, Response]] = None,
+            error: Option[Throwable] = None,
+            isMutable: Boolean = false,
+            protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11) =
     new RequestImpl(
       method,
       uri,
-      actionOpt,
+      headers,
+      cookies,
+      attributes,
+      content,
+      action,
       routeParams,
-      globalSettingsOpt,
-      errorOpt, protocolVersion
+      globalSettings,
+      error,
+      isMutable,
+      protocolVersion
     )
 
 }
