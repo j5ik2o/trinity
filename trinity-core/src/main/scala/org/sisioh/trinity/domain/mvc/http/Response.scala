@@ -15,9 +15,9 @@
  */
 package org.sisioh.trinity.domain.mvc.http
 
-import com.twitter.finagle.http.{ Response => FinagleResponse }
-import org.sisioh.trinity.domain.io.http
-import org.sisioh.trinity.domain.io.http.{ Response => IOResponse, ResponseStatus, ProtocolVersion, ResponseProxy }
+import com.twitter.finagle.http.{Response => FinagleResponse}
+import org.sisioh.trinity.domain.io.http.{Response => IOResponse, _}
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 /**
  * MVCのためのレスポンス。
@@ -39,7 +39,7 @@ object Response {
    * @param underlying
    * @return
    */
-  def apply(underlying: http.Response): Response = new ResponseImpl(underlying)
+  private[trinity] def apply(underlying: IOResponse): Response = new ResponseImpl(underlying)
 
   /**
    * ファクトリメソッド。
@@ -49,7 +49,12 @@ object Response {
    * @return
    */
   def apply(responseStatus: ResponseStatus.Value = ResponseStatus.Ok,
+            headers: Seq[(HeaderName, Any)] = Seq.empty,
+            cookies: Seq[Cookie] = Seq.empty,
+            attributes: Map[String, Any] = Map.empty[String, Any],
+            content: ChannelBuffer = ChannelBuffer.empty,
+            isMutable: Boolean = false,
             protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11): Response =
-    new ResponseImpl(responseStatus, protocolVersion)
+    new ResponseImpl(responseStatus, headers, cookies, attributes, content, isMutable, protocolVersion)
 
 }

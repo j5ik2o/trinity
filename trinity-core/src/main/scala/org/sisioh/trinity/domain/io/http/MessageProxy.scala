@@ -6,6 +6,8 @@ trait MessageProxy extends Message with Proxy {
 
   def underlying: Message
 
+  val isMutable: Boolean = underlying.isMutable
+
   def self = underlying
 
   def isRequest = underlying.isRequest

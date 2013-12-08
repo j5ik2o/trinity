@@ -26,7 +26,7 @@ trait Message {
     cloned
   }
 
-  val isMutable: Boolean = false
+  val isMutable: Boolean
 
   val toUnderlyingAsFinagle: FinagleMessage
 
@@ -154,8 +154,8 @@ trait Message {
 
   def contentType: Option[String] = toUnderlyingAsFinagle.contentType
 
-  def withContentType(value: String): this.type = mutate {
-    _.toUnderlyingAsFinagle.contentType = value
+  def withContentType(value: ContentType): this.type = mutate {
+    _.toUnderlyingAsFinagle.contentType = value.toString()
   }
 
   def date: Option[String] = toUnderlyingAsFinagle.date
