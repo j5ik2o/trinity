@@ -4,7 +4,9 @@ import com.twitter.finagle.http.{Cookie => FinagleCookie}
 import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie}
 import scala.language.implicitConversions
 
-
+/**
+ * クッキー。
+ */
 trait Cookie {
 
   val underlying: NettyCookie
@@ -57,6 +59,9 @@ trait Cookie {
 
 }
 
+/**
+ * コンパニオンオブジェクト。
+ */
 object Cookie {
 
   private[domain] implicit def toFinagle(self: Cookie): FinagleCookie =
