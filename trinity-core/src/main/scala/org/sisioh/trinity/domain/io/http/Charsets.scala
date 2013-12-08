@@ -3,8 +3,13 @@ package org.sisioh.trinity.domain.io.http
 import java.nio.charset.{Charset => JCharset}
 import org.sisioh.scala.toolbox._
 
+/**
+ * キャラクターセット。
+ */
 trait Charset extends EnumEntry {
+
   val toObject: JCharset
+
 }
 
 object Charsets extends Enum[Charset] {
