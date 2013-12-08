@@ -18,7 +18,7 @@ package org.sisioh.trinity.domain.mvc.routing
 import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc._
-import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, InternalServerErrorAction, Action}
+import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, Action}
 import org.sisioh.trinity.domain.mvc.filter.Filter
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternParser, PathPatternParser}
@@ -46,21 +46,6 @@ case class RoutingFilter
     globalSettings.flatMap {
       _.notFound
     }.orElse(Some(NotFoundHandleAction))
-  }
-
-  /**
-   * エラー発生時のリカバリを行うためのハンドラ。
-   *
-   * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
-   */
-  protected def errorHandler(request: Request, throwable: Throwable): Future[Response] = {
-    val newRequest = request.withError(throwable)
-    globalSettings.map {
-      _.error.map(_(newRequest)).
-        getOrElse(InternalServerErrorAction(newRequest))
-    }.getOrElse {
-      InternalServerErrorAction(request)
-    }
   }
 
   protected def getActionWithRouteParams(request: Request): Option[(Action[Request, Response], Map[String, String])] = {
