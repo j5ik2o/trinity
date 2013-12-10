@@ -17,8 +17,8 @@ package org.sisioh.trinity.domain.mvc.server
 
 import java.io.{FileNotFoundException, File}
 import java.net.InetSocketAddress
-import org.sisioh.config.{ConfigurationMode, Configuration}
 import org.sisioh.trinity.domain.mvc.Environment
+import org.sisioh.config.{ConfigurationMode, Configuration}
 import scala.util.{Failure, Try}
 
 object ServerConfigLoader extends ServerConfigLoader
@@ -71,7 +71,7 @@ class ServerConfigLoader {
         getStringValue(getKeyName("bindAddress", prefix)).map {
         bindAddress =>
           val splits = bindAddress.split(":")
-          if (splits.size > 0) {
+          if (splits.size > 1) {
             val host = splits(0)
             val port = splits(1).toInt
             new InetSocketAddress(host, port)
