@@ -1,8 +1,24 @@
+/*
+ * Copyright 2013 Sisioh Project and others. (http://sisioh.org/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 package org.sisioh.trinity.domain.mvc.resource
 
 import java.io.{FileInputStream, File, InputStream}
 import org.sisioh.trinity.domain.mvc.Environment
-import scala.util.{Failure, Success, Try}
+import org.sisioh.trinity.util.ResourceUtil
+import scala.util.Try
 
 /**
  * ファイルリソースを解決するためのクラス。
@@ -22,19 +38,9 @@ case class FileResourceResolver(environment: Environment.Value, localBasePath: F
 
   def getInputStream(path: String): Try[InputStream] = {
     if (environment == Environment.Product) {
-      getResourceInputStream(path)
+      ResourceUtil.getResourceInputStream(path)
     } else {
       getLocalInputStream(path)
-    }
-  }
-
-  private def getResourceInputStream(path: String): Try[InputStream] = {
-    Try(getClass.getResourceAsStream(path)).flatMap {
-      stream =>
-        Option(stream).map {
-          s =>
-            Success(s)
-        }.getOrElse(Failure(new Exception))
     }
   }
 
@@ -44,7 +50,7 @@ case class FileResourceResolver(environment: Environment.Value, localBasePath: F
   }
 
   private def hasResourceFile(path: String): Boolean = {
-    getResourceInputStream(path).map {
+    ResourceUtil.getResourceInputStream(path).map {
       _ =>
         true
     }.getOrElse(false)

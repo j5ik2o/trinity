@@ -1,7 +1,6 @@
 package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Message => FinagleMessage}
-import java.nio.charset.Charset
 import org.jboss.netty.handler.codec.http.CookieDecoder
 import org.jboss.netty.handler.codec.http.CookieEncoder
 import org.sisioh.trinity.domain.io.buffer.{ChannelBuffers, ChannelBuffer}
@@ -15,9 +14,29 @@ import scala.collection.JavaConverters.asScalaSetConverter
  */
 trait Message {
 
-  val isMutable: Boolean = false
+  protected def createInstance(message: this.type, attributes: Map[String, Any]): this.type
+
+  protected def mutate(f: (this.type) => Unit): this.type = {
+    val cloned = if (isMutable) {
+      this.asInstanceOf[this.type]
+    } else {
+      createInstance(this, attributes)
+    }
+    f(cloned)
+    cloned
+  }
+
+  val isMutable: Boolean
 
   val toUnderlyingAsFinagle: FinagleMessage
+
+  val attributes: Map[String, Any]
+
+  def withAttributes(attributes: Map[String, Any]): this.type
+
+  def withAttributes(attributes: (String, Any)*): this.type
+
+  def withoutAllAttributes(): this.type
 
   override def toString = Seq(
     s"protocolVersion = $protocolVersion",
@@ -58,9 +77,9 @@ trait Message {
 
   def withContent(content: ChannelBuffer): this.type
 
-  def contentAsString(charset: Charset = CharsetUtil.UTF_8): String = content.toString(charset)
+  def contentAsString(charset: Charset = Charsets.UTF_8): String = content.toString(charset)
 
-  def withContentAsString(body: String, charset: Charset = CharsetUtil.UTF_8): this.type =
+  def withContentAsString(body: String, charset: Charset = Charsets.UTF_8): this.type =
     withContent(ChannelBuffers.copiedBuffer(body, charset))
 
   def withHeader(name: HeaderName, value: Any): this.type
@@ -90,13 +109,125 @@ trait Message {
       xs =>
         cookieEncoder.addCookie(xs)
     }
-    withHeader(cookieHeaderName, cookieEncoder.encode)
+    if (!cookies.isEmpty) {
+      withHeader(cookieHeaderName, cookieEncoder.encode)
+    } else this
   }
 
   def cookies: Seq[Cookie] = {
     val decoder = new CookieDecoder()
-    val header = getHeader(cookieHeaderName).get
-    decoder.decode(header).asScala.map(toTrinity).toSeq
+    getHeader(cookieHeaderName).map {
+      header =>
+        decoder.decode(header).asScala.map(toTrinity).toSeq
+    }.getOrElse(Seq.empty)
+  }
+
+  def allow: Option[String] = toUnderlyingAsFinagle.allow
+
+  def withAllow(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.allow = value
+  }
+
+  def authorization: Option[String] = toUnderlyingAsFinagle.authorization
+
+  def withAuthorization(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.authorization = value
+  }
+
+  def cacheControl: Option[String] = toUnderlyingAsFinagle.cacheControl
+
+  def withCacheControl(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.cacheControl = value
+  }
+
+  def charset: Option[String] = toUnderlyingAsFinagle.charset
+
+  def withCharset(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.charset = value
+  }
+
+  def contentLength: Option[Long] = toUnderlyingAsFinagle.contentLength
+
+  def withContentLength(value: Long): this.type = mutate {
+    _.toUnderlyingAsFinagle.contentLength = value
+  }
+
+  def contentType: Option[String] = toUnderlyingAsFinagle.contentType
+
+  def withContentType(value: ContentType): this.type = mutate {
+    _.toUnderlyingAsFinagle.contentType = value.toString()
+  }
+
+  def date: Option[String] = toUnderlyingAsFinagle.date
+
+  def withDate(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.date = value
+  }
+
+  def expires: Option[String] = toUnderlyingAsFinagle.expires
+
+  def withExpire(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.expires = value
+  }
+
+  def host: Option[String] = toUnderlyingAsFinagle.host
+
+  def withHost(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.host = value
+  }
+
+  def lastModified: Option[String] = toUnderlyingAsFinagle.lastModified
+
+  def withLastModified(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.lastModified = value
+  }
+
+  def location: Option[String] = toUnderlyingAsFinagle.location
+
+  def withLocation(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.location = value
+  }
+
+  def mediaType: Option[String] = toUnderlyingAsFinagle.mediaType
+
+  def withMediaType(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.mediaType = value
+  }
+
+  def referer: Option[String] = toUnderlyingAsFinagle.referer
+
+  def withReferer(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.referer = value
+  }
+
+  def retryAfter: Option[String] = toUnderlyingAsFinagle.retryAfter
+
+  def withRetryAfter(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.retryAfter = value
+  }
+
+  def server: Option[String] = toUnderlyingAsFinagle.server
+
+  def withServer(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.server = value
+  }
+
+  def userAgent: Option[String] = toUnderlyingAsFinagle.userAgent
+
+  def withUserAgent(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.userAgent = value
+  }
+
+  def wwwAuthenticate: Option[String] = toUnderlyingAsFinagle.wwwAuthenticate
+
+  def withWwwAuthenticate(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.wwwAuthenticate = value
+  }
+
+  def xForwardedFor: Option[String] = toUnderlyingAsFinagle.xForwardedFor
+
+  def withXForwardedFor(value: String): this.type = mutate {
+    _.toUnderlyingAsFinagle.xForwardedFor = value
   }
 
 }

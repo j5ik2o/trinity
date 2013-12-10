@@ -25,6 +25,17 @@ trait ContentType extends EnumEntry {
  */
 object ContentType extends Enum[ContentType] {
 
+  def ofAny(main: String, sub: Option[String]): ContentType = AnyContentType(main, sub)
+
+  def ofAny(value: String): ContentType = {
+    val s = value.split("/")
+    if (s.size > 0) {
+      AnyContentType(s(0), Some(s(1)))
+    } else {
+      AnyContentType(value, None)
+    }
+  }
+
   def valueOf(value: String): Option[ContentType] = {
     values.find(_.toString() == value)
   }
@@ -68,6 +79,8 @@ object ContentType extends Enum[ContentType] {
     val main = throw new UnsupportedOperationException
     val sub = throw new UnsupportedOperationException
   }
+
+  private case class AnyContentType(main: String, sub: Option[String]) extends ContentType
 
   TextPlan % TextHtml % AppJson % AppXml % AppRss % AppOctetStream % AppOctetStream % All
 

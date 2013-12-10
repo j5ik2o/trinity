@@ -4,15 +4,15 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.ScatteringByteChannel
-import java.nio.charset.Charset
-
+import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
+import org.jboss.netty.buffer.{ChannelBuffers => NettyChannelBuffers}
+import org.sisioh.trinity.domain.io.http.Charset
 import scala.language.implicitConversions
 import scala.util.Try
 
-import org.jboss.netty.buffer.{ChannelBuffer => NettyChannelBuffer}
-import org.jboss.netty.buffer.{ChannelBuffers => NettyChannelBuffers}
-import org.sisioh.trinity.domain.io.infrastructure.buffer.ChannelBufferImpl
-
+/**
+ * `org.jboss.netty.buffer.ChannelBuffer` の Scalaラッパー
+ */
 trait ChannelBuffer {
 
   def factory: ChannelBufferFactory
@@ -251,7 +251,9 @@ trait ChannelBuffer {
 
 }
 
-
+/**
+ * コンパニオンオブジェクト。
+ */
 object ChannelBuffer {
 
   val empty: ChannelBuffer = NettyChannelBuffers.EMPTY_BUFFER

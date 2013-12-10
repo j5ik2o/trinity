@@ -1,10 +1,12 @@
 package org.sisioh.trinity.domain.io.buffer
 
 import java.nio.ByteOrder
-
 import org.jboss.netty.buffer.{DirectChannelBufferFactory => NettyDirectChannelBufferFactory}
 import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
 
+/**
+ * DirectChannelBufferのためのファクトリ。
+ */
 object DirectChannelBufferFactory {
 
   def apply(): ChannelBufferFactory =

@@ -1,13 +1,12 @@
 package org.sisioh.trinity.example
 
-import org.sisioh.trinity.domain.io.http.Method._
-import org.sisioh.trinity.domain.mvc.action.SimpleAction
-import org.sisioh.trinity.domain.mvc.controller.ControllerSupport
-import org.sisioh.trinity.domain.mvc.routing.RouteDsl._
-import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.{Environment, Bootstrap}
+import org.sisioh.trinity.Methods._
+import org.sisioh.trinity.RouteDsl._
+import org.sisioh.trinity._
 
-object PlayLikeApplicationForController extends App with Bootstrap {
+object PlayLikeApplicationForController extends ConsoleApplication {
+
+  override protected lazy val applicationId = "trinity-example"
 
   case class MainController() extends ControllerSupport {
 
@@ -29,7 +28,7 @@ object PlayLikeApplicationForController extends App with Bootstrap {
 
   val mainController = MainController()
 
-  override protected val routingFilter = Some(RoutingFilter.createForActions {
+  override protected lazy val routingFilter = Some(RoutingFilter.createForActions {
     implicit pathPatternParser =>
       Seq(
         Get % "/hello" -> mainController.helloWorld,

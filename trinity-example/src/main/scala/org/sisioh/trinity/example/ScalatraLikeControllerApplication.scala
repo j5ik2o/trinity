@@ -1,13 +1,9 @@
 package org.sisioh.trinity.example
 
 import org.json4s._
-import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeControllerSupport
-import org.sisioh.trinity.domain.mvc.http.{JSON4SRenderer, ResponseBuilder}
-import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
-import org.sisioh.trinity.domain.mvc.{BootstrapWithScalatraLikeSupport, Environment, Bootstrap}
+import org.sisioh.trinity._
 
-object ScalatraLikeControllerApplication
-  extends App with BootstrapWithScalatraLikeSupport {
+object ScalatraLikeControllerApplication extends ConsoleApplication with ScalatraLikeApplicationSupport {
 
   get("/hello") {
     request =>
@@ -29,7 +25,7 @@ object ScalatraLikeControllerApplication
 
   get( """/group/(.*)""".r, Seq("name")) {
     request =>
-      ResponseBuilder().withTextPlain("name = " + request.routeParams("name")).toFuture
+      responseBuilder.withTextPlain("name = " + request.routeParams("name")).toFuture
   }
 
   startWithAwait()
