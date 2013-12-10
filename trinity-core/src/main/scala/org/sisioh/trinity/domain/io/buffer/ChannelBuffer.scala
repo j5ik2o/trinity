@@ -251,7 +251,9 @@ trait ChannelBuffer {
 
 }
 
-
+/**
+ * コンパニオンオブジェクト。
+ */
 object ChannelBuffer {
 
   val empty: ChannelBuffer = NettyChannelBuffers.EMPTY_BUFFER
