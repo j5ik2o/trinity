@@ -1,8 +1,8 @@
 package org.sisioh.trinity.domain.mvc.resource
 
-import org.specs2.mutable.Specification
-import org.sisioh.trinity.domain.mvc.Environment
 import java.io.File
+import org.sisioh.trinity.domain.mvc.Environment
+import org.specs2.mutable.Specification
 
 class FileResourceResolverSpec extends Specification {
   val localBasePath = new File("trinity-core/src/test/resources/")

@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.io.infrastructure.netty3.buffer
 
-import org.specs2.mutable.Specification
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
+import org.specs2.mutable.Specification
 
 class ChannelBufferImplSpec extends Specification {
 

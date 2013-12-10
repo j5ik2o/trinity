@@ -1,12 +1,28 @@
 import sbt.Keys._
 import sbt._
+import sbtassembly.Plugin._
+import AssemblyKeys._
 
 object TrinityBuild extends Build {
 
+  val myAssemblySettings = mergeStrategy in assembly <<= (mergeStrategy in assembly) {
+  (old) => {
+    case "rootdoc.txt" | "readme.txt" => MergeStrategy.discard
+    case PathList("META-INF", xs @ _*) if (xs.length != 0) => {
+      xs.last.split("\\.").last.toUpperCase match {
+        case "MF" | "SF" | "DSA" | "RSA" => MergeStrategy.discard
+        case _ => MergeStrategy.first
+      }
+    }
+    case PathList("com", "twitter", "common", "args", "apt", "cmdline.arg.info.txt.1") => MergeStrategy.first
+    case _ => MergeStrategy.first
+  }
+  }
+
   val commonSettings = Project.defaultSettings ++ Seq(
     organization := "org.sisioh",
-    version := "1.0.0-SNAPSHOT",
-    scalaVersion := "2.10.2",
+    version := "1.0.0",
+    scalaVersion := "2.10.3",
     scalacOptions ++= Seq("-encoding", "UTF-8", "-feature", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-encoding", "UTF-8", "-deprecation"),
     resolvers ++= Seq(
@@ -17,13 +33,14 @@ object TrinityBuild extends Build {
       "Seasar Repository" at "http://maven.seasar.org/maven2/"
     ),
     libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % "2.10.2",
+      "org.scala-lang" % "scala-reflect" % "2.10.3",
       "junit" % "junit" % "4.8.1" % "test",
       "org.hamcrest" % "hamcrest-all" % "1.3" % "test",
       "org.mockito" % "mockito-core" % "1.9.5" % "test",
       "org.specs2" %% "specs2" % "2.0" % "test",
       "org.seasar.util" % "s2util" % "0.0.1"
     ),
+    fork in Test := true,
     publishMavenStyle := true,
     publishArtifact in Test := false,
     pomIncludeRepository := {
@@ -67,9 +84,9 @@ object TrinityBuild extends Build {
       name := "trinity-core",
       libraryDependencies ++= Seq(
         "org.json4s" %% "json4s-jackson" % "3.2.2",
-        "org.sisioh" %% "scala-dddbase-core" % "0.1.24",
+        "org.sisioh" %% "scala-dddbase-core" % "0.1.25",
         "org.sisioh" %% "scala-toolbox" % "0.0.7",
-        "org.sisioh" %% "sisioh-config" % "0.0.2-SNAPSHOT",
+        "org.sisioh" %% "sisioh-config" % "0.0.3",
         "org.slf4j" % "slf4j-api" % "1.6.6",
         "org.slf4j" % "log4j-over-slf4j" % "1.6.6",
         "org.slf4j" % "jul-to-slf4j" % "1.6.6",
@@ -106,38 +123,40 @@ object TrinityBuild extends Build {
     )
   ) dependsOn (core)
 
-  lazy val viewFreeMarker = Project(
-    id = "trinity-view-freemarker",
-    base = file("trinity-view-freemarker"),
-    settings = commonSettings ++ Seq(
-      name := "trinity-view-freemarker",
-      libraryDependencies ++= Seq(
-        "org.freemarker" % "freemarker" % "2.3.19"
+  /*
+    lazy val viewFreeMarker = Project(
+      id = "trinity-view-freemarker",
+      base = file("trinity-view-freemarker"),
+      settings = commonSettings ++ Seq(
+        name := "trinity-view-freemarker",
+        libraryDependencies ++= Seq(
+          "org.freemarker" % "freemarker" % "2.3.19"
+        )
       )
-    )
-  ) dependsOn (view)
+    ) dependsOn (view)
 
-  lazy val viewVelocity = Project(
-    id = "trinity-view-velocity",
-    base = file("trinity-view-velocity"),
-    settings = commonSettings ++ Seq(
-      name := "trinity-view-velocity",
-      libraryDependencies ++= Seq(
-        "velocity" % "velocity" % "1.5"
+    lazy val viewVelocity = Project(
+      id = "trinity-view-velocity",
+      base = file("trinity-view-velocity"),
+      settings = commonSettings ++ Seq(
+        name := "trinity-view-velocity",
+        libraryDependencies ++= Seq(
+          "velocity" % "velocity" % "1.5"
+        )
       )
-    )
-  ) dependsOn (view)
+    ) dependsOn (view)
 
-  lazy val viewThymeleaf = Project(
-    id = "trinity-view-thymeleaf",
-    base = file("trinity-view-thymeleaf"),
-    settings = commonSettings ++ Seq(
-      name := "trinity-view-thymeleaf",
-      libraryDependencies ++= Seq(
-        "org.thymeleaf" % "thymeleaf" % "2.0.17"
+    lazy val viewThymeleaf = Project(
+      id = "trinity-view-thymeleaf",
+      base = file("trinity-view-thymeleaf"),
+      settings = commonSettings ++ Seq(
+        name := "trinity-view-thymeleaf",
+        libraryDependencies ++= Seq(
+          "org.thymeleaf" % "thymeleaf" % "2.0.17"
+        )
       )
-    )
-  ) dependsOn (view)
+    ) dependsOn (view)
+  */
 
   lazy val viewScalate = Project(
     id = "trinity-view-scalate",
@@ -162,7 +181,7 @@ object TrinityBuild extends Build {
         "org.specs2" %% "specs2" % "1.14"
       )
     )
-  ) dependsOn(core, viewScalate % "test", viewThymeleaf % "test", viewVelocity % "test", viewFreeMarker % "test")
+  ) dependsOn(core, viewScalate % "test") // , viewThymeleaf % "test", viewVelocity % "test", viewFreeMarker % "test")
 
   lazy val example = Project(
     id = "trinity-example",
@@ -170,7 +189,27 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity-example"
     )
-  ) dependsOn(core, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker)
+  ) dependsOn(core, viewScalate) //, viewThymeleaf, viewVelocity, viewFreeMarker)
+
+  lazy val daemon = Project(
+    id = "trinity-daemon",
+    base = file("trinity-daemon"),
+    settings = commonSettings ++ Seq(
+      name := "trinity-daemon",
+      libraryDependencies ++= Seq(
+        "commons-daemon" % "commons-daemon" % "1.0.15"
+      )
+    )
+  ) dependsOn (core)
+
+  lazy val daemonTest = Project(
+    id = "trinity-daemon-test",
+    base = file("trinity-daemon-test"),
+    settings = commonSettings ++ assemblySettings ++ Seq(
+      name := "trinity-daemon-test",
+      myAssemblySettings
+    )
+  ) dependsOn (daemon, test % "test")
 
   val root = Project(
     id = "trinity",
@@ -178,6 +217,6 @@ object TrinityBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "trinity"
     )
-  ) aggregate(core, view, viewScalate, viewThymeleaf, viewVelocity, viewFreeMarker, test, example)
+  ) aggregate(core, daemon, view, viewScalate, test) //, viewThymeleaf, viewVelocity, viewFreeMarker, test, example)
 
 }

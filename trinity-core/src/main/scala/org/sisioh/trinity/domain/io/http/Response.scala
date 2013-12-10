@@ -1,8 +1,8 @@
 package org.sisioh.trinity.domain.io.http
 
 import com.twitter.finagle.http.{Response => FinagleResponse}
-import org.sisioh.trinity.domain.io.infrastructure.http.ResponseImpl
 import scala.language.implicitConversions
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 trait Response extends Message {
 
@@ -33,11 +33,16 @@ trait Response extends Message {
 
 object Response {
 
-  def apply(underlying: FinagleResponse): Response =
+  private[trinity] def apply(underlying: FinagleResponse): Response =
     ResponseImpl(underlying)
 
   def apply(responseStatus: ResponseStatus.Value = ResponseStatus.Ok,
+            headers: Seq[(HeaderName, Any)] = Seq.empty,
+            cookies: Seq[Cookie] = Seq.empty,
+            attributes: Map[String, Any] = Map.empty[String, Any],
+            content: ChannelBuffer = ChannelBuffer.empty,
+            isMutable: Boolean = false,
             protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11): Response =
-    new ResponseImpl(responseStatus, protocolVersion = protocolVersion)
+    new ResponseImpl(responseStatus, headers, cookies, attributes, content, isMutable, protocolVersion)
 
 }

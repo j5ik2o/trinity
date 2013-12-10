@@ -1,12 +1,12 @@
 package org.sisioh.trinity.domain.io.http
 
+import com.twitter.finagle.http.{Cookie => FinagleCookie}
+import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie}
 import scala.language.implicitConversions
 
-import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie}
-import org.sisioh.trinity.domain.io.infrastructure.http.CookieImpl
-
-import com.twitter.finagle.http.{Cookie => FinagleCookie}
-
+/**
+ * クッキー。
+ */
 trait Cookie {
 
   val underlying: NettyCookie
@@ -59,6 +59,9 @@ trait Cookie {
 
 }
 
+/**
+ * コンパニオンオブジェクト。
+ */
 object Cookie {
 
   private[domain] implicit def toFinagle(self: Cookie): FinagleCookie =

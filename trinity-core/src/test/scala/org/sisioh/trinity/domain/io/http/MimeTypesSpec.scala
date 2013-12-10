@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.io.http
 
-import org.specs2.mutable.Specification
 import java.io.File
+import org.specs2.mutable.Specification
 
 class MimeTypesSpec extends Specification {
 

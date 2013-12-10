@@ -6,12 +6,15 @@ import com.twitter.util.Await
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.sisioh.trinity.domain.io.http.{Response => IOResponse, HeaderName}
 import org.sisioh.trinity.domain.mvc.action.Action
+import org.sisioh.trinity.domain.mvc.filter.Filter
 import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 import org.sisioh.trinity.domain.mvc.server.ServiceBuilder
-import org.sisioh.trinity.domain.mvc.{Filter, GlobalSettings}
+import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
+import org.sisioh.trinity.util.DurationConverters._
 import org.specs2.specification.Scope
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.Duration
 import scala.language.reflectiveCalls
 import scala.util.Try
 
@@ -30,7 +33,7 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
   (method: HttpMethod,
    path: String,
    content: Option[Content],
-   headers: Map[HeaderName, String])
+   headers: Map[HeaderName, String], timeout: Duration)
   (implicit testContext: TestContext): Try[Response] = {
     implicit val executor = testContext.executor
     val UnitTestContext(routingFilter, filters) = testContext
@@ -40,13 +43,13 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
 
       def _buildService(action: Option[Action[Request, Response]] = None)
                        (implicit executor: ExecutionContext): Service[FinagleRequest, FinagleResponse] =
-        buildService(action)(executor)
+        buildService(Environment.Development, action)(executor)
     }
     serviceBuilder.registerFilter(routingFilter)
     serviceBuilder.registerFilters(filters)
     val service = serviceBuilder._buildService()
     Try {
-      val finagleResponse = Await.result(service(request))
+      val finagleResponse = Await.result(service(request), timeout.toTwitter)
       val r = IOResponse(finagleResponse)
       Response(r)
     }
