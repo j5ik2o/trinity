@@ -22,7 +22,7 @@ object TrinityBuild extends Build {
   val commonSettings = Project.defaultSettings ++ Seq(
     organization := "org.sisioh",
     version := "1.0.0-SNAPSHOT",
-    scalaVersion := "2.10.2",
+    scalaVersion := "2.10.3",
     scalacOptions ++= Seq("-encoding", "UTF-8", "-feature", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-encoding", "UTF-8", "-deprecation"),
     resolvers ++= Seq(
@@ -33,7 +33,7 @@ object TrinityBuild extends Build {
       "Seasar Repository" at "http://maven.seasar.org/maven2/"
     ),
     libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % "2.10.2",
+      "org.scala-lang" % "scala-reflect" % "2.10.3",
       "junit" % "junit" % "4.8.1" % "test",
       "org.hamcrest" % "hamcrest-all" % "1.3" % "test",
       "org.mockito" % "mockito-core" % "1.9.5" % "test",
@@ -84,9 +84,9 @@ object TrinityBuild extends Build {
       name := "trinity-core",
       libraryDependencies ++= Seq(
         "org.json4s" %% "json4s-jackson" % "3.2.2",
-        "org.sisioh" %% "scala-dddbase-core" % "0.1.24",
+        "org.sisioh" %% "scala-dddbase-core" % "0.1.25",
         "org.sisioh" %% "scala-toolbox" % "0.0.7",
-        "org.sisioh" %% "sisioh-config" % "0.0.2-SNAPSHOT",
+        "org.sisioh" %% "sisioh-config" % "0.0.3",
         "org.slf4j" % "slf4j-api" % "1.6.6",
         "org.slf4j" % "log4j-over-slf4j" % "1.6.6",
         "org.slf4j" % "jul-to-slf4j" % "1.6.6",
