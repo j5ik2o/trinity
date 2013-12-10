@@ -3,7 +3,7 @@ package org.sisioh.trinity.domain.io.buffer
 import java.nio.{ByteBuffer, ByteOrder}
 import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
 
-private[trinity]
+private[buffer]
 case class ChannelBufferFactoryImpl(underlying: NettyChannelBufferFactory)
   extends ChannelBufferFactory {
 

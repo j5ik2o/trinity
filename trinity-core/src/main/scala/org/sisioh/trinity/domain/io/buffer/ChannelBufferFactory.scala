@@ -27,13 +27,13 @@ trait ChannelBufferFactory {
 
 object ChannelBufferFactory {
 
-  implicit def toNetty(self: ChannelBufferFactory): NettyChannelBufferFactory =
+  private[trinity] implicit def toNetty(self: ChannelBufferFactory): NettyChannelBufferFactory =
     self match {
       case ChannelBufferFactoryImpl(underlying) => underlying
       case _ => throw new IllegalArgumentException()
     }
 
-  implicit def toTrinity(underlying: NettyChannelBufferFactory): ChannelBufferFactory =
+  private[trinity] implicit def toTrinity(underlying: NettyChannelBufferFactory): ChannelBufferFactory =
     ChannelBufferFactoryImpl(underlying)
 
 }

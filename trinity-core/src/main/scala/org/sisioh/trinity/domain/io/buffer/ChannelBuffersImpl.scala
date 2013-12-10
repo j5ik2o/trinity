@@ -4,6 +4,7 @@ import java.nio.{ByteBuffer, ByteOrder}
 import org.jboss.netty.buffer.{ChannelBuffers => NettyChannelBuffers}
 import org.sisioh.trinity.domain.io.http.Charset
 
+private[buffer]
 object ChannelBuffersImpl extends ChannelBuffers {
 
   def buffer(capacity: Int): ChannelBuffer = NettyChannelBuffers.buffer(capacity)
