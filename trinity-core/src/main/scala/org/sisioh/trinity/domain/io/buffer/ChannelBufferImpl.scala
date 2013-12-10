@@ -11,7 +11,7 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
 import org.sisioh.trinity.domain.io.http.Charset
 import scala.util.Try
 
-
+private[buffer]
 case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = false) extends ChannelBuffer {
 
   override def equals(obj: Any): Boolean = obj match {

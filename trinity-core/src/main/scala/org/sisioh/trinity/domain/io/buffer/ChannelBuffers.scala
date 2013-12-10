@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.io.buffer
 
 import java.nio._
-import org.jboss.netty.buffer.{ ChannelBufferFactory => NettyChannelBufferFactory }
+import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
 import org.sisioh.trinity.domain.io.http.Charset
 import scala.language.implicitConversions
 
@@ -100,14 +100,14 @@ trait ChannelBuffers {
 
 object ChannelBuffers extends ChannelBuffers {
 
-  private[buffer] implicit def toNetty(target: ChannelBufferFactory): NettyChannelBufferFactory = target match {
+  private[trinity] implicit def toNetty(target: ChannelBufferFactory): NettyChannelBufferFactory = target match {
     case ncb: ChannelBufferFactoryImpl =>
       ncb.underlying
     case _ =>
       throw new IllegalArgumentException()
   }
 
-  private[buffer] val impl: ChannelBuffers = ChannelBuffersImpl
+  private[trinity] val impl: ChannelBuffers = ChannelBuffersImpl
 
   def buffer(capacity: Int): ChannelBuffer = impl.buffer(capacity)
 
