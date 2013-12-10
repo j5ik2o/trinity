@@ -4,7 +4,9 @@ import java.nio.ByteOrder
 import org.jboss.netty.buffer.{HeapChannelBufferFactory => NettyHeapChannelBufferFactory}
 import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
 
-
+/**
+ * HeapChannelBufferのためのファクトリ。
+ */
 object HeapChannelBufferFactory {
 
   def apply(): ChannelBufferFactory =
