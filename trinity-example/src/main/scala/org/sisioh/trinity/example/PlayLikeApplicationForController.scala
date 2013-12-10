@@ -6,6 +6,8 @@ import org.sisioh.trinity._
 
 object PlayLikeApplicationForController extends ConsoleApplication {
 
+  override protected lazy val applicationId = "trinity-example"
+
   case class MainController() extends ControllerSupport {
 
     def helloWorld = SimpleAction {
