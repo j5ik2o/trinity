@@ -78,7 +78,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
     }
 
     def around[T: AsResult](t: => T): Result = {
-      running(AsResult(t))
+      running(AsResult.effectively(t))
     }
 
   }
