@@ -6,22 +6,22 @@ import AssemblyKeys._
 object TrinityBuild extends Build {
 
   val myAssemblySettings = mergeStrategy in assembly <<= (mergeStrategy in assembly) {
-  (old) => {
-    case "rootdoc.txt" | "readme.txt" => MergeStrategy.discard
-    case PathList("META-INF", xs @ _*) if (xs.length != 0) => {
-      xs.last.split("\\.").last.toUpperCase match {
-        case "MF" | "SF" | "DSA" | "RSA" => MergeStrategy.discard
-        case _ => MergeStrategy.first
+    (old) => {
+      case "rootdoc.txt" | "readme.txt" => MergeStrategy.discard
+      case PathList("META-INF", xs@_*) if (xs.length != 0) => {
+        xs.last.split("\\.").last.toUpperCase match {
+          case "MF" | "SF" | "DSA" | "RSA" => MergeStrategy.discard
+          case _ => MergeStrategy.first
+        }
       }
+      case PathList("com", "twitter", "common", "args", "apt", "cmdline.arg.info.txt.1") => MergeStrategy.first
+      case _ => MergeStrategy.first
     }
-    case PathList("com", "twitter", "common", "args", "apt", "cmdline.arg.info.txt.1") => MergeStrategy.first
-    case _ => MergeStrategy.first
-  }
   }
 
-  val commonSettings = Project.defaultSettings ++ Seq(
+  val commonSettings = Project.defaultSettings ++ net.virtualvoid.sbt.graph.Plugin.graphSettings ++ Seq(
     organization := "org.sisioh",
-    version := "1.0.0",
+    version := "1.0.1",
     scalaVersion := "2.10.3",
     scalacOptions ++= Seq("-encoding", "UTF-8", "-feature", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-encoding", "UTF-8", "-deprecation"),
@@ -84,7 +84,7 @@ object TrinityBuild extends Build {
       name := "trinity-core",
       libraryDependencies ++= Seq(
         "org.json4s" %% "json4s-jackson" % "3.2.2",
-        "org.sisioh" %% "scala-dddbase-core" % "0.1.25",
+        "org.sisioh" %% "scala-dddbase-core" % "0.1.26",
         "org.sisioh" %% "scala-toolbox" % "0.0.7",
         "org.sisioh" %% "sisioh-config" % "0.0.3",
         "org.slf4j" % "slf4j-api" % "1.6.6",
@@ -178,7 +178,7 @@ object TrinityBuild extends Build {
       libraryDependencies ++= Seq(
         "org.hamcrest" % "hamcrest-all" % "1.3",
         "org.mockito" % "mockito-core" % "1.9.5",
-        "org.specs2" %% "specs2" % "1.14"
+        "org.specs2" %% "specs2" % "2.0"
       )
     )
   ) dependsOn(core, viewScalate % "test") // , viewThymeleaf % "test", viewVelocity % "test", viewFreeMarker % "test")
@@ -209,7 +209,7 @@ object TrinityBuild extends Build {
       name := "trinity-daemon-test",
       myAssemblySettings
     )
-  ) dependsOn (daemon, test % "test")
+  ) dependsOn(daemon, test % "test")
 
   val root = Project(
     id = "trinity",
