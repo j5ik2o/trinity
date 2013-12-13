@@ -81,7 +81,7 @@ trait Request extends Message with RequestProxy with LoggingEx {
         acceptParts.map {
           xs =>
             val part = Splitter.on(";q=").split(xs).toArray.head
-            ContentType.valueOf(part).getOrElse(ContentType.All)
+            ContentTypes.valueOf(part).getOrElse(ContentTypes.All)
         }.toSeq
     }.getOrElse(Seq.empty[ContentType])
   }
