@@ -21,7 +21,7 @@ object TrinityBuild extends Build {
 
   val commonSettings = Project.defaultSettings ++ net.virtualvoid.sbt.graph.Plugin.graphSettings ++ Seq(
     organization := "org.sisioh",
-    version := "1.0.2-SNAPSHOT",
+    version := "1.0.2",
     scalaVersion := "2.10.3",
     scalacOptions ++= Seq("-encoding", "UTF-8", "-feature", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-encoding", "UTF-8", "-deprecation"),
