@@ -29,9 +29,7 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
   private val httpClients = scala.collection.mutable.Map.empty[SocketAddress, Service[HttpRequest, HttpResponse]]
 
-  private val defaultHost = "localhost"
 
-  private val defaultPort = 7070
 
   protected val serverAwaitDuration = Duration(5, TimeUnit.MINUTES)
 

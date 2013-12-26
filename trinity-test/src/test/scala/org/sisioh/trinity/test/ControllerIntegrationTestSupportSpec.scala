@@ -21,10 +21,16 @@ class ControllerIntegrationTestSupportSpec extends Specification with Controller
       ResponseBuilder().withContent("Hello World!").toFuture
   }
 
+  def post = SimpleAction {
+    request =>
+      ResponseBuilder().withContent("body = " + request.contentAsString()).toFuture
+  }
+
   val routingFilter = RoutingFilter.createForActions {
     implicit pathPatternParser =>
       Seq(
-        Get % "/hello" -> helloWorld
+        Get % "/hello" -> helloWorld,
+        Post % "/post" -> post
       )
   }
 
@@ -37,6 +43,25 @@ class ControllerIntegrationTestSupportSpec extends Specification with Controller
           result must beSuccessfulTry.like {
             case response =>
               response.contentAsString() must_== "Hello World!"
+          }
+      }
+
+    }
+    "test post method" in new WithServer(Server(filter = Some(routingFilter))){
+      testPost("/post", Some(StringContent("hoge"))) {
+        result =>
+          result must beSuccessfulTry.like {
+            case response =>
+              response.contentAsString() must_== "body = hoge"
+          }
+      }
+    }
+    "test post method" in new WithServer(Server(filter = Some(routingFilter))){
+      testPost("/post", Some(MapContent(Map("hoge"->"fuga")))) {
+        result =>
+          result must beSuccessfulTry.like {
+            case response =>
+              response.contentAsString() must_== "body = hoge=fuga"
           }
       }
     }
