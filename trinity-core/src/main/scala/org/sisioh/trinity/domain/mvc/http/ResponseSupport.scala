@@ -15,7 +15,7 @@
  */
 package org.sisioh.trinity.domain.mvc.http
 
-import org.sisioh.trinity.domain.io.http.{MimeTypes, ContentType, HeaderNames, ResponseStatus}
+import org.sisioh.trinity.domain.io.http._
 import scala.concurrent.Future
 
 trait ResponseSupport {
@@ -34,7 +34,7 @@ trait ResponseSupport {
     if (!request.routeParams.get("format").isEmpty) {
       val format = request.routeParams("format")
       val mime = MimeTypes.fileExtensionOf("." + format)
-      val contentType = ContentType.valueOf(mime).getOrElse(ContentType.All)
+      val contentType = ContentTypes.valueOf(mime).getOrElse(ContentTypes.All)
       if (callback.isDefinedAt(contentType)) {
         callback(contentType)
       } else {

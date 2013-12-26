@@ -12,7 +12,7 @@ trait Charset extends EnumEntry {
 
 }
 
-object Charsets extends Enum[Charset] {
+class Charsets extends Enum[Charset] {
 
   def valueOf(name: String): Option[Charset] = {
     values.find(_.toObject.toString == name)
@@ -29,6 +29,8 @@ object Charsets extends Enum[Charset] {
   val ISO_8859_1: Charset = CharsetValue("ISO-8859-1")
   val US_ASCII: Charset = CharsetValue("US-ASCII")
 
-  UTF_8 % UTF_16 % UTF_16BE % UTF_16LE % ISO_8859_1 % US_ASCII
+  val values = defineValues(UTF_8, UTF_16, UTF_16BE, UTF_16LE, ISO_8859_1, US_ASCII)
 
 }
+
+object Charsets extends Charsets

@@ -17,7 +17,7 @@ package org.sisioh.trinity.domain.mvc.action
 
 import java.lang.String
 import org.apache.commons.io.IOUtils
-import org.sisioh.trinity.domain.io.http.{ContentType, ResponseStatus}
+import org.sisioh.trinity.domain.io.http.{ContentTypes, ResponseStatus}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.util.ResourceUtil
 import scala.concurrent.Future
@@ -38,7 +38,7 @@ case object NotFoundHandleAction extends Action[Request, Response] {
       Future.successful(
         Response(
           ResponseStatus.NotFound
-        ).withContentType(ContentType.TextHtml).withContentAsString(html)
+        ).withContentType(ContentTypes.TextHtml).withContentAsString(html)
       )
     }).get
   }
