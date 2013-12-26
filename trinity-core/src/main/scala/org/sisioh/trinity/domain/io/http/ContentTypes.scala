@@ -23,7 +23,7 @@ trait ContentType extends EnumEntry {
 /**
  * コンパニオンオブジェクト。
  */
-object ContentType extends Enum[ContentType] {
+class ContentTypes extends Enum[ContentType] {
 
   def ofAny(main: String, sub: Option[String]): ContentType = AnyContentType(main, sub)
 
@@ -82,6 +82,8 @@ object ContentType extends Enum[ContentType] {
 
   private case class AnyContentType(main: String, sub: Option[String]) extends ContentType
 
-  TextPlan % TextHtml % AppJson % AppXml % AppRss % AppOctetStream % AppOctetStream % All
+  val values = defineValues(TextPlan, TextHtml, AppJson, AppXml, AppRss, AppOctetStream, AppOctetStream, All)
 
 }
+
+object ContentTypes extends ContentTypes

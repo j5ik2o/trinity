@@ -8,7 +8,7 @@ sealed trait HeaderName extends EnumEntry {
   val asString: String
 }
 
-object HeaderNames extends Enum[HeaderName] {
+class HeaderNames extends Enum[HeaderName] {
 
   private case class AnyHeaderName(asString: String) extends HeaderName
 
@@ -305,51 +305,54 @@ object HeaderNames extends Enum[HeaderName] {
     val asString: String = Names.WWW_AUTHENTICATE
   }
 
-  Accept % AcceptCharset %
-    AcceptEncoding % AcceptLanguage % AcceptRanges %
-    AcceptPatch % AccessControlAllowCredentials % AccessControlAllowHeaders %
+  val values = defineValues(Accept, AcceptCharset,
+    AcceptEncoding, AcceptLanguage, AcceptRanges,
+    AcceptPatch, AccessControlAllowCredentials, AccessControlAllowHeaders,
     // --- for Access
-    AccessControlAllowMethods % AccessControlAllowOrigin % AccessControlExposeHeaders %
-    AccessControlMaxAge % AccessControlRequestHeaders % AccessControlRequestMethod %
+    AccessControlAllowMethods, AccessControlAllowOrigin, AccessControlExposeHeaders,
+    AccessControlMaxAge, AccessControlRequestHeaders, AccessControlRequestMethod,
     // ---
-    Age % Allow % Authorization % CacheControl % Connection %
+    Age, Allow, Authorization, CacheControl, Connection,
     // --- for Content
-    ContentBase % ContentEncoding %
-    ContentLanguage % ContentLength % ContentLocation % ContentTransferEncoding %
-    ContentMD5 % ContentRange % ContentType %
-    Cookie %
-    Date %
-    ETag %
-    Expect %
-    Expires %
-    From %
-    Host %
+    ContentBase, ContentEncoding,
+    ContentLanguage, ContentLength, ContentLocation, ContentTransferEncoding,
+    ContentMD5, ContentRange, ContentType,
+    Cookie,
+    Date,
+    ETag,
+    Expect,
+    Expires,
+    From,
+    Host,
     // ---
-    IfMatch % IfModifiedSince % IfNoneMatch % IfRange % IfUnmodifiedSince %
-    LastModified %
-    Location %
-    MaxForwards %
-    Origin %
-    Pragma %
+    IfMatch, IfModifiedSince, IfNoneMatch, IfRange, IfUnmodifiedSince,
+    LastModified,
+    Location,
+    MaxForwards,
+    Origin,
+    Pragma,
     // --- Proxy
-    ProxyAuthenticate % ProxyAuthorization %
+    ProxyAuthenticate, ProxyAuthorization,
     // ---
-    Referer % RetryAfter %
-    SecWebSocketKey1 % SecWebSocketKey2 %
-    SecWebSocketLocation % SecWebSocketOrigin %
-    SecWebSocketProtocol % SecWebSocketVersion %
-    Server %
-    SetCookie % SetCookie2 %
-    Te %
-    Trailer %
-    TransferEncoding %
-    Upgrade %
-    UserAgent %
-    Vary %
-    Via %
-    Warning %
-    WebSocketLocation % WebSocketOrigin % WebSocketProtocol %
-    WWWAuthenticate
+    Referer, RetryAfter,
+    SecWebSocketKey1, SecWebSocketKey2,
+    SecWebSocketLocation, SecWebSocketOrigin,
+    SecWebSocketProtocol, SecWebSocketVersion,
+    Server,
+    SetCookie, SetCookie2,
+    Te,
+    Trailer,
+    TransferEncoding,
+    Upgrade,
+    UserAgent,
+    Vary,
+    Via,
+    Warning,
+    WebSocketLocation, WebSocketOrigin, WebSocketProtocol,
+    WWWAuthenticate)
 
 
 }
+
+
+object HeaderNames extends HeaderNames
