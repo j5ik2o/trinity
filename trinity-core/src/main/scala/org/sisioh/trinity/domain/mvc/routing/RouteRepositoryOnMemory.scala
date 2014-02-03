@@ -15,14 +15,22 @@
  */
 package org.sisioh.trinity.domain.mvc.routing
 
-import org.sisioh.dddbase.core.lifecycle.memory.mutable.sync.SyncRepositoryOnMemorySupport
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+
 
 private[routing]
 case class RouteRepositoryOnMemory()
-  extends SyncRepositoryOnMemorySupport[RouteId, Route[Request, Response]]
-  with RouteRepository {
+  extends RouteRepository {
 
-  type This = RouteRepositoryOnMemory
+  val entites: collection.mutable.Map[RouteId, Route[Request, Response]] = collection.mutable.Map.empty[RouteId, Route[Request, Response]]
 
+  override def store(route: Route[Request, Response]): Unit = {
+    entites += (route.identity -> route)
+  }
+
+  override def find(predicate: PartialFunction[Route[Request, Response], Boolean]): Option[Route[Request, Response]] = {
+    entites.find {
+      case (_, route) => predicate(route)
+    }.map(_._2)
+  }
 }
