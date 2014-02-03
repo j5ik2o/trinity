@@ -1,6 +1,6 @@
 package org.sisioh.trinity.test
 
-import com.twitter.finagle.http.{Request => FinagleRequest, Method}
+import com.twitter.finagle.http.{Request => FinagleRequest, RequestBuilder, Method}
 import java.util.concurrent.TimeUnit
 import org.jboss.netty.handler.codec.http.HttpMethod
 import org.jboss.netty.handler.codec.http.multipart.{HttpPostRequestEncoder, DefaultHttpDataFactory}
@@ -11,6 +11,8 @@ import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.Duration
 import scala.util.Try
+import org.jboss.netty.util.CharsetUtil
+import org.jboss.netty.buffer.ChannelBuffers
 
 trait ControllerTestSupport extends LoggingEx {
 
@@ -25,6 +27,10 @@ trait ControllerTestSupport extends LoggingEx {
   protected val globalSettings: Option[GlobalSettings[Request, Response]] = None
 
   protected val requestTimeout = Duration(10, TimeUnit.SECONDS)
+
+  protected val defaultHost = "localhost"
+
+  protected val defaultPort = 7070
 
   /**
    * HTTPリクエストを生成する。
@@ -41,12 +47,14 @@ trait ControllerTestSupport extends LoggingEx {
    content: Option[Content],
    headers: Map[HeaderName, String]): FinagleRequest =
     withDebugScope(s"newRequest($method, $path, $content, $headers)") {
+      val host = serverHost.getOrElse(defaultHost)
+      val port = serverPort.getOrElse(defaultPort)
+      def url = "http://" + host + ":" + port
       val request = content match {
         case Some(StringContent(v)) =>
-          val result = FinagleRequest(path)
-          result.httpRequest.setMethod(method)
-          result.contentString = v
-          result
+          val httpRequest = RequestBuilder().url(url + path).
+            build(method, Some(ChannelBuffers.copiedBuffer(v, CharsetUtil.UTF_8)))
+          FinagleRequest(httpRequest)
         case Some(MapContent(v)) if method == Method.Post =>
           val result = FinagleRequest(path)
           result.httpRequest.setMethod(method)
