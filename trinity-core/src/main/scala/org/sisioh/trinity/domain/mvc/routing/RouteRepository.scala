@@ -15,12 +15,14 @@
  */
 package org.sisioh.trinity.domain.mvc.routing
 
-import org.sisioh.dddbase.core.lifecycle.sync.{SyncEntityReadableByIterable, SyncRepository}
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 
-trait RouteRepository
-  extends SyncRepository[RouteId, Route[Request, Response]]
-  with SyncEntityReadableByIterable[RouteId, Route[Request, Response]]
+trait RouteRepository {
+
+  def find(route: PartialFunction[Route[Request, Response], Boolean]): Option[Route[Request, Response]]
+
+  def store(route: Route[Request, Response]): Unit
+}
 
 object RouteRepository {
 

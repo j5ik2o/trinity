@@ -15,7 +15,6 @@
  */
 package org.sisioh.trinity.domain.mvc.routing
 
-import org.sisioh.dddbase.core.lifecycle.sync.SyncEntityIOContext
 import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc._
 import org.sisioh.trinity.domain.mvc.action.{NotFoundHandleAction, Action}
@@ -49,7 +48,6 @@ case class RoutingFilter
   }
 
   protected def getActionWithRouteParams(request: Request): Option[(Action[Request, Response], Map[String, String])] = {
-    implicit val ctx = SyncEntityIOContext
     routeRepository.find {
       case Route(RouteId(m, pattern), _) =>
         val routeParamsOpt = pattern(request.path.split('?').head)
@@ -84,8 +82,6 @@ case class RoutingFilter
  * コンパニオンオブジェクト。
  */
 object RoutingFilter extends LoggingEx {
-
-  private implicit val ctx = SyncEntityIOContext
 
   def createForControllers(controllers: RouteDefHolder*)
                           (implicit executor: ExecutionContext,
