@@ -16,7 +16,6 @@
 package org.sisioh.trinity.domain.mvc.routing
 
 import java.util.concurrent.atomic.AtomicLong
-import org.sisioh.dddbase.core.model.{EntityCloneable, Entity}
 import org.sisioh.trinity.domain.io.http.Methods
 import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPatternParser, PathPattern}
@@ -27,9 +26,16 @@ import scala.concurrent.Future
  */
 private[mvc]
 trait Route[Req, Rep]
-  extends Entity[RouteId]
-  with EntityCloneable[RouteId, Route[Req, Rep]]
-  with Ordered[Route[Req, Rep]] {
+  extends Serializable with Ordered[Route[Req, Rep]] {
+
+  val identity: RouteId
+
+  override def equals(obj: Any): Boolean = obj match {
+    case that: Route[_, _] => this.identity == that.identity
+    case _ => false
+  }
+
+  override def hashCode = 31 * identity.##
 
   def compare(that: Route[Req, Rep]): Int = {
     this.order compareTo that.order
