@@ -14,7 +14,7 @@ import scala.util.Try
 import org.jboss.netty.util.CharsetUtil
 import org.jboss.netty.buffer.ChannelBuffers
 
-trait ControllerTestSupport extends LoggingEx {
+trait ControllerTestSupport {
 
   trait TestContext {
     val executor: ExecutionContext
@@ -45,8 +45,7 @@ trait ControllerTestSupport extends LoggingEx {
   (method: HttpMethod,
    path: String,
    content: Option[Content],
-   headers: Map[HeaderName, String]): FinagleRequest =
-    withDebugScope(s"newRequest($method, $path, $content, $headers)") {
+   headers: Map[HeaderName, String]): FinagleRequest = {
       val host = serverHost.getOrElse(defaultHost)
       val port = serverPort.getOrElse(defaultPort)
       def url = "http://" + host + ":" + port
@@ -78,7 +77,6 @@ trait ControllerTestSupport extends LoggingEx {
         header =>
           request.httpRequest.setHeader(header._1.asString, header._2)
       }
-      scopedDebug(s"request = $request")
       request
     }
 
