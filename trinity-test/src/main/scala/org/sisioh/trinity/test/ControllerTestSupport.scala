@@ -55,23 +55,20 @@ trait ControllerTestSupport {
             build(method, Some(ChannelBuffers.copiedBuffer(v, CharsetUtil.UTF_8)))
           FinagleRequest(httpRequest)
         case Some(MapContent(v)) if method == Method.Post =>
-          val result = FinagleRequest(path)
-          result.httpRequest.setMethod(method)
-          val dataFactory = new DefaultHttpDataFactory(false)
-          val encoder = new HttpPostRequestEncoder(dataFactory, result, false)
-          v.toList.foreach {
-            case (k, v) =>
-              encoder.addBodyAttribute(k, v)
-          }
-          FinagleRequest(encoder.finalizeRequest())
+          val httpRequest = RequestBuilder().url(url + path).
+            addFormElement(v.toSeq:_*).buildFormPost(false)
+          FinagleRequest(httpRequest)
         case Some(MapContent(v)) =>
-          val result = FinagleRequest(path, v.toList: _*)
-          result.httpRequest.setMethod(method)
-          result
+          val params = v map {
+            case (key, value) =>
+              key + '=' + value
+          } mkString("?", "&", "")
+          val httpRequest = RequestBuilder().url(url + path).
+            build(method, Some(ChannelBuffers.copiedBuffer(params, CharsetUtil.UTF_8)))
+          FinagleRequest(httpRequest)
         case _ =>
-          val result = FinagleRequest(path)
-          result.httpRequest.setMethod(method)
-          result
+          val httpRequest = RequestBuilder().url(url + path).build(method, None)
+          FinagleRequest(httpRequest)
       }
       headers.foreach {
         header =>
