@@ -26,10 +26,10 @@ object TrinityBuild extends Build {
     scalacOptions ++= Seq("-encoding", "UTF-8", "-feature", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-encoding", "UTF-8", "-deprecation"),
     resolvers ++= Seq(
+      "Sonatype Snapshot Repository" at "https://oss.sonatype.org/content/repositories/snapshots/",
+      "Sonatype Release Repository" at "https://oss.sonatype.org/content/repositories/releases/",
       "Twitter Repository" at "http://maven.twttr.com/",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-      "Sonatype Release Repository" at "https://oss.sonatype.org/content/repositories/releases/",
-      "Sonatype Snapshot Repository" at "https://oss.sonatype.org/content/repositories/snapshots/",
       "Seasar Repository" at "http://maven.seasar.org/maven2/"
     ),
     libraryDependencies ++= Seq(
@@ -84,7 +84,7 @@ object TrinityBuild extends Build {
       name := "trinity-core",
       libraryDependencies ++= Seq(
         "org.json4s" %% "json4s-jackson" % "3.2.2",
-        "org.sisioh" %% "scala-toolbox" % "0.0.8-SNAPSHOT",
+        "org.sisioh" %% "scala-toolbox" % "0.0.8",
         "org.sisioh" %% "sisioh-config" % "0.0.3",
         "org.slf4j" % "slf4j-api" % "1.6.6",
         "org.slf4j" % "log4j-over-slf4j" % "1.6.6",
