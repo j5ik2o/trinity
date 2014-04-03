@@ -68,10 +68,13 @@ trait ControllerTestSupport {
         case None if method == Method.Get =>
           val httpRequest = RequestBuilder().url(url + path).buildGet()
           FinagleRequest(httpRequest)
+        case None if method == Method.Post =>
+          val httpRequest = RequestBuilder().url(url + path).build(method, None)
+          FinagleRequest(httpRequest)
         case Some(_) if method == Method.Get =>
-          throw new IllegalArgumentException()
+          throw new IllegalArgumentException("Illegal request argument")
         case _ =>
-          throw new IllegalArgumentException()
+          throw new IllegalArgumentException("Illegal request argument")
       }
       headers.foreach {
         header =>
