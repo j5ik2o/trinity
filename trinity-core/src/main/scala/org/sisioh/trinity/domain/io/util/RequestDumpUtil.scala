@@ -2,15 +2,18 @@ package org.sisioh.trinity.domain.io.util
 
 import org.sisioh.trinity.domain.io.http.{Response, Request}
 
+/**
+ * Represents the utility class for dumping the request.
+ */
 object RequestDumpUtil {
 
   /**
-   * リクエストヘッダの内容を文字列バッファに編集します。
+   * Dumps the contents the headers has to the string buffer.
    *
-   * @param sb      文字列バッファ
-   * @param request リクエスト
-   * @param lf      改行文字
-   * @param indent  インデント
+   * @param sb      string buffer
+   * @param request [[Request]]
+   * @param lf      LF
+   * @param indent  indent
    */
   def dumpRequestHeaders(sb: StringBuilder,
                          request: Request, lf: String,
@@ -23,12 +26,12 @@ object RequestDumpUtil {
   }
 
   /**
-   * リクエスト属性の内容を文字列バッファに編集します。
+   * Dumps the contents the attributes has to the string buffer.
    *
-   * @param sb      文字列バッファ
-   * @param request リクエスト
-   * @param lf      改行文字
-   * @param indent  インデント
+   * @param sb      string buffer
+   * @param request [[Request]]
+   * @param lf      LF
+   * @param indent  indent
    */
   def dumpRequestAttributes(sb: StringBuilder, request: Request, lf: String, indent: String) {
     val headers = request.attributes.map {
@@ -40,12 +43,12 @@ object RequestDumpUtil {
 
 
   /**
-   * クッキーの内容を文字列バッファに編集します。
+   * Dumps the contents the cookies has to the string builder.
    *
-   * @param sb      文字列バッファ
-   * @param request リクエスト
-   * @param lf      改行文字
-   * @param indent  インデント
+   * @param sb      string buffer
+   * @param request [[Request]]
+   * @param lf      LF
+   * @param indent  indent
    */
   def dumpCookies(sb: StringBuilder, request: Request, lf: String, indent: String) {
     val cookies = request.cookies.map {
@@ -57,12 +60,12 @@ object RequestDumpUtil {
 
 
   /**
-   * リクエストパラメータの内容を文字列バッファに編集します。
+   * Dumps the contents the request parameters has to string buffer.
    *
-   * @param sb           文字列バッファ
-   * @param request           リクエスト
-   * @param lf            改行文字
-   * @param indent            インデント
+   * @param sb      string buffer
+   * @param request [[Request]]
+   * @param lf      LF
+   * @param indent  indent
    */
   def dumpRequestParameters(sb: StringBuilder, request: Request, lf: String, indent: String) {
     val params = request.getParamNames.map {
@@ -74,16 +77,12 @@ object RequestDumpUtil {
   }
 
   /**
-   * リクエストのプロパティを文字列バッファに編集します。
+   * Dumps the request properties to string buffer.
    *
-   * @param sb
-     * 文字列バッファ
-   * @param request
-     * リクエスト
-   * @param lf
-     * 改行文字
-   * @param indent
-     * インデント
+   * @param sb      string buffer
+   * @param request [[Request]]
+   * @param lf      LF
+   * @param indent  indent
    */
   def dumpRequestProperties(sb: StringBuilder, request: Request, lf: String, indent: String) {
     sb.append(indent)
@@ -127,18 +126,18 @@ object RequestDumpUtil {
 
 
   /**
-   * レスポンスのプロパティを文字列バッファに編集します。
+   * Dumps the response properties to string buffer.
    *
-   * @param sb 文字列バッファ
-   * @param response レスポンス
-   * @param lf 改行文字
-   * @param indent インデント
+   * @param sb      string buffer
+   * @param request [[Request]]
+   * @param lf      LF
+   * @param indent  indent
    */
   def dumpResponseProperties(sb: StringBuilder, response: Response, lf: String, indent: String) {
     sb.append(indent)
     sb.append("Response class=" + response.getClass.getName).append(
       ", instance=").append(response.toString().trim())
-    sb.append(lf);
+    sb.append(lf)
   }
 
 

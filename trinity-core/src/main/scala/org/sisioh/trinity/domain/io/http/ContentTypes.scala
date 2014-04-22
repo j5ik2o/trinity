@@ -4,10 +4,18 @@ import org.sisioh.scala.toolbox.Enum
 import org.sisioh.scala.toolbox.EnumEntry
 
 /**
- * コンテントタイプを表すトレイト。
+ * Represents the enumeration entry for content type.
  */
 trait ContentType extends EnumEntry {
+
+  /**
+   * main type name.
+   */
   val main: String
+
+  /**
+   * sub type name.
+   */
   val sub: Option[String]
 
   override def equals(obj: Any) = obj match {
@@ -21,12 +29,25 @@ trait ContentType extends EnumEntry {
 }
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the enumeration for [[ContentType]].
  */
 class ContentTypes extends Enum[ContentType] {
 
+  /**
+   * Gets a any [[ContentType]].
+   *
+   * @param main main type name
+   * @param sub sub type name
+   * @return [[ContentType]]
+   */
   def ofAny(main: String, sub: Option[String]): ContentType = AnyContentType(main, sub)
 
+  /**
+   * Gets a any [[ContentType]].
+   *
+   * @param value content type name as string(like "main/sub", "main")
+   * @return [[ContentType]]
+   */
   def ofAny(value: String): ContentType = {
     val s = value.split("/")
     if (s.size > 0) {
@@ -36,6 +57,12 @@ class ContentTypes extends Enum[ContentType] {
     }
   }
 
+  /**
+   * Gets the enumeration entry.
+   *
+   * @param value content type name as string
+   * @return [[ContentType]]
+   */
   def valueOf(value: String): Option[ContentType] = {
     values.find(_.toString() == value)
   }
@@ -86,4 +113,7 @@ class ContentTypes extends Enum[ContentType] {
 
 }
 
+/**
+ * Represents the companion object for [[ContentTypes]].
+ */
 object ContentTypes extends ContentTypes

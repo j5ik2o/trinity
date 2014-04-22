@@ -10,6 +10,11 @@ import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.Request
 import org.sisioh.trinity.domain.mvc.http.Response
 
+/**
+ * Represents the Gateway Filter.
+ *
+ * @param action [[Action]]
+ */
 case class GatewayFilter(action: Option[Action[Request, Response]] = None)
   extends FinagleFilter[IORequest, IOResponse, Request, Response] {
 
