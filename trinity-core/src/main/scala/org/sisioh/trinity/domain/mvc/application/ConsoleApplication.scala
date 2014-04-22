@@ -16,9 +16,9 @@
 package org.sisioh.trinity.domain.mvc.application
 
 /**
- * コンソールアプリケーションを表すトレイト。
+ * Represents the trait for the console application.
  *
- * コンソールアプリケーションを実装する場合は、このトレイトを実装するだけでよい。
+ * Implements a class by using this trait if you implement a console application.
  */
 trait ConsoleApplication extends Application with App with ConsoleApplicationSupport
 

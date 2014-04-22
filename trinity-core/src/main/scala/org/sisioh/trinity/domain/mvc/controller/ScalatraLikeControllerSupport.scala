@@ -24,6 +24,9 @@ import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util.matching.Regex
 
+/**
+ * Represents the trait to support scalatra like controller.
+ */
 trait ScalatraLikeControllerSupport extends ControllerSupport with RouteDefHolder {
 
   protected val routeDefs = mutable.ListBuffer.empty[RouteDef]
