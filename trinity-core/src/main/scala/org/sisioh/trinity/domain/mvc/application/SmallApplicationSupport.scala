@@ -17,6 +17,9 @@ package org.sisioh.trinity.domain.mvc.application
 
 import org.sisioh.trinity.domain.mvc.controller.ControllerSupport
 
+/**
+ * Represents the trait to support a simple application.
+ */
 trait SmallApplicationSupport extends Bootstrap with ControllerSupport {
   this: Application =>
 

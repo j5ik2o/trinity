@@ -18,6 +18,9 @@ package org.sisioh.trinity.domain.mvc.application
 import org.sisioh.trinity.domain.mvc.controller.ScalatraLikeControllerSupport
 import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 
+/**
+ * Represents the trait to support the Scalatra like application.
+ */
 trait ScalatraLikeApplicationSupport extends Bootstrap with ScalatraLikeControllerSupport {
   this: Application =>
 
