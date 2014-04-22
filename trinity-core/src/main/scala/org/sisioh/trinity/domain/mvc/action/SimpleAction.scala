@@ -19,12 +19,12 @@ import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import scala.concurrent.Future
 
 /**
- * シンプルな[[org.sisioh.trinity.domain.mvc.action.Action]]。
+ * Represents the simple action.
  */
 trait SimpleAction extends Action[Request, Response]
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the companion object for [[SimpleAction]].
  */
 object SimpleAction {
 

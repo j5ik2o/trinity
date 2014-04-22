@@ -5,9 +5,8 @@ import java.nio.ByteOrder
 import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
 import scala.language.implicitConversions
 
-
 /**
- * [[org.sisioh.trinity.domain.io.buffer.ChannelBuffer]]のためのファクトリ。
+ * Represents the trait for [[org.sisioh.trinity.domain.io.buffer.ChannelBuffer]].
  */
 trait ChannelBufferFactory {
 
@@ -25,6 +24,9 @@ trait ChannelBufferFactory {
 
 }
 
+/**
+ *  Represents the companion object for [[ChannelBufferFactory]]
+ */
 object ChannelBufferFactory {
 
   private[trinity] implicit def toNetty(self: ChannelBufferFactory): NettyChannelBufferFactory =

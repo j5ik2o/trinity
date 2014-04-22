@@ -18,10 +18,10 @@ package org.sisioh.trinity.domain.mvc.action
 import scala.concurrent.Future
 
 /**
- * アクションを表す値オブジェクト。
+ * Represents the trait for the action.
  *
- * @tparam Req リクエストの型
- * @tparam Rep レスポンスの型
+ * @tparam Req request type
+ * @tparam Rep response type
  */
 trait Action[-Req, +Rep] extends (Req => Future[Rep]) {
 
@@ -30,17 +30,17 @@ trait Action[-Req, +Rep] extends (Req => Future[Rep]) {
 }
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the companion object for [[Action]].
  */
 object Action {
 
   /**
-   * ファクトリメソッド。
+   * Creates the [[Action]]'s instance.
    *
-   * @param f 関数
-   * @tparam Req リクエストの型
-   * @tparam Rep レスポンスの型
-   * @return [[org.sisioh.trinity.domain.mvc.action.Action]]
+   * @param f function
+   * @tparam Req request type
+   * @tparam Rep response type
+   * @return [[Action]]
    */
   def apply[Req, Rep](f: (Req) => Future[Rep]): Action[Req, Rep] = new Action[Req, Rep] {
     def apply(request: Req): Future[Rep] = f(request)

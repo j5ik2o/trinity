@@ -31,7 +31,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 
 /**
- * サーバの起動をサポートするためのトレイト。
+ * Represents the trait to support the server booting.
  */
 trait Bootstrap {
   this: Application =>
