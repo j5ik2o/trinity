@@ -22,7 +22,7 @@ import scala.concurrent.{Future => SFuture, promise => SPromise}
 import scala.util.{Try => STry}
 
 /**
- * `scala.concurrent.Future` と `com.twitter.util.Future` を相互に変換するためのユーティリティ。
+ * Represents the converters to convert between `com.twitter.util.Future` and `scala.concurrent.Future`.
  */
 object FutureConverters {
 
