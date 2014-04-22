@@ -24,7 +24,7 @@ import scala.concurrent.Future
 import scala.util.Try
 
 /**
- * INTERNAL_SERVER_ERROR(500)を返す[[org.sisioh.trinity.domain.mvc.action.Action]]。
+ * Represents the action to returns the internal server error response.
  */
 case object InternalServerErrorAction extends Action[Request, Response] {
 

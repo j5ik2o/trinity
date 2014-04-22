@@ -2,57 +2,60 @@ package org.sisioh.trinity.domain.io.http
 
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
+/**
+ * Represents the proxy trait for [[Message]].
+ */
 trait MessageProxy extends Message with Proxy {
 
   def underlying: Message
 
-  val isMutable: Boolean = underlying.isMutable
+  override val isMutable: Boolean = underlying.isMutable
 
-  def self = underlying
+  override def self = underlying
 
-  def isRequest = underlying.isRequest
+  override def isRequest = underlying.isRequest
 
-  def getHeader(name: HeaderName): Option[String] = underlying.getHeader(name)
+  override def getHeader(name: HeaderName): Option[String] = underlying.getHeader(name)
 
-  def getHeaders(name: HeaderName): Seq[String] = underlying.getHeaders(name)
+  override def getHeaders(name: HeaderName): Seq[String] = underlying.getHeaders(name)
 
-  def headers: Seq[(HeaderName, Any)] = underlying.headers
+  override def headers: Seq[(HeaderName, Any)] = underlying.headers
 
-  def containsHeader(name: HeaderName): Boolean = underlying.containsHeader(name)
+  override def containsHeader(name: HeaderName): Boolean = underlying.containsHeader(name)
 
-  def headerNames: Set[HeaderName] = underlying.headerNames
+  override def headerNames: Set[HeaderName] = underlying.headerNames
 
-  def protocolVersion: ProtocolVersion.Value = underlying.protocolVersion
+  override def protocolVersion: ProtocolVersion.Value = underlying.protocolVersion
 
-  def withProtocolVersion(version: ProtocolVersion.Value): this.type = mutate {
+  override def withProtocolVersion(version: ProtocolVersion.Value): this.type = mutate {
     _.underlying.withProtocolVersion(version)
   }
 
-  def content: ChannelBuffer = underlying.content
+  override def content: ChannelBuffer = underlying.content
 
-  def withContent(content: ChannelBuffer): this.type = mutate {
+  override def withContent(content: ChannelBuffer): this.type = mutate {
     _.underlying.withContent(content)
   }
 
-  def withHeader(name: HeaderName, value: Any): this.type = mutate {
+  override def withHeader(name: HeaderName, value: Any): this.type = mutate {
     _.underlying.withHeader(name, value)
   }
 
-  def withHeader(name: HeaderName, values: Seq[_]): this.type = mutate {
+  override def withHeader(name: HeaderName, values: Seq[_]): this.type = mutate {
     _.underlying.withHeader(name, values)
   }
 
-  def withoutHeader(name: HeaderName): this.type = mutate {
+  override def withoutHeader(name: HeaderName): this.type = mutate {
     _.underlying.withoutHeader(name)
   }
 
-  def withoutAllHeaders: this.type = mutate {
+  override def withoutAllHeaders: this.type = mutate {
     _.underlying.withoutAllHeaders
   }
 
-  val isChunked: Boolean = underlying.isChunked
+  override val isChunked: Boolean = underlying.isChunked
 
-  def withChunked(chunked: Boolean): this.type = mutate {
+  override def withChunked(chunked: Boolean): this.type = mutate {
     _.underlying.withChunked(chunked)
   }
 

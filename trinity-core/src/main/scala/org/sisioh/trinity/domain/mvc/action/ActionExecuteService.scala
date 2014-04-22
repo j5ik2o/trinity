@@ -24,10 +24,10 @@ import org.sisioh.trinity.util.FutureConverters._
 import scala.concurrent.ExecutionContext
 
 /**
- * リクエストに関連づくアクションを実行するためのサービス。
+ * Represents the service to execute the action related to the request.
  *
- * @param globalSettings [[org.sisioh.trinity.domain.mvc.GlobalSettings]]
- * @param executor [[scala.concurrent.ExecutionContext]]
+ * @param globalSettings [[GlobalSettings]]
+ * @param executor [[ExecutionContext]]
  */
 case class ActionExecuteService
 (globalSettings: Option[GlobalSettings[Request, Response]] = None)
@@ -35,9 +35,9 @@ case class ActionExecuteService
   extends Service[Request, Response] with LoggingEx {
 
   /**
-   * アクションが見つからない場合のリカバリを行うためのハンドラ。
+   * Gets the handler for not found action.
    *
-   * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
+   * @return wrapped `com.twitter.finagle.http.Request` around `com.twitter.finagle.Future`
    */
   protected def notFoundHandler: Action[Request, Response] = {
     globalSettings.flatMap {

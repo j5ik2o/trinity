@@ -5,13 +5,24 @@ import org.jboss.netty.buffer.{DirectChannelBufferFactory => NettyDirectChannelB
 import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
 
 /**
- * DirectChannelBufferのためのファクトリ。
+ * Represents a factory for `org.jboss.netty.buffer.DirectChannelBuffer`.
  */
 object DirectChannelBufferFactory {
 
+  /**
+   * Creates a Direct [[ChannelBufferFactory]]'s instance.
+   *
+   * @return Direct [[ChannelBufferFactory]]
+   */
   def apply(): ChannelBufferFactory =
     NettyDirectChannelBufferFactory.getInstance()
 
+  /**
+   * Creates a Direct [[ChannelBufferFactory]]'s instance.
+   *
+   * @param endianness [[ByteOrder]]
+   * @return Direct [[ChannelBufferFactory]]
+   */
   def apply(endianness: ByteOrder): ChannelBufferFactory =
     NettyDirectChannelBufferFactory.getInstance(endianness)
 
