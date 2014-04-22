@@ -40,21 +40,21 @@ trait Bootstrap {
 
   protected implicit val pathPatternParser: PathPatternParser = SinatraPathPatternParser()
 
-  protected val environment: Environment.Value
+  override protected val environment: Environment.Value
 
   protected val configPrefixName: Option[String] = None
 
-  protected lazy val configuration: Configuration = withDebugScope("configuration") {
+  override protected lazy val configuration: Configuration = withDebugScope("configuration") {
     scopedDebug(s"applicationId = $applicationId, environment = $environment")
     ServerConfigLoader.loadConfiguration(applicationId, environment).get
   }
 
-  protected lazy val serverConfig = withDebugScope("serverConfig") {
+  override protected lazy val serverConfig = withDebugScope("serverConfig") {
     scopedDebug(s"applicationId = $applicationId, configuration = $configuration")
     ServerConfigLoader.loadServerConfig(configuration, configPrefixName)
   }
 
-  protected implicit val globalSettings: Option[GlobalSettings[Request, Response]] = None
+  override protected implicit val globalSettings: Option[GlobalSettings[Request, Response]] = None
 
   protected lazy val routingFilter: Option[RoutingFilter] = None
 
@@ -69,15 +69,15 @@ trait Bootstrap {
 
   protected lazy val server = createServer
 
-  def start(): Future[Unit] = {
+  override def start(): Future[Unit] = {
     server.start(environment)
   }
 
-  def stop(): Future[Unit] = server.stop()
+  override def stop(): Future[Unit] = server.stop()
 
-  def await(future: Future[Unit], duration: Duration = Duration.Inf): Unit =
+  override def await(future: Future[Unit], duration: Duration = Duration.Inf): Unit =
     Await.result(future, duration)
 
-  def startWithAwait(): Unit = await(start())
+  override def startWithAwait(): Unit = await(start())
 
 }
