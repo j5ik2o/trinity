@@ -5,7 +5,9 @@ import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory
 import org.sisioh.trinity.domain.io.http.Charset
 import scala.language.implicitConversions
 
-
+/**
+ * Represents a trait for `org.jboss.netty.buffer.ChannelBuffers`
+ */
 trait ChannelBuffers {
 
   // ---
@@ -98,6 +100,9 @@ trait ChannelBuffers {
 
 }
 
+/**
+ * Represents a companion object for [[ChannelBuffers]].
+ */
 object ChannelBuffers extends ChannelBuffers {
 
   private[trinity] implicit def toNetty(target: ChannelBufferFactory): NettyChannelBufferFactory = target match {

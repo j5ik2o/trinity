@@ -19,10 +19,11 @@ import com.twitter.finagle.http.{Message => FinagleMessage}
 import org.sisioh.trinity.domain.io.http.MessageProxy
 import org.sisioh.trinity.domain.io.http.{Message => IOMessage}
 
-
+/**
+ * Represents the message as wrapper for [[FinagleMessage]].
+ */
 trait Message extends IOMessage with MessageProxy {
 
-  val toUnderlyingAsFinagle: FinagleMessage
-
+  override val toUnderlyingAsFinagle: FinagleMessage
 
 }

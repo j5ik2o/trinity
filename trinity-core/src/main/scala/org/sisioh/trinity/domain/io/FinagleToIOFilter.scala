@@ -10,15 +10,15 @@ import org.sisioh.trinity.domain.io.http.{Request => IORequest}
 import org.sisioh.trinity.domain.io.http.{Response => IOResponse}
 
 /**
- * Finagleのためのフィルター。
- *
- * FinagleとIORequest, IOResponseを扱うサービスとの橋渡しを行う。
+ * Represents the filter as bridge from Finagle to Trinity.
  */
 case class FinagleToIOFilter()
   extends Filter[Request, Response, IORequest, IOResponse] {
 
-  def apply(request: Request, service: Service[IORequest, IOResponse]): Future[Response] = {
-    Stats.timeFutureNanos("FinagleToIOFilter")(service(IORequest(request)).map(_.toUnderlyingAsFinagle))
+  override def apply(request: Request, service: Service[IORequest, IOResponse]): Future[Response] = {
+    Stats.timeFutureNanos("FinagleToIOFilter")(
+      service(IORequest(request)).map(_.toUnderlyingAsFinagle)
+    )
   }
 
 }

@@ -1,18 +1,21 @@
 package org.sisioh.trinity.domain.io.http
 
+/**
+ * Represents the proxy trait for [[Request]].
+ */
 trait RequestProxy extends Request with MessageProxy {
 
-  val underlying: Request
+  override val underlying: Request
 
-  def method: Methods.Value = underlying.method
+  override def method: Methods.Value = underlying.method
 
-  def withMethod(method: Methods.Value): this.type = mutate {
+  override def withMethod(method: Methods.Value): this.type = mutate {
     _.underlying.withMethod(method)
   }
 
-  def uri: String = underlying.uri
+  override def uri: String = underlying.uri
 
-  def withUri(uri: String): this.type = mutate {
+  override def withUri(uri: String): this.type = mutate {
     _.underlying.withUri(uri)
   }
 

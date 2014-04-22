@@ -3,9 +3,12 @@ package org.sisioh.trinity.domain.io.http
 import com.google.common.base.Splitter
 import scala.collection.JavaConversions.iterableAsScalaIterable
 
+/**
+ * Represents the Ordering implementation for Accept.
+ */
 object AcceptOrdering extends Ordering[String] {
 
-  def getWeight(str: String): Double = {
+  private def getWeight(str: String): Double = {
     val parts = Splitter.on(';').split(str).toArray
     if (parts.length < 2) {
       1.0

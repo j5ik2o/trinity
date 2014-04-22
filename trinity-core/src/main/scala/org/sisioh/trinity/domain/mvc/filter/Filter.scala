@@ -24,7 +24,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.{Future => SFuture}
 
 /**
- * Trinity独自のフィルター。
+ * Represents the filter trait for Trinity.
  *
  * @tparam ReqIn
  * @tparam RepOut
@@ -39,12 +39,12 @@ trait Filter[-ReqIn, +RepOut, +ReqOut, -RepIn]
 }
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the companion object for [[Filter]].
  */
 object Filter {
 
   /**
-   * [[org.sisioh.trinity.domain.mvc.filter.Filter]]を`Finagle`の`Filter`に変換する。
+   * Converts the [[Filter]] to `com.twitter.finagle.Filter`.
    *
    * @param self
    * @param executor
