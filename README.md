@@ -10,7 +10,7 @@ Since May 2013
 - Support Domain Driven-Design by non CoC(Convention over Configuration).
 
 ## Features
-- You can deine Actions as Controller of Finagle Service.
+- You can use Actions as Controller, instead of Finagle Service.
   - URLs can be mapped to action methods, like Scalatra.
   - Otherwise, The Routing information can be outside of the Controller, like Play2.
 - You can use Template Engine (e.g. Scalatra) with Trinity.
