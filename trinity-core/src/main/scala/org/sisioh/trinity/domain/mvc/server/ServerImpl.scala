@@ -17,7 +17,9 @@ package org.sisioh.trinity.domain.mvc.server
 
 import com.twitter.finagle.CodecFactory
 import com.twitter.finagle.builder.ServerBuilder
+import com.twitter.finagle.builder.ServerConfig.Yes
 import com.twitter.finagle.builder.{Server => FinagleServer}
+import com.twitter.finagle.channel.OpenConnectionsThresholds
 import com.twitter.finagle.http.Http
 import com.twitter.finagle.http.RichHttp
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
@@ -30,8 +32,8 @@ import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
 import org.sisioh.trinity.util.DurationConverters._
 import org.sisioh.trinity.util.FutureConverters._
+import org.slf4j.bridge.SLF4JBridgeHandler
 import scala.concurrent._
-import com.twitter.finagle.builder.ServerConfig.Yes
 
 private[mvc]
 class ServerImpl
@@ -49,6 +51,7 @@ class ServerImpl
   protected def createRuntimeEnviroment: RuntimeEnvironment = new RuntimeEnvironment(this)
 
   private val defaultAdminHttpServicePort = 9990
+
 
   filter.foreach(registerFilter)
 
@@ -182,15 +185,37 @@ class ServerImpl
     }.getOrElse(sb)
   }
 
+  private def configOpenConnectionsThresholdsConfig[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.openConnectionsThresholdsConfig.map {
+      v =>
+        sb.openConnectionsThresholds(
+          OpenConnectionsThresholds(v.lowWaterMark, v.highWaterMark, v.idleTime.toTwitter)
+        )
+    }.getOrElse(sb)
+  }
 
-  def start(environment: Environment.Value = Environment.Development)
-           (implicit executor: ExecutionContext): Future[Unit] = future {
+  private def configKeepAlive[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.keepAlive.map {
+      v =>
+        sb.keepAlive(v)
+    }.getOrElse(sb)
+  }
+
+  override def start(environment: Environment.Value = Environment.Development)
+                    (implicit executor: ExecutionContext): Future[Unit] = future {
+    SLF4JBridgeHandler.removeHandlersForRootLogger()
+    SLF4JBridgeHandler.install()
+
     withDebugScope("start") {
       require(finagleServer.isEmpty)
       info(s"aciton = $action, routingFilter = $filter")
+
       if (serverConfig.statsEnabled) {
         createAdminHttpService(createRuntimeEnviroment)
       }
+
       val service = buildService(environment, action)
       val bindAddress = serverConfig.bindAddress.getOrElse(Server.defaultBindAddress)
       val name = serverConfig.name.getOrElse(Server.defaultName)
@@ -202,34 +227,38 @@ class ServerImpl
         .codec(createCodec)
         .bindTo(bindAddress)
         .tracer(createTracer)
+        .logChannelActivity(serverConfig.finagleLogging)
         .name(name)
 
-      val sb1 = configNewSSLEngine(defaultServerBuilder)
-      val sb2 = configTls(sb1)
+      val sb0 = configKeepAlive(defaultServerBuilder)
+      val sb1 = configOpenConnectionsThresholdsConfig(sb0)
 
-      val sb3 = configMaxConcurrentRequests(sb2)
-      val sb4 = configHostConnectionMaxIdleTime(sb3)
-      val sb5 = configHostConnectionMaxLifeTime(sb4)
+      val sb2 = configNewSSLEngine(sb1)
+      val sb3 = configTls(sb2)
 
-      val sb6 = configRequestTimeout(sb5)
-      val sb7 = configReadTimeout(sb6)
-      val sb8 = configWriteCompletionTimeout(sb7)
+      val sb4 = configMaxConcurrentRequests(sb3)
+      val sb5 = configHostConnectionMaxIdleTime(sb4)
+      val sb6 = configHostConnectionMaxLifeTime(sb5)
 
-      val sb9 = configSendBufferSize(sb8)
-      val sb10 = configReceiveBufferSize(sb9)
+      val sb7 = configRequestTimeout(sb6)
+      val sb8 = configReadTimeout(sb7)
+      val sb9 = configWriteCompletionTimeout(sb8)
 
-      info(s"maxConcurrentRequests = ${sb10.config.maxConcurrentRequests}")
-      info(s"hostConnectionMaxIdleTime = ${sb10.config.hostConnectionMaxIdleTime}")
-      info(s"hostConnectionMaxLifeTime = ${sb10.config.hostConnectionMaxLifeTime}")
+      val sb10 = configSendBufferSize(sb9)
+      val sb11 = configReceiveBufferSize(sb10)
 
-      info(s"requestTimeout = ${sb10.config.requestTimeout}")
-      info(s"readTimeout = ${sb10.config.readTimeout}")
-      info(s"writeCompletionTimeout = ${sb10.config.writeCompletionTimeout}")
+      info(s"maxConcurrentRequests = ${sb11.config.maxConcurrentRequests}")
+      info(s"hostConnectionMaxIdleTime = ${sb11.config.hostConnectionMaxIdleTime}")
+      info(s"hostConnectionMaxLifeTime = ${sb11.config.hostConnectionMaxLifeTime}")
 
-      info(s"sendBufferSize = ${sb10.config.bufferSize.send}")
-      info(s"receiveBufferSize = ${sb10.config.bufferSize.recv}")
+      info(s"requestTimeout = ${sb11.config.requestTimeout}")
+      info(s"readTimeout = ${sb11.config.readTimeout}")
+      info(s"writeCompletionTimeout = ${sb11.config.writeCompletionTimeout}")
 
-      finagleServer = Some(sb10.build(service))
+      info(s"sendBufferSize = ${sb11.config.bufferSize.send}")
+      info(s"receiveBufferSize = ${sb11.config.bufferSize.recv}")
+
+      finagleServer = Some(sb11.build(service))
 
       globalSettings.foreach {
         _.onStart(this)

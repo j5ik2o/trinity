@@ -16,8 +16,14 @@
 package org.sisioh.trinity.domain.mvc.server
 
 import java.net.SocketAddress
+
 import javax.net.ssl.SSLEngine
 import scala.concurrent.duration.Duration
+
+case class OpenConnectionsThresholdsConfig
+(lowWaterMark: Int,
+ highWaterMark: Int,
+ idleTime: Duration)
 
 case class TlsConfig
 (certificatePath: String,
@@ -51,8 +57,10 @@ case class ServerConfig
 (name: Option[String] = None,
  bindAddress: Option[SocketAddress] = None,
  awaitDuration: Option[Duration] = None,
+ finagleLogging: Boolean = true,
  statsEnabled: Boolean = false,
  statsPort: Option[Int] = None,
+ keepAlive: Option[Boolean] = None,
  maxRequestSize: Option[Int] = None,
  maxResponseSize: Option[Int] = None,
  maxConcurrentRequests: Option[Int] = None,
@@ -63,6 +71,7 @@ case class ServerConfig
  writeCompletionTimeout: Option[Duration] = None,
  sendBufferSize: Option[Int] = None,
  receiveBufferSize: Option[Int] = None,
+ openConnectionsThresholdsConfig: Option[OpenConnectionsThresholdsConfig] = None,
  newSSLEngine: Option[() => Engine] = None,
  tlsConfig: Option[TlsConfig] = None)
 
