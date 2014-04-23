@@ -20,6 +20,7 @@ import java.net.InetSocketAddress
 import org.sisioh.trinity.domain.mvc.Environment
 import org.sisioh.config.{ConfigurationMode, Configuration}
 import scala.util.{Failure, Try}
+import scala.concurrent.duration.Duration
 
 object ServerConfigLoader extends ServerConfigLoader
 
@@ -81,6 +82,17 @@ class ServerConfigLoader {
       },
       statsEnabled = configuration.getBooleanValue(getKeyName("stats.Enabled", prefix)).getOrElse(false),
       statsPort = configuration.getIntValue(getKeyName("stats.port", prefix)),
+      maxRequestSize = configuration.getIntValue(getKeyName("maxRequestSize", prefix)),
+      maxResponseSize = configuration.getIntValue(getKeyName("maxResponseSize", prefix)),
+      maxConcurrentRequests = configuration.getIntValue(getKeyName("maxConcurrentRequests", prefix)),
+      hostConnectionMaxIdleTime = configuration.getStringValue(getKeyName("hostConnectionMaxIdleTime", prefix)).map(Duration(_)),
+      hostConnectionMaxLifeTime = configuration.getStringValue(getKeyName("hostConnectionMaxLifeTime", prefix)).map(Duration(_)),
+      requestTimeout = configuration.getStringValue(getKeyName("requestTimeout", prefix)).map(Duration(_)),
+      readTimeout = configuration.getStringValue(getKeyName("readTimeout", prefix)).map(Duration(_)),
+      writeCompletionTimeout = configuration.getStringValue(getKeyName("writeCompletionTimeout", prefix)).map(Duration(_)),
+      sendBufferSize = configuration.getIntValue(getKeyName("sendBufferSize", prefix)),
+      receiveBufferSize = configuration.getIntValue(getKeyName("receiveBufferSize", prefix)),
+      newSSLEngine = None,
       tlsConfig = loadTlsConfig(configuration, prefix)
     )
     serverConfiguration

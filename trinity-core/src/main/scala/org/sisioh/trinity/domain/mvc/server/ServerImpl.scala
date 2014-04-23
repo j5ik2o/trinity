@@ -28,8 +28,10 @@ import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.filter.Filter
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
+import org.sisioh.trinity.util.DurationConverters._
 import org.sisioh.trinity.util.FutureConverters._
 import scala.concurrent._
+import com.twitter.finagle.builder.ServerConfig.Yes
 
 private[mvc]
 class ServerImpl
@@ -88,6 +90,98 @@ class ServerImpl
     RichHttp[FinagleRequest](http)
   }
 
+  private def configNewSSLEngine[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.newSSLEngine.map {
+      f =>
+        sb.newFinagleSslEngine({
+          () =>
+            val r = f()
+            com.twitter.finagle.ssl.Engine(r.self, r.handlesRenegotiation, r.certId)
+        })
+    }.getOrElse(sb)
+  }
+
+  private def configTls[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.tlsConfig.map {
+      tc =>
+        sb.tls(
+          tc.certificatePath,
+          tc.keyPath,
+          tc.caCertificatePath.orNull,
+          tc.ciphers.orNull,
+          tc.nextProtos.orNull
+        )
+    }.getOrElse(sb)
+  }
+
+  private def configMaxConcurrentRequests[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.maxConcurrentRequests.map {
+      v =>
+        sb.maxConcurrentRequests(v)
+    }.getOrElse(sb)
+  }
+
+
+  private def configHostConnectionMaxIdleTime[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.hostConnectionMaxIdleTime.map {
+      v =>
+        sb.hostConnectionMaxIdleTime(v.toTwitter)
+    }.getOrElse(sb)
+  }
+
+  private def configHostConnectionMaxLifeTime[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.hostConnectionMaxLifeTime.map {
+      v =>
+        sb.hostConnectionMaxLifeTime(v.toTwitter)
+    }.getOrElse(sb)
+  }
+
+
+  private def configRequestTimeout[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.requestTimeout.map {
+      v =>
+        sb.requestTimeout(v.toTwitter)
+    }.getOrElse(sb)
+  }
+
+  private def configReadTimeout[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.readTimeout.map {
+      v =>
+        sb.readTimeout(v.toTwitter)
+    }.getOrElse(sb)
+  }
+
+  private def configWriteCompletionTimeout[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.writeCompletionTimeout.map {
+      v =>
+        sb.writeCompletionTimeout(v.toTwitter)
+    }.getOrElse(sb)
+  }
+
+  private def configSendBufferSize[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.sendBufferSize.map {
+      v =>
+        sb.sendBufferSize(v)
+    }.getOrElse(sb)
+  }
+
+  private def configReceiveBufferSize[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.receiveBufferSize.map {
+      v =>
+        sb.recvBufferSize(v)
+    }.getOrElse(sb)
+  }
+
 
   def start(environment: Environment.Value = Environment.Development)
            (implicit executor: ExecutionContext): Future[Unit] = future {
@@ -99,9 +193,9 @@ class ServerImpl
       }
       val service = buildService(environment, action)
       val bindAddress = serverConfig.bindAddress.getOrElse(Server.defaultBindAddress)
-      scopedDebug(s"bindAddress = $bindAddress")
+      info(s"bindAddress = $bindAddress")
       val name = serverConfig.name.getOrElse(Server.defaultName)
-      scopedDebug(s"name = $name")
+      info(s"name = $name")
 
       val defaultServerBuilder = ServerBuilder()
         .codec(createCodec)
@@ -109,27 +203,23 @@ class ServerImpl
         .tracer(createTracer)
         .name(name)
 
-      val sb1 = serverConfig.newSSLEngine.map {
-        f =>
-          defaultServerBuilder.newFinagleSslEngine({
-            () =>
-              val r = f()
-              com.twitter.finagle.ssl.Engine(r.self, r.handlesRenegotiation, r.certId)
-          })
-      }.getOrElse(defaultServerBuilder)
+      val sb1 = configNewSSLEngine(defaultServerBuilder)
+      val sb2 = configTls(sb1)
 
-      val sb2 = serverConfig.tlsConfig.map {
-        tc =>
-          sb1.tls(
-            tc.certificatePath,
-            tc.keyPath,
-            tc.caCertificatePath.orNull,
-            tc.ciphers.orNull,
-            tc.nextProtos.orNull
-          )
-      }.getOrElse(sb1)
+      val sb3 = configMaxConcurrentRequests(sb2)
+      val sb4 = configHostConnectionMaxIdleTime(sb3)
+      val sb5 = configHostConnectionMaxLifeTime(sb4)
 
-      finagleServer = Some(sb2.build(service))
+      val sb6 = configRequestTimeout(sb5)
+      val sb7 = configReadTimeout(sb6)
+      val sb8 = configWriteCompletionTimeout(sb7)
+
+      val sb9 = configSendBufferSize(sb8)
+      val sb10 = configReceiveBufferSize(sb9)
+
+      finagleServer = Some(sb10.build(service))
+
+
 
       globalSettings.foreach {
         _.onStart(this)
