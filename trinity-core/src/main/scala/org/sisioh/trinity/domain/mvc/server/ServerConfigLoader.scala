@@ -17,10 +17,10 @@ package org.sisioh.trinity.domain.mvc.server
 
 import java.io.{FileNotFoundException, File}
 import java.net.InetSocketAddress
-import org.sisioh.trinity.domain.mvc.Environment
 import org.sisioh.config.{ConfigurationMode, Configuration}
-import scala.util.{Failure, Try}
+import org.sisioh.trinity.domain.mvc.Environment
 import scala.concurrent.duration.Duration
+import scala.util.{Failure, Try}
 
 object ServerConfigLoader extends ServerConfigLoader
 
@@ -51,6 +51,17 @@ class ServerConfigLoader {
 
   private def getKeyName(keyName: String, prefix: Option[String] = None) =
     prefix.map(_ + keyName).getOrElse(keyName)
+
+  protected def loadOpenConnectionsThresholdsConfig
+  (configuration: Configuration, prefix: Option[String]): Option[OpenConnectionsThresholdsConfig] = {
+    configuration.getConfiguration(getKeyName("openConnectionThresholds", prefix)).map {
+      c =>
+        val lowWaterMark = c.getIntValue("lowWaterMark").get
+        val highWaterMark = c.getIntValue("highWaterMark").get
+        val idleTime = c.getStringValue("idleTime").map(Duration(_)).get
+        OpenConnectionsThresholdsConfig(lowWaterMark, highWaterMark, idleTime)
+    }
+  }
 
   protected def loadTlsConfig(configuration: Configuration, prefix: Option[String]): Option[TlsConfig] = {
     configuration.getConfiguration(getKeyName("tls", prefix)).map {
@@ -93,7 +104,8 @@ class ServerConfigLoader {
       sendBufferSize = configuration.getIntValue(getKeyName("sendBufferSize", prefix)),
       receiveBufferSize = configuration.getIntValue(getKeyName("receiveBufferSize", prefix)),
       newSSLEngine = None,
-      tlsConfig = loadTlsConfig(configuration, prefix)
+      tlsConfig = loadTlsConfig(configuration, prefix),
+      openConnectionsThresholdsConfig = loadOpenConnectionsThresholdsConfig(configuration, prefix)
     )
     serverConfiguration
   }
