@@ -58,7 +58,11 @@ case class ServerConfig
  maxConcurrentRequests: Option[Int] = None,
  hostConnectionMaxIdleTime: Option[Duration] = None,
  hostConnectionMaxLifeTime: Option[Duration] = None,
- requestTimeout: Option[Int] = None,
+ requestTimeout: Option[Duration] = None,
+ readTimeout: Option[Duration] = None,
+ writeCompletionTimeout: Option[Duration] = None,
+ sendBufferSize: Option[Int] = None,
+ receiveBufferSize: Option[Int] = None,
  newSSLEngine: Option[() => Engine] = None,
  tlsConfig: Option[TlsConfig] = None)
 
