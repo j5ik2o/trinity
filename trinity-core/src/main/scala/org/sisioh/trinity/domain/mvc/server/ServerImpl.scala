@@ -193,8 +193,9 @@ class ServerImpl
       }
       val service = buildService(environment, action)
       val bindAddress = serverConfig.bindAddress.getOrElse(Server.defaultBindAddress)
-      info(s"bindAddress = $bindAddress")
       val name = serverConfig.name.getOrElse(Server.defaultName)
+
+      info(s"bindAddress = $bindAddress")
       info(s"name = $name")
 
       val defaultServerBuilder = ServerBuilder()
@@ -217,9 +218,18 @@ class ServerImpl
       val sb9 = configSendBufferSize(sb8)
       val sb10 = configReceiveBufferSize(sb9)
 
+      info(s"maxConcurrentRequests = ${sb10.config.maxConcurrentRequests}")
+      info(s"hostConnectionMaxIdleTime = ${sb10.config.hostConnectionMaxIdleTime}")
+      info(s"hostConnectionMaxLifeTime = ${sb10.config.hostConnectionMaxLifeTime}")
+
+      info(s"requestTimeout = ${sb10.config.requestTimeout}")
+      info(s"readTimeout = ${sb10.config.readTimeout}")
+      info(s"writeCompletionTimeout = ${sb10.config.writeCompletionTimeout}")
+
+      info(s"sendBufferSize = ${sb10.config.bufferSize.send}")
+      info(s"receiveBufferSize = ${sb10.config.bufferSize.recv}")
+
       finagleServer = Some(sb10.build(service))
-
-
 
       globalSettings.foreach {
         _.onStart(this)
