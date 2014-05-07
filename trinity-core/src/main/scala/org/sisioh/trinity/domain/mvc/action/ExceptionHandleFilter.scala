@@ -39,12 +39,9 @@ case class ExceptionHandleFilter
    */
   protected def errorHandler(request: Request, throwable: Throwable): Future[Response] = {
     val newRequest = request.withError(throwable)
-    globalSettings.map {
-      _.error.map(_(newRequest)).
-        getOrElse(InternalServerErrorAction(newRequest))
-    }.getOrElse {
+    globalSettings.fold(
       InternalServerErrorAction(newRequest)
-    }
+    )(_.error.fold(InternalServerErrorAction(newRequest))(_(newRequest)))
   }
 
   def apply(requestIn: Request, action: Action[Request, Response]): Future[Response] = {

@@ -23,7 +23,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Success
 
 /**
- * Represents the filter for [[Request]] dumpping.
+ * Represents the filter for dump [[Request]].
  *
  * @param executor [[scala.concurrent.ExecutionContext]]
  */

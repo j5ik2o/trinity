@@ -51,7 +51,7 @@ trait Bootstrap {
 
   override protected lazy val serverConfig = withDebugScope("serverConfig") {
     scopedDebug(s"applicationId = $applicationId, configuration = $configuration")
-    ServerConfigLoader.loadServerConfig(configuration, configPrefixName)
+    ServerConfigLoader.loadAsServerConfig(configuration, configPrefixName)
   }
 
   override protected implicit val globalSettings: Option[GlobalSettings[Request, Response]] = None

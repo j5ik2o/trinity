@@ -15,7 +15,8 @@
  */
 package org.sisioh.trinity.domain.mvc.routing
 
-import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+import org.sisioh.trinity.domain.mvc.http.Request
+import org.sisioh.trinity.domain.mvc.http.Response
 
 private[routing]
 case class RouteRepositoryOnMemory()

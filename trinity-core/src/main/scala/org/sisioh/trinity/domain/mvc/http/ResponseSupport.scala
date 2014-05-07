@@ -18,6 +18,9 @@ package org.sisioh.trinity.domain.mvc.http
 import org.sisioh.trinity.domain.io.http._
 import scala.concurrent.Future
 
+/**
+ * Represents the trait to supports response processing.
+ */
 trait ResponseSupport {
 
   protected def responseBuilder = ResponseBuilder()
@@ -26,7 +29,7 @@ trait ResponseSupport {
     val responseBuilder = ResponseBuilder().
       withResponseStatus(ResponseStatus.MovedPermanently).
       withHeader(HeaderNames.Location, location)
-    val resp = response.map(responseBuilder.build(_)).getOrElse(responseBuilder.build)
+    val resp = response.fold(responseBuilder.build)(responseBuilder.build(_))
     Future.successful(resp)
   }
 

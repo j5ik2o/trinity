@@ -29,72 +29,209 @@ import scala.util.matching.Regex
  */
 trait ScalatraLikeControllerSupport extends ControllerSupport with RouteDefHolder {
 
+  /**
+   * defined values to represent routes.
+   */
   protected val routeDefs = mutable.ListBuffer.empty[RouteDef]
 
-  protected def get(path: String)(callback: Request => Future[Response])(implicit pathPatternParser: PathPatternParser) {
+  /**
+   * Adds a route to the action to process GET request with path.
+   *
+   * @param path
+   * @param callback
+   * @param pathPatternParser
+   * @return
+   */
+  protected def get(path: String)
+                   (callback: Request => Future[Response])
+                   (implicit pathPatternParser: PathPatternParser) {
     addRoute(Methods.Get, path)(callback)
   }
 
+  /**
+   * Adds a route to the action to process GET request by [[Regex]].
+   *
+   * @param regex
+   * @param captureGroupNames
+   * @param callback
+   * @return
+   */
   protected def get(regex: Regex, captureGroupNames: Seq[String] = Seq.empty)
                    (callback: Request => Future[Response]) {
     addRoute(Methods.Get, regex, captureGroupNames)(callback)
   }
 
-  protected def delete(path: String)(callback: Request => Future[Response])(implicit pathPatternParser: PathPatternParser) {
+  /**
+   * Adds a route to the action to process DELETE request with path.
+   *
+   * @param path
+   * @param callback
+   * @param pathPatternParser
+   * @return
+   */
+  protected def delete(path: String)
+                      (callback: Request => Future[Response])
+                      (implicit pathPatternParser: PathPatternParser) {
     addRoute(Methods.Delete, path)(callback)
   }
 
+  /**
+   * Adds a route to the action to process DELETE request by [[Regex]].
+   *
+   * @param regex
+   * @param captureGroupNames
+   * @param callback
+   * @return
+   */
   protected def delete(regex: Regex, captureGroupNames: Seq[String] = Seq.empty)
                       (callback: Request => Future[Response]) {
     addRoute(Methods.Delete, regex, captureGroupNames)(callback)
   }
 
-  protected def post(path: String)(callback: Request => Future[Response])(implicit pathPatternParser: PathPatternParser) {
+  /**
+   * Adds a route to the action to process POST request with path.
+   *
+   * @param path
+   * @param callback
+   * @param pathPatternParser
+   * @return
+   */
+  protected def post(path: String)
+                    (callback: Request => Future[Response])
+                    (implicit pathPatternParser: PathPatternParser) {
     addRoute(Methods.Post, path)(callback)
   }
 
+  /**
+   * Adds a route to the action to process POST request by [[Regex]]
+   *
+   * @param regex
+   * @param captureGroupNames
+   * @param callback
+   * @return
+   */
   protected def post(regex: Regex, captureGroupNames: Seq[String] = Seq.empty)
                     (callback: Request => Future[Response]) {
     addRoute(Methods.Post, regex, captureGroupNames)(callback)
   }
 
-  protected def put(path: String)(callback: Request => Future[Response])(implicit pathPatternParser: PathPatternParser) {
+  /**
+   * Adds a route to the action to process PUT request with path.
+   *
+   * @param path
+   * @param callback
+   * @param pathPatternParser
+   * @return
+   */
+  protected def put(path: String)
+                   (callback: Request => Future[Response])
+                   (implicit pathPatternParser: PathPatternParser) {
     addRoute(Methods.Put, path)(callback)
   }
 
-  protected def put(regex: Regex, captureGroupNames: Seq[String] = Seq.empty)(callback: Request => Future[Response]) {
+  /**
+   * Adds a route to the action to process PUT request by [[Regex]].
+   *
+   * @param regex
+   * @param captureGroupNames
+   * @param callback
+   * @return
+   */
+  protected def put(regex: Regex, captureGroupNames: Seq[String] = Seq.empty)
+                   (callback: Request => Future[Response]) {
     addRoute(Methods.Put, regex, captureGroupNames)(callback)
   }
 
-  protected def head(path: String)(callback: Request => Future[Response])(implicit pathPatternParser: PathPatternParser) {
+  /**
+   * Adds a route to the action to process HEAD request with path.
+   *
+   * @param path
+   * @param callback
+   * @param pathPatternParser
+   * @return
+   */
+  protected def head(path: String)
+                    (callback: Request => Future[Response])
+                    (implicit pathPatternParser: PathPatternParser) {
     addRoute(Methods.Head, path)(callback)
   }
 
+  /**
+   * Adds a route to the action to process HEAD request by [[Regex]].
+   *
+   * @param regex
+   * @param captureGroupNames
+   * @param callback
+   * @return
+   */
   protected def head(regex: Regex, captureGroupNames: Seq[String] = Seq.empty)
                     (callback: Request => Future[Response]) {
     addRoute(Methods.Head, regex, captureGroupNames)(callback)
   }
 
-  protected def patch(path: String)(callback: Request => Future[Response])(implicit pathPatternParser: PathPatternParser) {
+  /**
+   * Adds a route to the action to process PATCH request with path.
+   *
+   * @param path
+   * @param callback
+   * @param pathPatternParser
+   * @return
+   */
+  protected def patch(path: String)
+                     (callback: Request => Future[Response])
+                     (implicit pathPatternParser: PathPatternParser) {
     addRoute(Methods.Post, path)(callback)
   }
 
-  protected def patch(regex: Regex, captureGroupNames: Seq[String] = Seq.empty)(callback: Request => Future[Response]) {
+  /**
+   * Adds a route to the action to process PATCH request by [[Regex]].
+   *
+   * @param regex
+   * @param captureGroupNames
+   * @param callback
+   * @return
+   */
+  protected def patch(regex: Regex, captureGroupNames: Seq[String] = Seq.empty)
+                     (callback: Request => Future[Response]) {
     addRoute(Methods.Post, regex, captureGroupNames)(callback)
   }
 
-  protected def addRoute(method: Methods.Value, path: String)(callback: Request => Future[Response])
+  /**
+   * Adds a route to the action with path.
+   *
+   * @param method
+   * @param path
+   * @param callback
+   * @param pathPatternParser
+   * @return
+   */
+  protected def addRoute(method: Methods.Value, path: String)
+                        (callback: Request => Future[Response])
                         (implicit pathPatternParser: PathPatternParser) {
     val route = RouteDef(method, pathPatternParser(path), Action(callback))
     routeDefs.append(route)
   }
 
+  /**
+   * Adds a route to the action by [[Regex]].
+   *
+   * @param method
+   * @param regex
+   * @param captureGroupNames
+   * @param callback
+   * @return
+   */
   protected def addRoute(method: Methods.Value, regex: Regex, captureGroupNames: Seq[String] = Seq.empty)
                         (callback: Request => Future[Response]) {
     val route = RouteDef(method, PathPattern(regex, captureGroupNames), Action(callback))
     routeDefs.append(route)
   }
 
+  /**
+   * Gets defined routes.
+   *
+   * @return
+   */
   def getRouteDefs: Seq[RouteDef] = routeDefs.toSeq
 
 }

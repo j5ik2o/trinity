@@ -6,7 +6,7 @@ import org.sisioh.trinity.domain.io.http.Charset
 import scala.language.implicitConversions
 
 /**
- * Represents a trait for `org.jboss.netty.buffer.ChannelBuffers`
+ * Represents a trait for `org.jboss.netty.buffer.ChannelBuffers`.
  */
 trait ChannelBuffers {
 

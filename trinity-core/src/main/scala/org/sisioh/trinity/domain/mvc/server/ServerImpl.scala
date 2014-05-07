@@ -35,6 +35,15 @@ import org.sisioh.trinity.util.FutureConverters._
 import org.slf4j.bridge.SLF4JBridgeHandler
 import scala.concurrent._
 
+/**
+ * Represents the implementation class for [[Server]].
+ *
+ * @param serverConfig [[ServerConfig]]
+ * @param action wrapped [[Action]] around `scala.Option`
+ * @param filter wrapped [[Filter]] around `scala.Option`
+ * @param globalSettings [[GlobalSettings]]
+ * @param executor `ExecutionContext`
+ */
 private[mvc]
 class ServerImpl
 (val serverConfig: ServerConfig,
@@ -46,20 +55,23 @@ class ServerImpl
 
   private var finagleServer: Option[FinagleServer] = None
 
+  /**
+   * 
+   * @return
+   */
   protected def createTracer: Tracer = NullTracer
 
   protected def createRuntimeEnviroment: RuntimeEnvironment = new RuntimeEnvironment(this)
 
   private val defaultAdminHttpServicePort = 9990
 
-
   filter.foreach(registerFilter)
 
   /**
-   * [[com.twitter.ostrich.admin.AdminHttpService]] を生成する。
+   * Creates a `com.twitter.ostrich.admin.AdminHttpService`.
    *
-   * @param runtimeEnv [[com.twitter.ostrich.admin.RuntimeEnvironment]]
-   * @return [[com.twitter.ostrich.admin.AdminHttpService]]
+   * @param runtimeEnv `com.twitter.ostrich.admin.RuntimeEnvironment`
+   * @return `com.twitter.ostrich.admin.AdminHttpService`
    */
   protected def createAdminHttpService(runtimeEnv: RuntimeEnvironment): AdminHttpService = withDebugScope("createAdminService") {
     val httpPort = serverConfig.statsPort.getOrElse(defaultAdminHttpServicePort)
@@ -73,11 +85,10 @@ class ServerImpl
     )(runtimeEnv)
   }
 
-
   /**
-   * コーデックを生成する。
+   * Creates a `com.twitter.finagle.CodecFactory`.
    *
-   * @return [[com.twitter.finagle.CodecFactory]]
+   * @return `com.twitter.finagle.CodecFactory`
    */
   protected def createCodec: CodecFactory[FinagleRequest, FinagleResponse] = {
     import com.twitter.conversions.storage._
@@ -281,7 +292,7 @@ class ServerImpl
     }
   }
 
-  def stop()(implicit executor: ExecutionContext): Future[Unit] = synchronized {
+  override def stop()(implicit executor: ExecutionContext): Future[Unit] = synchronized {
     withDebugScope("stop") {
       require(finagleServer.isDefined)
       finagleServer.map {
@@ -296,5 +307,6 @@ class ServerImpl
     }
   }
 
-  def isStarted: Boolean = finagleServer.isDefined
+  override def isStarted: Boolean = finagleServer.isDefined
+
 }

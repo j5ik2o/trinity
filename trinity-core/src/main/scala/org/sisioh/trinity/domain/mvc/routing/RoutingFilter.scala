@@ -79,21 +79,38 @@ case class RoutingFilter
 }
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the companion object for [[RoutingFilter]].
  */
 object RoutingFilter extends LoggingEx {
 
+  @deprecated("instead of createFromControllers", "1.0.1")
   def createForControllers(controllers: RouteDefHolder*)
                           (implicit executor: ExecutionContext,
                            globalSettings: Option[GlobalSettings[Request, Response]] = None,
-                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = withDebugScope("createForControllers") {
-    createForActions {
-      pathPatternParser =>
-        val result = controllers.flatMap(_.getRouteDefs)
-        debug(s"result = $result")
-        result
+                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter =
+    createFromControllers(controllers: _*)
+
+  /**
+   * Creates a instance from [[RouteDefHolder]] for controllers.
+   *
+   * @param controllers
+   * @param executor
+   * @param globalSettings
+   * @param pathPatternParser
+   * @return
+   */
+  def createFromControllers(controllers: RouteDefHolder*)
+                          (implicit executor: ExecutionContext,
+                           globalSettings: Option[GlobalSettings[Request, Response]] = None,
+                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter =
+    withDebugScope("createForControllers") {
+      createForActions {
+        pathPatternParser =>
+          val result = controllers.flatMap(_.getRouteDefs)
+          debug(s"result = $result")
+          result
+      }
     }
-  }
 
   def createForActions(routeDefs: (PathPatternParser) => Seq[RouteDef])
                       (implicit executor: ExecutionContext,

@@ -59,12 +59,12 @@ trait Route[Req, Rep]
 }
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the companion object for [[Route]].
  */
 object Route {
 
   /**
-   * ファクトリメソッド。
+   * Creates the instance as [[Route]].
    *
    * @param identity [[org.sisioh.trinity.domain.mvc.routing.RouteId]]
    * @param action [[org.sisioh.trinity.domain.mvc.action.Action]]

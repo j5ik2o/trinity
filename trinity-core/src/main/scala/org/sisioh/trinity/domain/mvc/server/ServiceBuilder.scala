@@ -28,7 +28,7 @@ import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext
 
 /**
- * Finagleサービスを作成するためのビルダー責務。
+ * Represents the builder trait creating finagle's service.
  */
 trait ServiceBuilder {
 
@@ -69,7 +69,9 @@ trait ServiceBuilder {
     registerFinagleFilter(Filter.toFinagleFilter(filter))
   }
 
-  protected def buildService(environment: Environment.Value, action: Option[Action[Request, Response]] = None)(implicit executor: ExecutionContext) = {
+  protected def buildService(environment: Environment.Value,
+                             action: Option[Action[Request, Response]] = None)
+                            (implicit executor: ExecutionContext) = {
     val actionExecuteService = ActionExecuteService(globalSettings)
     def applyFilter() = {
       if (environment == Environment.Development)
@@ -83,7 +85,6 @@ trait ServiceBuilder {
     val service: Service[FinagleRequest, FinagleResponse] =
       FinagleToIOFilter() andThen
         GatewayFilter(action) andThen applyFilter
-
     service
   }
 

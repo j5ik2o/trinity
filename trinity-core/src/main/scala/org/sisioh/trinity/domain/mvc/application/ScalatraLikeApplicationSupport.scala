@@ -25,6 +25,6 @@ trait ScalatraLikeApplicationSupport extends Bootstrap with ScalatraLikeControll
   this: Application =>
 
   override protected lazy val routingFilter =
-    Some(RoutingFilter.createForControllers(this))
+    Some(RoutingFilter.createFromControllers(this))
 
 }

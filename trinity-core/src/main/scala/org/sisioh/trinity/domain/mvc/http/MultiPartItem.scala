@@ -25,20 +25,40 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBuffer.toTrinity
 import scala.concurrent._
 
 /**
- * マルチパートアイテムを表現する値オブジェクト。
+ * Represents the multi-parts value object.
  *
- * @param mixedFileUpload [[org.jboss.netty.handler.codec.http.multipart.MixedFileUpload]]
+ * @param mixedFileUpload `org.jboss.netty.handler.codec.http.multipart.MixedFileUpload`
+ * @param ioChunkSize chunked I/O size
  */
 case class MultiPartItem(mixedFileUpload: MixedFileUpload, ioChunkSize: Int = 1024) {
 
+  /**
+   * file's data.
+   */
   val data: ChannelBuffer = mixedFileUpload.getChannelBuffer
 
+  /**
+   * name.
+   */
   val name = mixedFileUpload.getName
 
+  /**
+   * file's content-type.
+   */
   val contentType = mixedFileUpload.getContentType
 
+  /**
+   * file's name.
+   */
   val fileName = mixedFileUpload.getFilename
 
+  /**
+   * Writes the data to the file.
+   *
+   * @param path path to file
+   * @param executor `ExecutionContext`
+   * @return future
+   */
   def writeToFile(path: String)
                  (implicit executor: ExecutionContext): Future[Unit] = future {
     using(new FileOutputStream(path)) {
