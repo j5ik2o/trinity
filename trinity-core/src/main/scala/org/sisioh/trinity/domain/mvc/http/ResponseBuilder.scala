@@ -24,7 +24,7 @@ import scala.concurrent.Future
 import collection.mutable.ListBuffer
 
 /**
- * 値オブジェクトのインスタンスを生成するビルダーのトレイト。
+ * Represents the trait to build a value-object's instance.
  *
  * @tparam T ビルド対象のインスタンスの型
  * @tparam S このビルダークラスの型

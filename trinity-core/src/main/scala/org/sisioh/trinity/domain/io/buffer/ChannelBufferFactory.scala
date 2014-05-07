@@ -25,7 +25,7 @@ trait ChannelBufferFactory {
 }
 
 /**
- *  Represents the companion object for [[ChannelBufferFactory]]
+ *  Represents the companion object for [[ChannelBufferFactory]].
  */
 object ChannelBufferFactory {
 

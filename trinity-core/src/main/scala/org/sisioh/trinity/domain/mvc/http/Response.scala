@@ -20,33 +20,38 @@ import org.sisioh.trinity.domain.io.http.{Response => IOResponse, _}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 /**
- * MVCのためのレスポンス。
+ * Represents the response for MVC.
  */
 trait Response extends Message with ResponseProxy {
 
+  /**
+   * Gets a string representation as [[Response]].
+   *
+   * @return string representation as [[Response]]
+   */
   def encodeString(): String = toUnderlyingAsFinagle.encodeString()
 
 }
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the companion object for [[Response]].
  */
 object Response {
 
   /**
-   * ファクトリメソッド。
+   * Creates a instance as [[Response]] from [[IOResponse]].
    * 　
-   * @param underlying
-   * @return
+   * @param underlying [[IOResponse]]
+   * @return [[Response]]
    */
   private[trinity] def apply(underlying: IOResponse): Response = new ResponseImpl(underlying)
 
   /**
-   * ファクトリメソッド。
+   * Creates a instance as [[Response]].
    *
-   * @param responseStatus
-   * @param protocolVersion
-   * @return
+   * @param responseStatus [[ResponseStatus.Value]]
+   * @param protocolVersion protocol version
+   * @return [[Response]]
    */
   def apply(responseStatus: ResponseStatus.Value = ResponseStatus.Ok,
             headers: Seq[(HeaderName, Any)] = Seq.empty,

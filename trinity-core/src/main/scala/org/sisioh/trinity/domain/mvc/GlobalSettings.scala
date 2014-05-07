@@ -21,7 +21,7 @@ import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.server.Server
 
 /**
- * グローバル設定を表すトレイト。
+ * Presents the trait for the global configuration.
  */
 trait GlobalSettings[-Req <: Request, +Rep <: Response] {
 

@@ -12,7 +12,7 @@ import org.sisioh.trinity.domain.io.http.Charset
 import scala.util.Try
 
 /**
- * Represent the implementation class for [[ChannelBuffer]]
+ * Represent the implementation class for [[ChannelBuffer]].
  *
  * @param underlying [[NettyChannelBuffer]]
  * @param mutated if `true` is mutable mode

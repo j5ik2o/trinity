@@ -5,7 +5,7 @@ import org.jboss.netty.buffer.{HeapChannelBufferFactory => NettyHeapChannelBuffe
 import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
 
 /**
- * Represents a factory class for `org.jboss.netty.buffer.NettyHeapChannelBufferFactory`
+ * Represents a factory class for `org.jboss.netty.buffer.NettyHeapChannelBufferFactory`.
  */
 object HeapChannelBufferFactory {
 

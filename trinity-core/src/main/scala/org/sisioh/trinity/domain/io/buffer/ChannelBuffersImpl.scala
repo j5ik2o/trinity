@@ -5,7 +5,7 @@ import org.jboss.netty.buffer.{ChannelBuffers => NettyChannelBuffers}
 import org.sisioh.trinity.domain.io.http.Charset
 
 /**
- * Represents the implementation class for [[ChannelBuffer]]
+ * Represents the implementation class for [[ChannelBuffer]].
  */
 private[buffer]
 object ChannelBuffersImpl extends ChannelBuffers {

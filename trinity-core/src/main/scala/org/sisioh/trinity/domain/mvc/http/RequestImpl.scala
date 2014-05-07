@@ -26,6 +26,15 @@ import scala.util.Try
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import scala.Some
 
+/**
+ * Represents then implementation class for [[Request]].
+ *
+ * @param underlying [[Request]]
+ * @param action action
+ * @param routeParams
+ * @param globalSettings [[GlobalSettings]]
+ * @param error wrapped `Throwable` arround `scala.Option`
+ */
 private[http]
 class RequestImpl
 (override val underlying: IORequest,

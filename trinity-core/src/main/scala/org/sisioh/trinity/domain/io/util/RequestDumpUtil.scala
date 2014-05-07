@@ -129,7 +129,7 @@ object RequestDumpUtil {
    * Dumps the response properties to string buffer.
    *
    * @param sb      string buffer
-   * @param request [[Request]]
+   * @param response [[Response]]
    * @param lf      LF
    * @param indent  indent
    */

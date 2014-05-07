@@ -20,11 +20,27 @@ import java.net.SocketAddress
 import javax.net.ssl.SSLEngine
 import scala.concurrent.duration.Duration
 
+/**
+ * Represents the configuration for open connections thresholds.
+ *
+ * @param lowWaterMark
+ * @param highWaterMark
+ * @param idleTime
+ */
 case class OpenConnectionsThresholdsConfig
 (lowWaterMark: Int,
  highWaterMark: Int,
  idleTime: Duration)
 
+/**
+ * Represents the configuration for TLS.
+ *
+ * @param certificatePath
+ * @param keyPath
+ * @param caCertificatePath
+ * @param ciphers
+ * @param nextProtos
+ */
 case class TlsConfig
 (certificatePath: String,
  keyPath: String,
@@ -32,12 +48,19 @@ case class TlsConfig
  ciphers: Option[String],
  nextProtos: Option[String])
 
+/**
+ * Represents the configuration for SSL Engine.
+ *
+ * @param self
+ * @param handlesRenegotiation
+ * @param certId
+ */
 case class Engine(self: SSLEngine,
                   handlesRenegotiation: Boolean = false,
                   certId: String = "<unknown>")
 
 /**
- * [[org.sisioh.trinity.domain.mvc.server.Server]]のための設定。
+ * Represents the configuration for [[Server]].
  *
  * @param name
  * @param bindAddress

@@ -4,7 +4,7 @@ import java.nio.{ByteBuffer, ByteOrder}
 import org.jboss.netty.buffer.{ChannelBufferFactory => NettyChannelBufferFactory}
 
 /**
- * Represents the implementation class for [[ChannelBufferFactory]]
+ * Represents the implementation class for [[ChannelBufferFactory]].
  *
  * @param underlying [[NettyChannelBufferFactory]]
  */
