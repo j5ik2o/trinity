@@ -17,8 +17,16 @@ package org.sisioh.trinity.domain.mvc.server
 
 import org.sisioh.config.Configuration
 
+/**
+ * Represents the event listener for [[ServerConfig]].
+ */
 trait ServerConfigEventListener {
 
+  /**
+   * Calls the handler, when loaded the configuration.
+   *
+   * @param configuration `Configuration`
+   */
   protected[server] def onLoadedConfig(configuration: Configuration): Unit
 
 }

@@ -31,20 +31,20 @@ class ResponseImpl(override val underlying: IOResponse)
            protocolVersion: ProtocolVersion.Value = ProtocolVersion.Http11) =
     this(IOResponse(responseStatus, headers, cookies, attributes, content, isMutable, protocolVersion))
 
-  val toUnderlyingAsFinagle = underlying.toUnderlyingAsFinagle
+  override val toUnderlyingAsFinagle = underlying.toUnderlyingAsFinagle
 
-  protected def createInstance(message: this.type, attributes: Map[String, Any]): this.type =
+  override protected def createInstance(message: this.type, attributes: Map[String, Any]): this.type =
     new ResponseImpl(message.underlying.withAttributes(attributes)).asInstanceOf[this.type]
 
-  val attributes: Map[String, Any] = underlying.attributes
+  override val attributes: Map[String, Any] = underlying.attributes
 
-  def withAttributes(_attributes: Map[String, Any]): this.type =
+  override def withAttributes(_attributes: Map[String, Any]): this.type =
     new ResponseImpl(underlying.withAttributes(_attributes)).asInstanceOf[this.type]
 
-  def withAttributes(_attributes: (String, Any)*): this.type =
+  override def withAttributes(_attributes: (String, Any)*): this.type =
     new ResponseImpl(underlying.withAttributes(_attributes: _*)).asInstanceOf[this.type]
 
-  def withoutAllAttributes(): this.type =
+  override def withoutAllAttributes(): this.type =
     new ResponseImpl(underlying.withoutAllAttributes()).asInstanceOf[this.type]
 
 }

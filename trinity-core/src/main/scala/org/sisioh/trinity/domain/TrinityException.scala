@@ -15,6 +15,11 @@
  */
 package org.sisioh.trinity.domain
 
-
+/**
+ * Represents the generic exception for Trinity.
+ *
+ * @param message message
+ * @param cause the cause of the occurred exception
+ */
 case class TrinityException(message: Option[String] = None, cause: Option[Throwable] = None)
   extends Exception(message.orNull, cause.orNull)

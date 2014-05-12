@@ -21,13 +21,19 @@ import org.sisioh.trinity.util.ResourceUtil
 import scala.util.Try
 
 /**
- * ファイルリソースを解決するためのクラス。
+ * Represents the class to resolve file's resources.
  *
  * @param environment [[org.sisioh.trinity.domain.mvc.Environment]]
- * @param localBasePath Development時のローカルベースパス
+ * @param localBasePath local base path when development mode
  */
 case class FileResourceResolver(environment: Environment.Value, localBasePath: File) {
 
+  /**
+   * Gets whether exist the file that be specified by the file path.
+   *
+   * @param path path to file
+   * @return Returns true if it exists.
+   */
   def hasFile(path: String): Boolean = {
     if (environment == Environment.Product) {
       hasResourceFile(path)
@@ -36,6 +42,12 @@ case class FileResourceResolver(environment: Environment.Value, localBasePath: F
     }
   }
 
+  /**
+   * Gets [[InputStream]] that be specified by the file path.
+   *
+   * @param path path to file
+   * @return wrapped [[InputStream]] around `scala.util.Try`
+   */
   def getInputStream(path: String): Try[InputStream] = {
     if (environment == Environment.Product) {
       ResourceUtil.getResourceInputStream(path)
@@ -51,8 +63,7 @@ case class FileResourceResolver(environment: Environment.Value, localBasePath: F
 
   private def hasResourceFile(path: String): Boolean = {
     ResourceUtil.getResourceInputStream(path).map {
-      _ =>
-        true
+      _ => true
     }.getOrElse(false)
   }
 
@@ -63,6 +74,5 @@ case class FileResourceResolver(environment: Environment.Value, localBasePath: F
     else if (!file.canRead) false
     else true
   }
-
 
 }

@@ -24,7 +24,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 
 /**
- * アプリケーションを表すトレイト。
+ * Represents the application trait.
  */
 trait Application extends LoggingEx {
 

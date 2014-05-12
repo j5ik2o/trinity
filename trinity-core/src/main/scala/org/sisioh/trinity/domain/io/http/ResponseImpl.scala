@@ -6,7 +6,7 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 import org.sisioh.trinity.domain.io.http.ResponseStatus.{toNetty, toTrinity}
 
 /**
- * Netty Requestのラッパー。
+ * Represents a implementation class for [[Response]].
  *
  * @param toUnderlyingAsFinagle
  */
@@ -16,6 +16,17 @@ case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse,
                         isMutable: Boolean = false)
   extends AbstractMessage(toUnderlyingAsFinagle) with Response {
 
+  /**
+   * Auxiliary constructor.
+   *
+   * @param status
+   * @param headers
+   * @param cookies
+   * @param attributes
+   * @param content
+   * @param isMutable
+   * @param protocolVersion
+   */
   def this(status: ResponseStatus.Value,
            headers: Seq[(HeaderName, Any)] = Seq.empty,
            cookies: Seq[Cookie] = Seq.empty,
@@ -29,9 +40,9 @@ case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse,
     setContent(content)
   }
 
-  def isRequest: Boolean = false
+  override def isRequest: Boolean = false
 
-  protected def createInstance(message: this.type, attributes: Map[String, Any]): this.type =
+  override protected def createInstance(message: this.type, attributes: Map[String, Any]): this.type =
     new ResponseImpl(message.toUnderlyingAsFinagle.asInstanceOf[FinagleResponse], attributes).asInstanceOf[this.type]
 
   protected def mutateAsResponse(f: (NettyResponse) => Unit): this.type = {
@@ -44,9 +55,9 @@ case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse,
     cloned.asInstanceOf[this.type]
   }
 
-  def responseStatus: ResponseStatus.Value = toUnderlyingAsFinagle.getStatus()
+  override def responseStatus: ResponseStatus.Value = toUnderlyingAsFinagle.getStatus()
 
-  def withResponseStatus(status: ResponseStatus.Value): this.type = mutateAsResponse {
+  override def withResponseStatus(status: ResponseStatus.Value): this.type = mutateAsResponse {
     _.setStatus(status)
   }
 

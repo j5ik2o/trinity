@@ -17,10 +17,13 @@ package org.sisioh.trinity.domain.mvc.application
 
 import org.sisioh.trinity.Environment
 
+/**
+ * Represents the trait to support the console application.
+ */
 trait ConsoleApplicationSupport extends Bootstrap {
   this: ConsoleApplication =>
 
-  protected lazy val environment: Environment.Value =
+  override protected lazy val environment: Environment.Value =
     if (args.size > 0 && args(0).toLowerCase == Environment.Development.toString.toLowerCase)
       Environment.Development
     else

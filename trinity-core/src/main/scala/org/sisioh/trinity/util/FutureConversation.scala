@@ -21,13 +21,16 @@ import scala.concurrent.{Future => SFuture, promise => SPromise, ExecutionContex
 import scala.language.implicitConversions
 import scala.util.{Try => STry}
 
+/**
+ * Represents the implicit conversions to convert between `com.twitter.util.Future` and `scala.concurrent.Future`.
+ */
 object FutureConversation {
 
   /**
-   * `com.twitter.util.Future` を `scala.concurrent.Future` に変換するための暗黙的値クラス。
+   * Gets a future as `scala.concurrent.Future`.
    *
-   * @param future [[com.twitter.util.Future]]
-   * @tparam T 値の型
+   * @param future `com.twitter.util.Future`
+   * @tparam T value's type
    */
   implicit def TFutureToSFuture[T](future: TFuture[T]): SFuture[T] = {
     val prom = SPromise[T]()
@@ -39,12 +42,13 @@ object FutureConversation {
   }
 
   /**
-   * `scala.concurrent.Future` から `com.twitter.util.Future` に変換するための暗黙的値クラス。
+   * Gets a future as `com.twitter.util.Future`.
    *
    * @param future `scala.concurrent.Future`
-   * @tparam T 値の型
+   * @tparam T value's type
    */
-  implicit def SFutureToTFuture[T](future: SFuture[T])(implicit executor: ExecutionContext): TFuture[T] = {
+  implicit def SFutureToTFuture[T](future: SFuture[T])
+                                  (implicit executor: ExecutionContext): TFuture[T] = {
     val prom = TPromise[T]()
     future.onComplete {
       t: STry[T] =>

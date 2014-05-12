@@ -22,10 +22,10 @@ import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
- * 例外をハンドリングするためのフィルター。
+ * Represents the filter for handling exceptions.
  *
- * @param globalSettings [[org.sisioh.trinity.domain.mvc.GlobalSettings]]
- * @param executor [[scala.concurrent.ExecutionContext]]
+ * @param globalSettings [[GlobalSettings]]
+ * @param executor [[ExecutionContext]]
  */
 case class ExceptionHandleFilter
 (globalSettings: Option[GlobalSettings[Request, Response]] = None)
@@ -33,18 +33,15 @@ case class ExceptionHandleFilter
   extends SimpleFilter[Request, Response] with LoggingEx {
 
   /**
-   * エラー発生時のリカバリを行うためのハンドラ。
+   * Gets the handler which be recovered errors which occurred.
    *
-   * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
+   * @return wrapped `com.twitter.finagle.http.Request` around `Future`
    */
   protected def errorHandler(request: Request, throwable: Throwable): Future[Response] = {
     val newRequest = request.withError(throwable)
-    globalSettings.map {
-      _.error.map(_(newRequest)).
-        getOrElse(InternalServerErrorAction(newRequest))
-    }.getOrElse {
+    globalSettings.fold(
       InternalServerErrorAction(newRequest)
-    }
+    )(_.error.fold(InternalServerErrorAction(newRequest))(_(newRequest)))
   }
 
   def apply(requestIn: Request, action: Action[Request, Response]): Future[Response] = {

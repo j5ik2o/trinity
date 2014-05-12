@@ -25,7 +25,7 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
- * サーバーを表すトレイト。
+ * Represents the trait for the server.
  */
 trait Server extends ServiceBuilder {
 
@@ -44,14 +44,23 @@ trait Server extends ServiceBuilder {
 }
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the companion object for [[Server]].
  */
 object Server {
 
+  /**
+   * The default name for [[Server]]
+   */
   val defaultName = "trinity"
 
+  /**
+   * The duration to await for [[Server]]
+   */
   val defaultAwaitDuration = Duration(5, TimeUnit.SECONDS)
 
+  /**
+   * The bind address for [[Server]]
+   */
   val defaultBindAddress = new InetSocketAddress(7070)
 
   def apply(serverConfig: ServerConfig = ServerConfig(),

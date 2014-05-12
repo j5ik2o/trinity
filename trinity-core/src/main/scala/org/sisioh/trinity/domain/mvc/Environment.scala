@@ -15,6 +15,19 @@
  */
 package org.sisioh.trinity.domain.mvc
 
+/**
+ * Represents the environment for the trinity.
+ */
 object Environment extends Enumeration {
-  val Product, Development = Value
+
+  /**
+   * Product
+   */
+  val Product,
+
+  /**
+   * Development
+   */
+  Development = Value
+
 }

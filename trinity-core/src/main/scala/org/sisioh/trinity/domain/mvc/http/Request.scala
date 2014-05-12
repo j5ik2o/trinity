@@ -27,7 +27,7 @@ import scala.util.{Try, Sorting}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 /**
- * MVCのために拡張された[[org.sisioh.trinity.domain.io.http.Request]]。
+ * Represents [[Request]] enhanced for MVC.
  */
 trait Request extends Message with RequestProxy with LoggingEx {
 
@@ -74,7 +74,7 @@ trait Request extends Message with RequestProxy with LoggingEx {
 
   def accepts: Seq[ContentType] = {
     val accept = getHeader(HeaderNames.Accept)
-    accept.map {
+    accept.fold(Seq.empty[ContentType]) {
       accept =>
         val acceptParts = Splitter.on(',').split(accept).toArray
         Sorting.quickSort(acceptParts)(AcceptOrdering)
@@ -83,7 +83,7 @@ trait Request extends Message with RequestProxy with LoggingEx {
             val part = Splitter.on(";q=").split(xs).toArray.head
             ContentTypes.valueOf(part).getOrElse(ContentTypes.All)
         }.toSeq
-    }.getOrElse(Seq.empty[ContentType])
+    }
   }
 
   val error: Option[Throwable]
@@ -97,7 +97,7 @@ trait Request extends Message with RequestProxy with LoggingEx {
    * @return `Future`でラップされた [[org.sisioh.trinity.domain.mvc.http.Response]]
    */
   def execute(defaultAction: Action[Request, Response]): Future[Response] = withDebugScope(s"$toString : execute") {
-    action.map(_(this)).getOrElse(defaultAction(this))
+    action.fold(defaultAction(this))(_(this))
   }
 
   val globalSettings: Option[GlobalSettings[Request, Response]]
