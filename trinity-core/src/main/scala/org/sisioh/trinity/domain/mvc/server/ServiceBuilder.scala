@@ -34,44 +34,89 @@ trait ServiceBuilder {
 
   private val finagleFilterBuffers = new ListBuffer[FinagleFilter[Request, Response, Request, Response]]()
 
+  /**
+   * Wrapped [[GlobalSettings]] around `scala.Option`
+   */
   val globalSettings: Option[GlobalSettings[Request, Response]]
 
+  /**
+   * Applys finagle's filters to base service.
+   *
+   * @param baseService based [[Service]]
+   * @return [[Service]] applied filters
+   */
   protected def applyFinagleFilters(baseService: Service[Request, Response]) = {
     finagleFilterBuffers.foldRight(baseService) {
-      (b, a) =>
-        b andThen a
+      (b, a) => b andThen a
     }
   }
 
+  /**
+   * Clears finagle's filters.
+   */
   protected def unregisterAllFinagleFilters() = {
     finagleFilterBuffers.clear()
   }
 
+  /**
+   * Registers finagle's filters.
+   *
+   * @param filters filters
+   */
   protected def registerFinagleFilters(filters: Seq[FinagleFilter[Request, Response, Request, Response]]) {
     finagleFilterBuffers.appendAll(filters)
   }
 
+  /**
+   * Registers finagle's filters.
+   *
+   * @param filter a [[Filter]]
+   */
   protected def registerFinagleFilter(filter: FinagleFilter[Request, Response, Request, Response]) {
     finagleFilterBuffers.append(filter)
   }
 
+  /**
+   * Un-registers all filters.
+   */
   def unregisterAllFilters() = {
     unregisterAllFinagleFilters()
   }
 
-  def registerFilters(filters: Seq[Filter[Request, Response, Request, Response]])(implicit executor: ExecutionContext) {
+  /**
+   * Registers filters.
+   *
+   * @param filters filters
+   * @param executor `scala.concurrent.ExecutionContext`
+   */
+  def registerFilters(filters: Seq[Filter[Request, Response, Request, Response]])
+                     (implicit executor: ExecutionContext) {
     registerFinagleFilters(filters.map {
       Filter toFinagleFilter _
     })
   }
 
-  def registerFilter(filter: Filter[Request, Response, Request, Response])(implicit executor: ExecutionContext) {
+  /**
+   * Registers a filter.
+   *
+   * @param filter a [[Filter]]
+   * @param executor `scala.concurrent.ExecutionContext`
+   */
+  def registerFilter(filter: Filter[Request, Response, Request, Response])
+                    (implicit executor: ExecutionContext) {
     registerFinagleFilter(Filter.toFinagleFilter(filter))
   }
 
-  protected def buildService(environment: Environment.Value,
-                             action: Option[Action[Request, Response]] = None)
-                            (implicit executor: ExecutionContext) = {
+  /**
+   * Builds a service.
+   *
+   * @param environment [[Environment.Value]]
+   * @param action wrapped [[Action]] around `scala.Option`
+   * @param executor `scala.concurrent.ExecutionContext`
+   * @return [[Service]]
+   */
+  protected def buildService(environment: Environment.Value, action: Option[Action[Request, Response]] = None)
+                            (implicit executor: ExecutionContext): Service[FinagleRequest, FinagleResponse] = {
     val actionExecuteService = ActionExecuteService(globalSettings)
     def applyFilter() = {
       if (environment == Environment.Development)

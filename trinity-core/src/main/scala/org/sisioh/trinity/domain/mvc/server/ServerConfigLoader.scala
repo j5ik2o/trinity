@@ -64,7 +64,7 @@ class ServerConfigLoader {
   }
 
   private def getKeyName(keyName: String, prefix: Option[String] = None) =
-    prefix.map(_ + keyName).getOrElse(keyName)
+    prefix.fold(keyName)(_ + keyName)
 
   /**
    * Loads the OpenConnectionsThresholds configuration items.
@@ -126,7 +126,7 @@ class ServerConfigLoader {
             new InetSocketAddress(bindAddress.toInt)
           }
       },
-      statsEnabled = configuration.getBooleanValue(getKeyName("stats.Enabled", prefix)).getOrElse(false),
+      statsEnabled = configuration.getBooleanValue(getKeyName("stats.enabled", prefix)).getOrElse(false),
       statsPort = configuration.getIntValue(getKeyName("stats.port", prefix)),
       maxRequestSize = configuration.getIntValue(getKeyName("maxRequestSize", prefix)),
       maxResponseSize = configuration.getIntValue(getKeyName("maxResponseSize", prefix)),

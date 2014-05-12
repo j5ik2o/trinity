@@ -17,16 +17,38 @@ package org.sisioh.trinity.domain.mvc.routing
 
 import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 
+/**
+ * Represents the repository trait for [[Route]].
+ */
 trait RouteRepository {
 
-  def find(route: PartialFunction[Route[Request, Response], Boolean]): Option[Route[Request, Response]]
+  /**
+   * Finds a route by the partial-function.
+   *
+   * @param function partial-function
+   * @return wrapped [[Route]] around `scala.Option`
+   */
+  def find(function: PartialFunction[Route[Request, Response], Boolean]): Option[Route[Request, Response]]
 
+  /**
+   * Stores a route.
+   *
+   * @param route [[Route]]
+   */
   def store(route: Route[Request, Response]): Unit
+
 }
 
+/**
+ * Represents the companion object for [[Route]].
+ */
 object RouteRepository {
 
+  /**
+   * Creates a instance of [[RouteRepository]] on Memory.
+   *
+   * @return [[RouteRepository]]
+   */
   def ofMemory: RouteRepository = RouteRepositoryOnMemory()
-
 
 }

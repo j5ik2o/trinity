@@ -26,21 +26,31 @@ import org.sisioh.trinity.domain.mvc.server.Server
 trait GlobalSettings[-Req <: Request, +Rep <: Response] {
 
   /**
-   * リクエストに対するリソースが見つからなかった場合に呼ばれる`Action`。
+   * Gets a action called when the resource for the request is not found.
    *
-   * @return [[org.sisioh.trinity.domain.mvc.action.Action]]
+   * @return [[Action]]
    */
   def notFound: Option[Action[Req, Rep]] = None
 
   /**
-   * エラーが発生した場合に呼ばれる`Action`。
+   * Gets a action called when error is occurred.
    *
-   * @return [[org.sisioh.trinity.domain.mvc.action.Action]]
+   * @return [[Action]]
    */
   def error: Option[Action[Req, Rep]] = None
 
+  /**
+   * The callback handler when the server started.
+   *
+   * @param server [[Server]]
+   */
   def onStart(server: Server): Unit
 
+  /**
+   * The callback handler when the server stopped.
+   *
+   * @param server [[Server]]
+   */
   def onStop(server: Server): Unit
 
 }
