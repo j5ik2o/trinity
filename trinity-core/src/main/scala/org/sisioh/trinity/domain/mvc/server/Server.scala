@@ -48,10 +48,19 @@ trait Server extends ServiceBuilder {
  */
 object Server {
 
+  /**
+   * The default name for [[Server]]
+   */
   val defaultName = "trinity"
 
+  /**
+   * The duration to await for [[Server]]
+   */
   val defaultAwaitDuration = Duration(5, TimeUnit.SECONDS)
 
+  /**
+   * The bind address for [[Server]]
+   */
   val defaultBindAddress = new InetSocketAddress(7070)
 
   def apply(serverConfig: ServerConfig = ServerConfig(),

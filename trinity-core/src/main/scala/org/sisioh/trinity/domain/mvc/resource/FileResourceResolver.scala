@@ -21,10 +21,10 @@ import org.sisioh.trinity.util.ResourceUtil
 import scala.util.Try
 
 /**
- * Represents the class to resolves file resources.
+ * Represents the class to resolve file's resources.
  *
- * @param environment [[Environment.Value]]
- * @param localBasePath When development mode, it's local path.
+ * @param environment [[org.sisioh.trinity.domain.mvc.Environment]]
+ * @param localBasePath local base path when development mode
  */
 case class FileResourceResolver(environment: Environment.Value, localBasePath: File) {
 

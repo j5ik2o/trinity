@@ -24,7 +24,7 @@ import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternPars
 import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * ルーティング用フィルター。
+ * Represents the routing filter.
  *
  * @param routeRepository [[org.sisioh.trinity.domain.mvc.routing.RouteRepository]]
  * @param globalSettings [[org.sisioh.trinity.domain.mvc.GlobalSettings]]
@@ -37,9 +37,9 @@ case class RoutingFilter
   extends Filter[Request, Response, Request, Response] with LoggingEx {
 
   /**
-   * アクションが見つからない場合のリカバリを行うためのハンドラ。
+   * Gets the handler to recovery request not found.
    *
-   * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
+   * @return wrapped [[Action]] around `scala.Option`
    */
   protected def notFoundHandler: Option[Action[Request, Response]] = {
     globalSettings.flatMap {
@@ -47,6 +47,12 @@ case class RoutingFilter
     }.orElse(Some(NotFoundHandleAction))
   }
 
+  /**
+   * Gets the action with route-params from [[Request]].
+   *
+   * @param request [[Request]]
+   * @return action with route-params
+   */
   protected def getActionWithRouteParams(request: Request): Option[(Action[Request, Response], Map[String, String])] = {
     routeRepository.find {
       case Route(RouteId(m, pattern), _) =>

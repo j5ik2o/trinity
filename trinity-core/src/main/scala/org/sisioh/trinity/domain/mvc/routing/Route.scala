@@ -22,20 +22,20 @@ import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPatternParser, Pat
 import scala.concurrent.Future
 
 /**
- * ルートを表すエンティティ。
+ * Represents the route to the action.
  */
 private[mvc]
 trait Route[Req, Rep]
   extends Serializable with Ordered[Route[Req, Rep]] {
 
-  val identity: RouteId
+  val identifier: RouteId
 
   override def equals(obj: Any): Boolean = obj match {
-    case that: Route[_, _] => this.identity == that.identity
+    case that: Route[_, _] => this.identifier == that.identifier
     case _ => false
   }
 
-  override def hashCode = 31 * identity.##
+  override def hashCode = 31 * identifier.##
 
   def compare(that: Route[Req, Rep]): Int = {
     this.order compareTo that.order
@@ -44,12 +44,12 @@ trait Route[Req, Rep]
   private val order = Route.orderGenerator.getAndIncrement
 
   /**
-   * アクション
+   * The action this route has.
    */
   val action: Action[Req, Rep]
 
   /**
-   * アクションを実行する。
+   * Applies the request to the action this route has.
    *
    * @param request リクエスト
    * @return `Future`
@@ -106,7 +106,7 @@ object Route {
    * @return 構成要素
    */
   def unapply[Req, Rep](route: Route[Req, Rep]): Option[(RouteId, Action[Req, Rep])] =
-    Some(route.identity, route.action)
+    Some(route.identifier, route.action)
 
   private val orderGenerator = new AtomicLong()
 

@@ -15,6 +15,9 @@
  */
 package org.sisioh
 
+/**
+ * Represents package object for Trinity.
+ */
 package object trinity {
 
   val Environment = org.sisioh.trinity.domain.mvc.Environment

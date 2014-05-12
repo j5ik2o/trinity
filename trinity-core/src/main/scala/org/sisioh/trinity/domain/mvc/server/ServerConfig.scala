@@ -16,12 +16,11 @@
 package org.sisioh.trinity.domain.mvc.server
 
 import java.net.SocketAddress
-
 import javax.net.ssl.SSLEngine
 import scala.concurrent.duration.Duration
 
 /**
- * Represents the configuration for open connections thresholds.
+ * Represents the configuration item for finagle's OpenConnectionsThresholds.
  *
  * @param lowWaterMark
  * @param highWaterMark
@@ -33,7 +32,7 @@ case class OpenConnectionsThresholdsConfig
  idleTime: Duration)
 
 /**
- * Represents the configuration for TLS.
+ * Represents the configuration item for TLS.
  *
  * @param certificatePath
  * @param keyPath
@@ -49,9 +48,9 @@ case class TlsConfig
  nextProtos: Option[String])
 
 /**
- * Represents the configuration for SSL Engine.
+ * Represents the configuration item for SSL engine.
  *
- * @param self
+ * @param self [[SSLEngine]]
  * @param handlesRenegotiation
  * @param certId
  */
@@ -60,7 +59,7 @@ case class Engine(self: SSLEngine,
                   certId: String = "<unknown>")
 
 /**
- * Represents the configuration for [[Server]].
+ * Represents the configuration item for [[Server]].
  *
  * @param name
  * @param bindAddress

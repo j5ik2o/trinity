@@ -27,7 +27,7 @@ import scala.util.{Try, Sorting}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
 /**
- * Represents [[org.sisioh.trinity.domain.io.http.Request]] that was enhanced for MVC.
+ * Represents [[Request]] enhanced for MVC.
  */
 trait Request extends Message with RequestProxy with LoggingEx {
 

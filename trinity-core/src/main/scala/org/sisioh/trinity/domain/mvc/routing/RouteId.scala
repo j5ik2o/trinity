@@ -25,6 +25,13 @@ import org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPattern
  * @param pathPattern
  */
 case class RouteId(method: Methods.Value, pathPattern: PathPattern) {
+
+  /**
+   * Gets the method and the pathPattern.
+   *
+   * @return method and pathPattern
+   */
   def value: (Methods.Value, PathPattern) = (method, pathPattern)
+
 }
 

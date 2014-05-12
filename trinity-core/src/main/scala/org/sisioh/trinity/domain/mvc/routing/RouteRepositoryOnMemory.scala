@@ -26,7 +26,7 @@ case class RouteRepositoryOnMemory()
     collection.mutable.Map.empty[RouteId, Route[Request, Response]]
 
   override def store(route: Route[Request, Response]): Unit = {
-    entites += (route.identity -> route)
+    entites += (route.identifier -> route)
   }
 
   override def find(predicate: PartialFunction[Route[Request, Response], Boolean]): Option[Route[Request, Response]] = {
