@@ -25,16 +25,24 @@ import scala.util.{Failure, Try}
 object ServerConfigLoader extends ServerConfigLoader
 
 /**
- * サーバ用設定ファイルを読み込むためのサービス。
+ * Represents the service loading the configuration file.
  */
 class ServerConfigLoader {
 
+  /**
+   * Loads the configuration to be specified by the application and the environment.
+   *
+   * @param applicationId application id
+   * @param environment [[Environment.Value]]
+   * @param serverConfigEventListener [[ServerConfigEventListener]]
+   * @return wrapped [[Configuration]] around `scala.util.Try`
+   */
   def loadConfiguration(applicationId: String,
-                        enviroment: Environment.Value,
+                        environment: Environment.Value,
                         serverConfigEventListener: Option[ServerConfigEventListener] = None): Try[Configuration] = Try {
     val configuration = Configuration.loadByMode(
       new File(applicationId),
-      if (enviroment == Environment.Product)
+      if (environment == Environment.Product)
         ConfigurationMode.Prod
       else
         ConfigurationMode.Dev
@@ -46,12 +54,25 @@ class ServerConfigLoader {
     configuration
   }.recoverWith {
     case ex =>
-      Failure(new FileNotFoundException(s"Configuration file is not found. please set config path to -Dconfig.file or -Dconfig.resource, -Dconfig.url. (applicationId = $applicationId, environment = $enviroment)"))
+      Failure(
+        new FileNotFoundException(
+          "Configuration file is not found." +
+            "please set config path to -Dconfig.file or -Dconfig.resource, -Dconfig.url. " +
+            s"(applicationId = $applicationId, environment = $environment)"
+        )
+      )
   }
 
   private def getKeyName(keyName: String, prefix: Option[String] = None) =
-    prefix.map(_ + keyName).getOrElse(keyName)
+    prefix.fold(keyName)(_ + keyName)
 
+  /**
+   * Loads the OpenConnectionsThresholds configuration items.
+   *
+   * @param configuration `Configuration`
+   * @param prefix prefix string
+   * @return wrapped [[OpenConnectionsThresholdsConfig]] around `scala.Option`
+   */
   protected def loadOpenConnectionsThresholdsConfig
   (configuration: Configuration, prefix: Option[String]): Option[OpenConnectionsThresholdsConfig] = {
     configuration.getConfiguration(getKeyName("openConnectionThresholds", prefix)).map {
@@ -63,6 +84,13 @@ class ServerConfigLoader {
     }
   }
 
+  /**
+   * Loads the Tls configuration items.
+   *
+   * @param configuration `Configuration`
+   * @param prefix prefix string
+   * @return wrapped [[TlsConfig]] around `scala.Option`
+   */
   protected def loadTlsConfig(configuration: Configuration, prefix: Option[String]): Option[TlsConfig] = {
     configuration.getConfiguration(getKeyName("tls", prefix)).map {
       c =>
@@ -75,7 +103,14 @@ class ServerConfigLoader {
     }
   }
 
-  def loadServerConfig(configuration: Configuration, prefix: Option[String] = None): ServerConfig = {
+  /**
+   * Loads the configuration as [[ServerConfig]].
+   *
+   * @param configuration `Configuration`
+   * @param prefix prefix string
+   * @return [[ServerConfig]]
+   */
+  def loadAsServerConfig(configuration: Configuration, prefix: Option[String] = None): ServerConfig = {
     val serverConfiguration = ServerConfig(
       name = configuration.
         getStringValue(getKeyName("name", prefix)),
@@ -91,7 +126,7 @@ class ServerConfigLoader {
             new InetSocketAddress(bindAddress.toInt)
           }
       },
-      statsEnabled = configuration.getBooleanValue(getKeyName("stats.Enabled", prefix)).getOrElse(false),
+      statsEnabled = configuration.getBooleanValue(getKeyName("stats.enabled", prefix)).getOrElse(false),
       statsPort = configuration.getIntValue(getKeyName("stats.port", prefix)),
       maxRequestSize = configuration.getIntValue(getKeyName("maxRequestSize", prefix)),
       maxResponseSize = configuration.getIntValue(getKeyName("maxResponseSize", prefix)),

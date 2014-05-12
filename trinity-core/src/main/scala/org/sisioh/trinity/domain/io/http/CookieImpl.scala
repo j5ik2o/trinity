@@ -3,9 +3,21 @@ package org.sisioh.trinity.domain.io.http
 import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie, DefaultCookie}
 import scala.collection.JavaConverters.asScalaSetConverter
 
+/**
+ * Represents the implementation class for [[Cookie]].
+ *
+ * @param underlying [[NettyCookie]]
+ */
 private[trinity]
 case class CookieImpl(underlying: NettyCookie) extends Cookie {
 
+  /**
+   * Auxiliary constructor.
+   *
+   * @param name
+   * @param value
+   * @return this
+   */
   def this(name: String, value: String) =
     this(new DefaultCookie(name, value))
 

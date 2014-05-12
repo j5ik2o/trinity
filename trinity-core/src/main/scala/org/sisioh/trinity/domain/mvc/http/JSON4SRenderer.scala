@@ -20,22 +20,26 @@ import org.json4s.jackson.JsonMethods._
 import org.sisioh.trinity.domain.io.http.{Charset, Charsets}
 
 /**
- * `JValue` のための[[org.sisioh.trinity.domain.mvc.http.ResponseRenderer]]。
+ * Represents [[org.sisioh.trinity.domain.mvc.http.ResponseRenderer]] for `org.json4s.JValue`.
  *
  * @param jValue `org.json4s.JValue`
  * @param charset [[org.sisioh.trinity.domain.io.http.Charset]]
  */
-case class JSON4SRenderer(jValue: JValue, charset: Option[Charset] = None) extends ResponseRenderer {
+case class JSON4SRenderer(jValue: JValue, charset: Option[Charset] = None)
+  extends ResponseRenderer {
 
   def render(responseBuilder: ResponseBuilder): Unit =
     responseBuilder.
       withContent(compact(jValue), charset.getOrElse(Charsets.UTF_8)).
-      withContentType(JSON4SRenderer.ContentTypeName + charset.map("; charset=" + _.toObject.name().toLowerCase).getOrElse(""))
+      withContentType(
+        JSON4SRenderer.ContentTypeName +
+          charset.fold("")("; charset=" + _.toObject.name().toLowerCase)
+      )
 
 }
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the companion object for [[JSON4SRenderer]].
  */
 object JSON4SRenderer {
 

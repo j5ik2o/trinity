@@ -15,6 +15,12 @@
  */
 package org.sisioh.trinity.domain.mvc.http
 
+/**
+ * Represents the exception occurred, when doesn't find the responder.
+ *
+ * @param message
+ * @param cause
+ */
 case class RespondNotFoundException(message: Option[String] = None, cause: Option[Throwable] = None)
   extends Exception(message.orNull, cause.orNull)
 

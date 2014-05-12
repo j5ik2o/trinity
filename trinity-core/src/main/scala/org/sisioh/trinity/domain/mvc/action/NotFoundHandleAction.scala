@@ -24,7 +24,7 @@ import scala.concurrent.Future
 import scala.util.Try
 
 /**
- * NOT_FOUND(404)を返す[[org.sisioh.trinity.domain.mvc.action.Action]]。
+ * Represents the action to returns the not found response.
  */
 case object NotFoundHandleAction extends Action[Request, Response] {
 

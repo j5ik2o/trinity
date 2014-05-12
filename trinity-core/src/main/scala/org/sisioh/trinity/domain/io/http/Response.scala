@@ -4,9 +4,12 @@ import com.twitter.finagle.http.{Response => FinagleResponse}
 import scala.language.implicitConversions
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
+/**
+ * Represents the trait for HTTP response.
+ */
 trait Response extends Message {
 
-  val toUnderlyingAsFinagle: FinagleResponse
+  override val toUnderlyingAsFinagle: FinagleResponse
 
   override def toString() =
     Seq(
@@ -25,17 +28,43 @@ trait Response extends Message {
   override def hashCode: Int =
     31 * (super.hashCode + responseStatus.##)
 
+  /**
+   * Gets the response status.
+   *
+   * @return response status
+   */
   def responseStatus: ResponseStatus.Value
 
+  /**
+   * Creates a new instance with a new response status.
+   *
+   * @param status response status
+   * @return a new instance
+   */
   def withResponseStatus(status: ResponseStatus.Value): this.type
 
 }
 
+/**
+ * Represents the companion object for [[Response]].
+ */
 object Response {
 
   private[trinity] def apply(underlying: FinagleResponse): Response =
     ResponseImpl(underlying)
 
+  /**
+   * Creates a [[Response]]'s instance.
+   *
+   * @param responseStatus response status
+   * @param headers headers
+   * @param cookies cookies
+   * @param attributes attributes
+   * @param content content
+   * @param isMutable true if it's mutable
+   * @param protocolVersion protocol version
+   * @return [[Response]]
+   */
   def apply(responseStatus: ResponseStatus.Value = ResponseStatus.Ok,
             headers: Seq[(HeaderName, Any)] = Seq.empty,
             cookies: Seq[Cookie] = Seq.empty,

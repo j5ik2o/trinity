@@ -11,8 +11,15 @@ import org.sisioh.trinity.domain.io.buffer.ChannelBufferFactory.toTrinity
 import org.sisioh.trinity.domain.io.http.Charset
 import scala.util.Try
 
+/**
+ * Represent the implementation class for [[ChannelBuffer]].
+ *
+ * @param underlying [[NettyChannelBuffer]]
+ * @param mutated if `true` is mutable mode
+ */
 private[buffer]
-case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = false) extends ChannelBuffer {
+case class ChannelBufferImpl
+(underlying: NettyChannelBuffer, mutated: Boolean = false) extends ChannelBuffer {
 
   override def equals(obj: Any): Boolean = obj match {
     case ChannelBufferImpl(netty, _) =>
@@ -36,343 +43,338 @@ case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = 
     f(result.underlying)
   }
 
+  override def factory: ChannelBufferFactory = underlying.factory()
 
-  def factory: ChannelBufferFactory = underlying.factory()
+  override def capacity: Int = underlying.capacity()
 
-  def capacity: Int = underlying.capacity()
+  override def byteOrder: ByteOrder = underlying.order()
 
-  def byteOrder: ByteOrder = underlying.order()
+  override def isDirect: Boolean = underlying.isDirect
 
-  def isDirect: Boolean = underlying.isDirect
+  override def readerIndex: Int = underlying.readerIndex()
 
-  def readerIndex: Int = underlying.readerIndex()
+  override def writerIndex: Int = underlying.writerIndex()
 
-  def writerIndex: Int = underlying.writerIndex()
-
-  def withReaderIndex(readerIndex: Int): ChannelBuffer = mutateAsThis {
+  override def withReaderIndex(readerIndex: Int): ChannelBuffer = mutateAsThis {
     _.readerIndex(readerIndex)
   }
 
-  def withWriterIndex(writerIndex: Int): ChannelBuffer = mutateAsThis {
+  override def withWriterIndex(writerIndex: Int): ChannelBuffer = mutateAsThis {
     _.writerIndex(writerIndex)
   }
 
-  def withIndex(readerIndex: Int, writerIndex: Int): ChannelBuffer = mutateAsThis {
+  override def withIndex(readerIndex: Int, writerIndex: Int): ChannelBuffer = mutateAsThis {
     _.setIndex(readerIndex, writerIndex)
   }
 
-  def readableBytes: Int = underlying.readableBytes()
+  override def readableBytes: Int = underlying.readableBytes()
 
-  def writableBytes: Int = underlying.writableBytes()
+  override def writableBytes: Int = underlying.writableBytes()
 
-  def isReadable: Boolean = underlying.readable()
+  override def isReadable: Boolean = underlying.readable()
 
-  def isWritable: Boolean = underlying.writable()
+  override def isWritable: Boolean = underlying.writable()
 
-  def withClear: ChannelBuffer = mutateAsThis {
+  override def withClear: ChannelBuffer = mutateAsThis {
     _.clear()
   }
 
-  def withMarkReaderIndex: ChannelBuffer = mutateAsThis {
+  override def withMarkReaderIndex: ChannelBuffer = mutateAsThis {
     _.markReaderIndex()
   }
 
-  def withResetReaderIndex: ChannelBuffer = mutateAsThis {
+  override def withResetReaderIndex: ChannelBuffer = mutateAsThis {
     _.resetReaderIndex()
   }
 
-  def withMarkWriterIndex: ChannelBuffer = mutateAsThis {
+  override def withMarkWriterIndex: ChannelBuffer = mutateAsThis {
     _.markWriterIndex()
   }
 
-  def withResetWriterIndex: ChannelBuffer = mutateAsThis {
+  override def withResetWriterIndex: ChannelBuffer = mutateAsThis {
     _.resetWriterIndex()
   }
 
-  def withDiscardReadBytes: ChannelBuffer = mutateAsThis {
+  override def withDiscardReadBytes: ChannelBuffer = mutateAsThis {
     _.discardReadBytes()
   }
 
-  def withEnsureWritableBytes(writableBytes: Int): ChannelBuffer = mutateAsThis {
+  override def withEnsureWritableBytes(writableBytes: Int): ChannelBuffer = mutateAsThis {
     _.ensureWritableBytes(writableBytes)
   }
 
-  def getByte(index: Int): Byte = underlying.getByte(index)
+  override def getByte(index: Int): Byte = underlying.getByte(index)
 
-  def getUnsignedByte(index: Int): Short = underlying.getUnsignedByte(index)
+  override def getUnsignedByte(index: Int): Short = underlying.getUnsignedByte(index)
 
-  def getShort(index: Int): Short = underlying.getShort(index)
+  override def getShort(index: Int): Short = underlying.getShort(index)
 
-  def getUnsignedShort(index: Int): Int = underlying.getUnsignedShort(index)
+  override def getUnsignedShort(index: Int): Int = underlying.getUnsignedShort(index)
 
-  def getMedium(index: Int): Int = underlying.getMedium(index)
+  override def getMedium(index: Int): Int = underlying.getMedium(index)
 
-  def getUnsignedMedium(index: Int): Int = underlying.getUnsignedMedium(index)
+  override def getUnsignedMedium(index: Int): Int = underlying.getUnsignedMedium(index)
 
-  def getInt(index: Int): Int = underlying.getInt(index)
+  override def getInt(index: Int): Int = underlying.getInt(index)
 
-  def getUnsignedInt(index: Int): Long = underlying.getUnsignedInt(index)
+  override def getUnsignedInt(index: Int): Long = underlying.getUnsignedInt(index)
 
-  def getLong(index: Int): Long = underlying.getLong(index)
+  override def getLong(index: Int): Long = underlying.getLong(index)
 
-  def getChar(index: Int): Char = underlying.getChar(index)
+  override def getChar(index: Int): Char = underlying.getChar(index)
 
-  def getFloat(index: Int): Float = underlying.getFloat(index)
+  override def getFloat(index: Int): Float = underlying.getFloat(index)
 
-  def getDouble(index: Int): Double = underlying.getDouble(index)
+  override def getDouble(index: Int): Double = underlying.getDouble(index)
 
-  def getBytes(index: Int): ChannelBuffer =
+  override def getBytes(index: Int): ChannelBuffer =
     getBytes(index, underlying.capacity() - (index + 1))
 
-  def getBytes(index: Int, length: Int): ChannelBuffer = {
+  override def getBytes(index: Int, length: Int): ChannelBuffer = {
     val dst = ChannelBuffers.buffer(underlying.order(), length)
     underlying.getBytes(index, dst, length)
     dst
   }
 
-  def getBytesAsByteArray(index: Int): Array[Byte] =
+  override def getBytesAsByteArray(index: Int): Array[Byte] =
     getBytesAsByteArray(underlying.capacity() - (index + 1))
 
-  def getBytesAsByteArray(index: Int, length: Int): Array[Byte] = {
+  override def getBytesAsByteArray(index: Int, length: Int): Array[Byte] = {
     val dst = new Array[Byte](length)
     underlying.getBytes(index, dst, 0, length)
     dst
   }
 
-  def getBytesAsByteBuffer(index: Int): ByteBuffer = {
+  override def getBytesAsByteBuffer(index: Int): ByteBuffer = {
     val dst = ByteBuffer.allocate(underlying.capacity() - (index + 1))
     underlying.getBytes(index, dst)
     dst
   }
 
-  def withByte(index: Int, value: Int): ChannelBuffer = mutateAsThis {
+  override def withByte(index: Int, value: Int): ChannelBuffer = mutateAsThis {
     _.setByte(index, value)
   }
 
-  def withShort(index: Int, value: Int): ChannelBuffer = mutateAsThis {
+  override def withShort(index: Int, value: Int): ChannelBuffer = mutateAsThis {
     _.setShort(index, value)
   }
 
-  def withMedium(index: Int, value: Int): ChannelBuffer = mutateAsThis {
+  override def withMedium(index: Int, value: Int): ChannelBuffer = mutateAsThis {
     _.setMedium(index, value)
   }
 
-  def withInt(index: Int, value: Int): ChannelBuffer = mutateAsThis {
+  override def withInt(index: Int, value: Int): ChannelBuffer = mutateAsThis {
     _.setInt(index, value)
   }
 
-  def withLong(index: Int, value: Long): ChannelBuffer = mutateAsThis {
+  override def withLong(index: Int, value: Long): ChannelBuffer = mutateAsThis {
     _.setLong(index, value)
   }
 
-  def withChar(index: Int, value: Int): ChannelBuffer = mutateAsThis {
+  override def withChar(index: Int, value: Int): ChannelBuffer = mutateAsThis {
     _.setChar(index, value)
   }
 
-  def withFloat(index: Int, value: Float): ChannelBuffer = mutateAsThis {
+  override def withFloat(index: Int, value: Float): ChannelBuffer = mutateAsThis {
     _.setFloat(index, value)
   }
 
-  def withDouble(index: Int, value: Double): ChannelBuffer = mutateAsThis {
+  override def withDouble(index: Int, value: Double): ChannelBuffer = mutateAsThis {
     _.setDouble(index, value)
   }
 
-  def withBytes(index: Int, src: ChannelBuffer): ChannelBuffer = mutateAsThis {
+  override def withBytes(index: Int, src: ChannelBuffer): ChannelBuffer = mutateAsThis {
     _.setBytes(index, src)
   }
 
-  def withBytes(index: Int, src: ChannelBuffer, length: Int): ChannelBuffer = mutateAsThis {
+  override def withBytes(index: Int, src: ChannelBuffer, length: Int): ChannelBuffer = mutateAsThis {
     _.setBytes(index, src, length)
   }
 
-  def withBytes(index: Int, src: ChannelBuffer, srcIndex: Int, length: Int): ChannelBuffer = mutateAsThis {
+  override def withBytes(index: Int, src: ChannelBuffer, srcIndex: Int, length: Int): ChannelBuffer = mutateAsThis {
     _.setBytes(index, src, srcIndex, length)
   }
 
-  def withBytes(index: Int, src: Array[Byte]): ChannelBuffer = mutateAsThis {
+  override def withBytes(index: Int, src: Array[Byte]): ChannelBuffer = mutateAsThis {
     _.setBytes(index, src)
   }
 
-  def withBytes(index: Int, src: Array[Byte], srcIndex: Int, length: Int): ChannelBuffer = mutateAsThis {
+  override def withBytes(index: Int, src: Array[Byte], srcIndex: Int, length: Int): ChannelBuffer = mutateAsThis {
     _.setBytes(index, src, srcIndex, length)
   }
 
-  def withBytes(index: Int, src: ByteBuffer): ChannelBuffer = mutateAsThis {
+  override def withBytes(index: Int, src: ByteBuffer): ChannelBuffer = mutateAsThis {
     _.setBytes(index, src)
   }
 
-  def withBytes(index: Int, in: InputStream, length: Int): Try[ChannelBuffer] = Try {
+  override def withBytes(index: Int, in: InputStream, length: Int): Try[ChannelBuffer] = Try {
     mutateAsThis {
       _.setBytes(index, in, length)
     }
   }
 
-  def withBytes(index: Int, in: ScatteringByteChannel, length: Int): Try[ChannelBuffer] = Try {
+  override def withBytes(index: Int, in: ScatteringByteChannel, length: Int): Try[ChannelBuffer] = Try {
     mutateAsThis {
       _.setBytes(index, in, length)
     }
   }
 
-  def withZero(index: Int, length: Int): ChannelBuffer = mutateAsThis {
+  override def withZero(index: Int, length: Int): ChannelBuffer = mutateAsThis {
     _.setZero(index, length)
   }
 
-  def readByte: Byte = mutateAsResult {
+  override def readByte: Byte = mutateAsResult {
     _.readByte
   }
 
-  def readUnsignedByte: Short = mutateAsResult {
+  override def readUnsignedByte: Short = mutateAsResult {
     _.readUnsignedByte()
   }
 
-  def readShort: Short = mutateAsResult {
+  override def readShort: Short = mutateAsResult {
     _.readShort()
   }
 
-  def readUnsignedShort: Int = mutateAsResult {
+  override def readUnsignedShort: Int = mutateAsResult {
     _.readUnsignedShort()
   }
 
-  def readMedium: Int = mutateAsResult {
+  override def readMedium: Int = mutateAsResult {
     _.readMedium()
   }
 
-  def readUnsignedMedium: Int = mutateAsResult {
+  override def readUnsignedMedium: Int = mutateAsResult {
     _.readUnsignedMedium()
   }
 
-  def readInt: Int = mutateAsResult {
+  override def readInt: Int = mutateAsResult {
     _.readInt
   }
 
-  def readUnsignedInt: Long = mutateAsResult {
+  override def readUnsignedInt: Long = mutateAsResult {
     _.readUnsignedInt
   }
 
-  def readLong: Long = mutateAsResult {
+  override def readLong: Long = mutateAsResult {
     _.readLong
   }
 
-  def readChar: Char = mutateAsResult {
+  override def readChar: Char = mutateAsResult {
     _.readChar
   }
 
-  def readFloat: Float = mutateAsResult {
+  override def readFloat: Float = mutateAsResult {
     _.readFloat
   }
 
-  def readDouble: Double = mutateAsResult {
+  override def readDouble: Double = mutateAsResult {
     _.readDouble
   }
 
-  def readSlice(length: Int): ChannelBuffer = mutateAsThis {
-    _.readSlice(length)
-  }
+  override def readBytes: ChannelBuffer = readBytes(underlying.readableBytes())
 
-  def readBytes: ChannelBuffer = readBytes(underlying.readableBytes())
-
-  def readBytes(length: Int): ChannelBuffer = mutateAsResult {
+  override def readBytes(length: Int): ChannelBuffer = mutateAsResult {
     clonedUnderlying =>
       val dst = ChannelBuffers.buffer(underlying.order(), length)
       clonedUnderlying.readBytes(dst, length)
       dst
   }
 
-  def readBytesAsByteArray: Array[Byte] = readBytesAsByteArray(underlying.readableBytes())
+  override def readBytesAsByteArray: Array[Byte] = readBytesAsByteArray(underlying.readableBytes())
 
-  def readBytesAsByteArray(length: Int): Array[Byte] = mutateAsResult {
+  override def readBytesAsByteArray(length: Int): Array[Byte] = mutateAsResult {
     clonedUnderlying =>
       val dst = new Array[Byte](length)
       clonedUnderlying.readBytes(dst, 0, length)
       dst
   }
 
-  def readBytesAsByteBuffer: ByteBuffer = mutateAsResult {
+  override def readBytesAsByteBuffer: ByteBuffer = mutateAsResult {
     clonedUnderlying =>
       val dst = ByteBuffer.allocate(underlying.readableBytes())
       clonedUnderlying.readBytes(dst)
       dst
   }
 
-  def withSkipBytes(length: Int): ChannelBuffer = mutateAsThis {
+  override def withSkipBytes(length: Int): ChannelBuffer = mutateAsThis {
     _.skipBytes(length)
   }
 
-  def withWriteByte(value: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteByte(value: Int): ChannelBuffer = mutateAsThis {
     _.writeByte(value)
   }
 
-  def withWriteShort(value: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteShort(value: Int): ChannelBuffer = mutateAsThis {
     _.writeShort(value)
   }
 
-  def withWriteMedium(value: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteMedium(value: Int): ChannelBuffer = mutateAsThis {
     _.writeMedium(value)
   }
 
-  def withWriteInt(value: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteInt(value: Int): ChannelBuffer = mutateAsThis {
     _.writeInt(value)
   }
 
-  def withWriteLong(value: Long): ChannelBuffer = mutateAsThis {
+  override def withWriteLong(value: Long): ChannelBuffer = mutateAsThis {
     _.writeLong(value)
   }
 
-  def withWriteChar(value: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteChar(value: Int): ChannelBuffer = mutateAsThis {
     _.writeChar(value)
   }
 
-  def withWriteFloat(value: Float): ChannelBuffer = mutateAsThis {
+  override def withWriteFloat(value: Float): ChannelBuffer = mutateAsThis {
     _.writeFloat(value)
   }
 
-  def withWriteDouble(value: Double): ChannelBuffer = mutateAsThis {
+  override def withWriteDouble(value: Double): ChannelBuffer = mutateAsThis {
     _.writeDouble(value)
   }
 
-  def withWriteBytes(src: ChannelBuffer): ChannelBuffer = mutateAsThis {
+  override def withWriteBytes(src: ChannelBuffer): ChannelBuffer = mutateAsThis {
     _.writeBytes(src)
   }
 
-  def withWriteBytes(src: ChannelBuffer, length: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteBytes(src: ChannelBuffer, length: Int): ChannelBuffer = mutateAsThis {
     _.writeBytes(src, length)
   }
 
-  def withWriteBytes(src: ChannelBuffer, srcIndex: Int, length: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteBytes(src: ChannelBuffer, srcIndex: Int, length: Int): ChannelBuffer = mutateAsThis {
     _.writeBytes(src, srcIndex, length)
   }
 
-  def withWriteBytes(src: Array[Byte]): ChannelBuffer = mutateAsThis {
+  override def withWriteBytes(src: Array[Byte]): ChannelBuffer = mutateAsThis {
     _.writeBytes(src)
   }
 
-  def withWriteBytes(src: Array[Byte], srcIndex: Int, length: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteBytes(src: Array[Byte], srcIndex: Int, length: Int): ChannelBuffer = mutateAsThis {
     _.writeBytes(src, srcIndex, length)
   }
 
-  def withWriteBytes(src: ByteBuffer): ChannelBuffer = mutateAsThis {
+  override def withWriteBytes(src: ByteBuffer): ChannelBuffer = mutateAsThis {
     _.writeBytes(src)
   }
 
-  def withWriteBytes(in: InputStream, length: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteBytes(in: InputStream, length: Int): ChannelBuffer = mutateAsThis {
     _.writeBytes(in, length)
   }
 
-  def withWriteBytes(in: ScatteringByteChannel, length: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteBytes(in: ScatteringByteChannel, length: Int): ChannelBuffer = mutateAsThis {
     _.writeBytes(in, length)
   }
 
-  def withWriteZero(length: Int): ChannelBuffer = mutateAsThis {
+  override def withWriteZero(length: Int): ChannelBuffer = mutateAsThis {
     _.writeZero(length)
   }
 
-  def indexOf(fromIndex: Int, toIndex: Int, value: Byte): Int = underlying.indexOf(fromIndex, toIndex, value)
+  override def indexOf(fromIndex: Int, toIndex: Int, value: Byte): Int = underlying.indexOf(fromIndex, toIndex, value)
 
-  def bytesBefore(value: Byte): Int = underlying.bytesBefore(value)
+  override def bytesBefore(value: Byte): Int = underlying.bytesBefore(value)
 
-  def bytesBefore(length: Int, value: Byte): Int = underlying.bytesBefore(length, value)
+  override def bytesBefore(length: Int, value: Byte): Int = underlying.bytesBefore(length, value)
 
-  def bytesBefore(index: Int, length: Int, value: Byte): Int = underlying.bytesBefore(index, length, value)
+  override def bytesBefore(index: Int, length: Int, value: Byte): Int = underlying.bytesBefore(index, length, value)
 
   private def internalClone = {
     val cloned = underlying.copy(0, capacity)
@@ -382,34 +384,34 @@ case class ChannelBufferImpl(underlying: NettyChannelBuffer, mutated: Boolean = 
     result
   }
 
-  def copy: ChannelBuffer = underlying.copy
+  override def copy: ChannelBuffer = underlying.copy
 
-  def copy(index: Int, length: Int): ChannelBuffer = underlying.copy(index, length)
+  override def copy(index: Int, length: Int): ChannelBuffer = underlying.copy(index, length)
 
-  def slice: ChannelBuffer = underlying.slice
+  override def slice: ChannelBuffer = underlying.slice
 
-  def slice(index: Int, length: Int): ChannelBuffer = underlying.slice(index, length)
+  override def slice(index: Int, length: Int): ChannelBuffer = underlying.slice(index, length)
 
-  def duplicate: ChannelBuffer = underlying.duplicate()
+  override def duplicate: ChannelBuffer = underlying.duplicate()
 
-  def toByteBuffer: ByteBuffer = underlying.toByteBuffer
+  override def toByteBuffer: ByteBuffer = underlying.toByteBuffer
 
-  def toByteBuffer(index: Int, length: Int): ByteBuffer = underlying.toByteBuffer(index, length)
+  override def toByteBuffer(index: Int, length: Int): ByteBuffer = underlying.toByteBuffer(index, length)
 
-  def toByteBuffers: Array[ByteBuffer] = underlying.toByteBuffers
+  override def toByteBuffers: Array[ByteBuffer] = underlying.toByteBuffers
 
-  def toByteBuffers(index: Int, length: Int): Array[ByteBuffer] = underlying.toByteBuffers(index, length)
+  override def toByteBuffers(index: Int, length: Int): Array[ByteBuffer] = underlying.toByteBuffers(index, length)
 
-  def hasArray: Boolean = underlying.hasArray
+  override def hasArray: Boolean = underlying.hasArray
 
-  def array: Array[Byte] = underlying.array()
+  override def array: Array[Byte] = underlying.array()
 
-  def arrayOffset: Int = underlying.arrayOffset()
+  override def arrayOffset: Int = underlying.arrayOffset()
 
-  def toString(charset: Charset): String = underlying.toString(charset.toObject)
+  override def toString(charset: Charset): String = underlying.toString(charset.toObject)
 
-  def toString(index: Int, length: Int, charset: Charset): String = underlying.toString(index, length, charset.toObject)
+  override def toString(index: Int, length: Int, charset: Charset): String = underlying.toString(index, length, charset.toObject)
 
-  def compareTo(buffer: ChannelBuffer): Int = underlying.compareTo(buffer)
+  override def compareTo(buffer: ChannelBuffer): Int = underlying.compareTo(buffer)
 
 }

@@ -1,7 +1,7 @@
 package org.sisioh.trinity.domain.io.http
 
 /**
- * レスポンスのためのプロキシー。
+ * Represents the proxy trait for [[Response]].
  */
 trait ResponseProxy extends Response with MessageProxy {
 

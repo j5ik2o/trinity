@@ -16,6 +16,8 @@
 package org.sisioh.trinity.domain.mvc.filter
 
 /**
+ *
+ *
  * シンプルな[[org.sisioh.trinity.domain.mvc.filter.Filter]]。
  *
  * @tparam Req リクエストの型

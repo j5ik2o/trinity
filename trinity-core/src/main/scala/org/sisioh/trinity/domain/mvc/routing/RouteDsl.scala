@@ -22,6 +22,9 @@ import org.sisioh.trinity.domain.mvc.routing.pathpattern.{PathPatternParser, Pat
 import scala.concurrent.Future
 import scala.util.matching.Regex
 
+/**
+ * Represents the dsl for routes.
+ */
 object RouteDsl {
 
   case class PathPatternDef(method: Methods.Value, pathPattern: PathPattern) {

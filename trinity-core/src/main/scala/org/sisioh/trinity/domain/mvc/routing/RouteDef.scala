@@ -20,6 +20,13 @@ import org.sisioh.trinity.domain.mvc.action.Action
 import org.sisioh.trinity.domain.mvc.http.{Request, Response}
 import org.sisioh.trinity.domain.mvc.routing.pathpattern.PathPattern
 
+/**
+ * Represents the defined values to route.
+ *
+ * @param method [[Methods.Value]]
+ * @param pathPattern [[PathPattern]]
+ * @param action [[Action]]
+ */
 case class RouteDef
 (method: Methods.Value,
  pathPattern: PathPattern,
