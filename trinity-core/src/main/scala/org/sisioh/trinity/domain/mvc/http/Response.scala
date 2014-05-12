@@ -16,8 +16,8 @@
 package org.sisioh.trinity.domain.mvc.http
 
 import com.twitter.finagle.http.{Response => FinagleResponse}
-import org.sisioh.trinity.domain.io.http.{Response => IOResponse, _}
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
+import org.sisioh.trinity.domain.io.http.{Response => IOResponse, _}
 
 /**
  * Represents the response for MVC.
@@ -49,8 +49,13 @@ object Response {
   /**
    * Creates a instance as [[Response]].
    *
-   * @param responseStatus [[ResponseStatus.Value]]
-   * @param protocolVersion protocol version
+   * @param responseStatus a [[ResponseStatus.Value]]
+   * @param headers headers
+   * @param cookies cookies
+   * @param attributes attributes
+   * @param content content
+   * @param isMutable whether mutable
+   * @param protocolVersion a [[ProtocolVersion.Value]]
    * @return [[Response]]
    */
   def apply(responseStatus: ResponseStatus.Value = ResponseStatus.Ok,
