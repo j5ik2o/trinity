@@ -3,7 +3,8 @@ package org.sisioh.trinity.example
 import org.json4s._
 import org.sisioh.trinity._
 
-object ScalatraLikeControllerApplication extends ConsoleApplication with ScalatraLikeApplicationSupport {
+object ScalatraLikeControllerApplication
+  extends ConsoleApplication with ScalatraLikeApplicationSupport {
 
   get("/hello") {
     request =>

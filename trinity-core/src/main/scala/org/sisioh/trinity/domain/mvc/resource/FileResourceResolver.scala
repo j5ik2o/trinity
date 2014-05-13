@@ -16,6 +16,7 @@
 package org.sisioh.trinity.domain.mvc.resource
 
 import java.io.{FileInputStream, File, InputStream}
+import org.sisioh.scala.toolbox.LoggingEx
 import org.sisioh.trinity.domain.mvc.Environment
 import org.sisioh.trinity.util.ResourceUtil
 import scala.util.Try
@@ -26,7 +27,8 @@ import scala.util.Try
  * @param environment [[org.sisioh.trinity.domain.mvc.Environment]]
  * @param localBasePath local base path when development mode
  */
-case class FileResourceResolver(environment: Environment.Value, localBasePath: File) {
+case class FileResourceResolver(environment: Environment.Value, localBasePath: File)
+  extends LoggingEx {
 
   /**
    * Gets whether exist the file that be specified by the file path.
@@ -63,16 +65,18 @@ case class FileResourceResolver(environment: Environment.Value, localBasePath: F
 
   private def hasResourceFile(path: String): Boolean = {
     ResourceUtil.getResourceInputStream(path).map {
-      _ => true
+      fh => fh.close(); true
     }.getOrElse(false)
   }
 
   private def hasLocalFile(path: String): Boolean = {
     val file = new File(localBasePath, path)
-    if (file.toString.contains("trinity-core/src/test")) false
+    val result = if (file.toString.contains("trinity-core/src/test")) false
     else if (!file.exists || file.isDirectory) false
     else if (!file.canRead) false
     else true
+    debug(s"hasLocalFile($path) = $result")
+    result
   }
 
 }

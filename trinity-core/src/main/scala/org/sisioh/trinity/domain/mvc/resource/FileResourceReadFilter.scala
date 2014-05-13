@@ -15,7 +15,7 @@
  */
 package org.sisioh.trinity.domain.mvc.resource
 
-import java.io.File
+import java.io.{InputStream, File}
 import org.apache.commons.io.IOUtils
 import org.sisioh.trinity.domain.io.buffer.ChannelBuffers
 import org.sisioh.trinity.domain.io.http.MimeTypes
@@ -30,19 +30,22 @@ import scala.util.Try
  * Represents the filter to read the file resources.
  *
  * @param environment [[Environment.Value]]
- * @param localPath local path
+ * @param localBasePath local base path
  */
-class FileResourceReadFilter(environment: Environment.Value, localPath: File)
+class FileResourceReadFilter(environment: Environment.Value, localBasePath: File)
   extends SimpleFilter[Request, Response] with ResponseSupport {
 
-  private val fileResolver = FileResourceResolver(environment, localPath)
+  private val fileResolver = FileResourceResolver(environment, localBasePath)
 
   def isValidPath(path: String): Boolean = {
+    var fi: InputStream = null
     try {
-      val fi = getClass.getResourceAsStream(path)
+      fi = getClass.getResourceAsStream(path)
       if (fi != null && fi.available > 0) true else false
     } catch {
       case e: Exception => false
+    } finally {
+      if (fi != null) fi.close()
     }
   }
 
@@ -51,15 +54,17 @@ class FileResourceReadFilter(environment: Environment.Value, localPath: File)
     if (fileResolver.hasFile(requestIn.uri) && requestIn.uri != '/') {
       fileResolver.getInputStream(requestIn.uri).flatMap {
         fh =>
-          val r = for {
-            bytes <- Try(IOUtils.toByteArray(fh))
-            result <- Try(fh.read(bytes))
-          } yield {
-            val mimeType = MimeTypes.fileExtensionOf('.' + requestIn.uri.toString.split('.').last)
-            responseBuilder.withContentType(mimeType).withContent(ChannelBuffers.copiedBuffer(bytes)).toFuture
+          try {
+            for {
+              bytes <- Try(IOUtils.toByteArray(fh))
+              result <- Try(fh.read(bytes))
+            } yield {
+              val mimeType = MimeTypes.fileExtensionOf('.' + requestIn.uri.toString.split('.').last)
+              responseBuilder.withContentType(mimeType).withContent(ChannelBuffers.copiedBuffer(bytes)).toFuture
+            }
+          } finally {
+            fh.close()
           }
-          fh.close()
-          r
       }.get
     } else {
       action(requestIn)

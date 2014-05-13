@@ -33,18 +33,24 @@ case object InternalServerErrorAction extends Action[Request, Response] {
     val sw = new StringWriter()
     val pw = new PrintWriter(sw)
     exception.printStackTrace(pw)
-    (for {
-      fh <- ResourceUtil.getResourceInputStream("/500.html")
-      bytes <- Try(IOUtils.toByteArray(fh))
-      result <- Try(fh.read(bytes))
-    } yield {
-      val html = new String(bytes).replace("$STACK_TRACE", sw.toString)
-      Future.successful(
-        Response(
-          ResponseStatus.InternalServerError
-        ).withContentType(ContentTypes.TextHtml).withContentAsString(html)
-      )
-    }).get
+    ResourceUtil.getResourceInputStream("/500.html").flatMap {
+      fh =>
+        try {
+          for {
+            bytes <- Try(IOUtils.toByteArray(fh))
+            result <- Try(fh.read(bytes))
+          } yield {
+            val html = new String(bytes).replace("$STACK_TRACE", sw.toString)
+            Future.successful(
+              Response(
+                ResponseStatus.InternalServerError
+              ).withContentType(ContentTypes.TextHtml).withContentAsString(html)
+            )
+          }
+        } finally {
+          fh.close()
+        }
+    }.get
   }
 
 }

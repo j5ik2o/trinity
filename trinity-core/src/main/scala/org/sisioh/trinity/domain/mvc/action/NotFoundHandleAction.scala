@@ -29,18 +29,24 @@ import scala.util.Try
 case object NotFoundHandleAction extends Action[Request, Response] {
 
   def apply(request: Request): Future[Response] = {
-    (for {
-      fh <- ResourceUtil.getResourceInputStream("/404.html")
-      bytes <- Try(IOUtils.toByteArray(fh))
-      result <- Try(fh.read(bytes))
-    } yield {
-      val html = new String(bytes)
-      Future.successful(
-        Response(
-          ResponseStatus.NotFound
-        ).withContentType(ContentTypes.TextHtml).withContentAsString(html)
-      )
-    }).get
+    ResourceUtil.getResourceInputStream("/404.html").flatMap {
+      fh =>
+        try {
+          for {
+            bytes <- Try(IOUtils.toByteArray(fh))
+            result <- Try(fh.read(bytes))
+          } yield {
+            val html = new String(bytes)
+            Future.successful(
+              Response(
+                ResponseStatus.NotFound
+              ).withContentType(ContentTypes.TextHtml).withContentAsString(html)
+            )
+          }
+        } finally {
+          fh.close()
+        }
+    }.get
   }
 
 }
