@@ -36,7 +36,8 @@ import scala.concurrent.duration.Duration
 trait Bootstrap {
   this: Application =>
 
-  protected implicit val executor = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool())
+  protected implicit val executor: ExecutionContext =
+    ExecutionContext.fromExecutorService(Executors.newCachedThreadPool())
 
   protected implicit val pathPatternParser: PathPatternParser = SinatraPathPatternParser()
 
