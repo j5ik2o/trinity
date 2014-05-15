@@ -47,7 +47,6 @@ case class ExceptionHandleFilter
   def apply(requestIn: Request, action: Action[Request, Response]): Future[Response] = {
     action(requestIn).recoverWith {
       case throwable =>
-        error("caught error.", throwable)
         errorHandler(requestIn, throwable)
     }
   }
