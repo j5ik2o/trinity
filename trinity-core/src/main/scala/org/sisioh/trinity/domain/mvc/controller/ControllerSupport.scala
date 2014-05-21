@@ -17,6 +17,8 @@ package org.sisioh.trinity.domain.mvc.controller
 
 import org.sisioh.trinity.domain.mvc.http.ResponseSupport
 
-trait ControllerSupport extends ResponseSupport {
+/**
+ * Represents the trait to support the controller.
+ */
+trait ControllerSupport extends ResponseSupport
 
-}

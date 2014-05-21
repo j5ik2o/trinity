@@ -5,7 +5,7 @@ import org.jboss.netty.handler.codec.http.{Cookie => NettyCookie}
 import scala.language.implicitConversions
 
 /**
- * クッキー。
+ * Cookie
  */
 trait Cookie {
 
@@ -60,7 +60,7 @@ trait Cookie {
 }
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the companion object for [[Cookie]].
  */
 object Cookie {
 
@@ -75,8 +75,21 @@ object Cookie {
 
   private[domain] implicit def toTrinity(underlying: NettyCookie): Cookie = CookieImpl(underlying)
 
+  /**
+   * Creates a instance from `NettyCookie`.
+   *
+   * @param underlying [[NettyCookie]]
+   * @return [[Cookie]]
+   */
   def apply(underlying: NettyCookie): Cookie = new CookieImpl(underlying)
 
+  /**
+   * Creates a instance from key-value.
+   *
+   * @param name
+   * @param value
+   * @return [[Cookie]]
+   */
   def apply(name: String, value: String): Cookie = new CookieImpl(name, value)
 
 }

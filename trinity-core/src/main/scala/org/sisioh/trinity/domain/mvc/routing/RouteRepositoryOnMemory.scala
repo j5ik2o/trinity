@@ -15,7 +15,8 @@
  */
 package org.sisioh.trinity.domain.mvc.routing
 
-import org.sisioh.trinity.domain.mvc.http.{Response, Request}
+import org.sisioh.trinity.domain.mvc.http.Request
+import org.sisioh.trinity.domain.mvc.http.Response
 
 private[routing]
 case class RouteRepositoryOnMemory()
@@ -25,7 +26,7 @@ case class RouteRepositoryOnMemory()
     collection.mutable.Map.empty[RouteId, Route[Request, Response]]
 
   override def store(route: Route[Request, Response]): Unit = {
-    entites += (route.identity -> route)
+    entites += (route.identifier -> route)
   }
 
   override def find(predicate: PartialFunction[Route[Request, Response], Boolean]): Option[Route[Request, Response]] = {

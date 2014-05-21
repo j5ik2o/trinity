@@ -23,7 +23,11 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Success
 
 /**
+<<<<<<< HEAD
  * [[org.sisioh.trinity.domain.io.http.Request]]をログにダンプするためのフィルター。
+=======
+ * Represents the filter for [[Request]] dumpping.
+>>>>>>> release/v1.0.7
  *
  * @param executor [[scala.concurrent.ExecutionContext]]
  */

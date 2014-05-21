@@ -19,18 +19,44 @@ import com.twitter.util.{Duration => TDuration}
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.{Duration => SDuration}
 
+/**
+ * Represents the converters to convert between `com.twitter.util.Duration` and `scala.concurrent.duration.Duration`.
+ */
 object DurationConverters {
 
+  /**
+   * Represents the implicit value class to convert from `com.twitter.util.Duration` to  `scala.concurrent.duration.Duration`.
+   *
+   * @param duration `com.twitter.util.Duration`
+   */
   implicit class TDurationToSDuration(val duration: TDuration) extends AnyVal {
+
+    /**
+     * Gets a duration as `scala.concurrent.duration.Duration`.
+     *
+     * @return duration
+     */
     def toScala: SDuration = {
       SDuration(duration.inNanoseconds, TimeUnit.NANOSECONDS)
     }
+
   }
 
+  /**
+   * Represents the implicit value class to convert from `scala.concurrent.duration.Duration` to `com.twitter.util.Duration`.
+   * @param duration
+   */
   implicit class SDurationToTDuration(val duration: SDuration) extends AnyVal {
+
+    /**
+     * Gets a duration as `com.twitter.util.Duration`.
+     *
+     * @return duration
+     */
     def toTwitter: TDuration = {
       TDuration(duration.length, duration.unit)
     }
+
   }
 
 }

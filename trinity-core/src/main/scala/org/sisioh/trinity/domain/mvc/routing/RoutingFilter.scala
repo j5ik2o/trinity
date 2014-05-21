@@ -24,7 +24,7 @@ import org.sisioh.trinity.domain.mvc.routing.pathpattern.{SinatraPathPatternPars
 import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * ルーティング用フィルター。
+ * Represents the routing filter.
  *
  * @param routeRepository [[org.sisioh.trinity.domain.mvc.routing.RouteRepository]]
  * @param globalSettings [[org.sisioh.trinity.domain.mvc.GlobalSettings]]
@@ -37,9 +37,9 @@ case class RoutingFilter
   extends Filter[Request, Response, Request, Response] with LoggingEx {
 
   /**
-   * アクションが見つからない場合のリカバリを行うためのハンドラ。
+   * Gets the handler to recovery request not found.
    *
-   * @return `Future`にラップされた[[com.twitter.finagle.http.Request]]
+   * @return wrapped [[Action]] around `scala.Option`
    */
   protected def notFoundHandler: Option[Action[Request, Response]] = {
     globalSettings.flatMap {
@@ -47,6 +47,12 @@ case class RoutingFilter
     }.orElse(Some(NotFoundHandleAction))
   }
 
+  /**
+   * Gets the action with route-params from [[Request]].
+   *
+   * @param request [[Request]]
+   * @return action with route-params
+   */
   protected def getActionWithRouteParams(request: Request): Option[(Action[Request, Response], Map[String, String])] = {
     routeRepository.find {
       case Route(RouteId(m, pattern), _) =>
@@ -79,21 +85,38 @@ case class RoutingFilter
 }
 
 /**
- * コンパニオンオブジェクト。
+ * Represents the companion object for [[RoutingFilter]].
  */
 object RoutingFilter extends LoggingEx {
 
+  @deprecated("instead of createFromControllers", "1.0.1")
   def createForControllers(controllers: RouteDefHolder*)
                           (implicit executor: ExecutionContext,
                            globalSettings: Option[GlobalSettings[Request, Response]] = None,
-                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter = withDebugScope("createForControllers") {
-    createForActions {
-      pathPatternParser =>
-        val result = controllers.flatMap(_.getRouteDefs)
-        debug(s"result = $result")
-        result
+                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter =
+    createFromControllers(controllers: _*)
+
+  /**
+   * Creates a instance from [[RouteDefHolder]] for controllers.
+   *
+   * @param controllers
+   * @param executor
+   * @param globalSettings
+   * @param pathPatternParser
+   * @return
+   */
+  def createFromControllers(controllers: RouteDefHolder*)
+                          (implicit executor: ExecutionContext,
+                           globalSettings: Option[GlobalSettings[Request, Response]] = None,
+                           pathPatternParser: PathPatternParser = SinatraPathPatternParser()): RoutingFilter =
+    withDebugScope("createForControllers") {
+      createForActions {
+        pathPatternParser =>
+          val result = controllers.flatMap(_.getRouteDefs)
+          debug(s"result = $result")
+          result
+      }
     }
-  }
 
   def createForActions(routeDefs: (PathPatternParser) => Seq[RouteDef])
                       (implicit executor: ExecutionContext,

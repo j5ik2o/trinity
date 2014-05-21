@@ -17,7 +17,9 @@ package org.sisioh.trinity.domain.mvc.server
 
 import com.twitter.finagle.CodecFactory
 import com.twitter.finagle.builder.ServerBuilder
+import com.twitter.finagle.builder.ServerConfig.Yes
 import com.twitter.finagle.builder.{Server => FinagleServer}
+import com.twitter.finagle.channel.OpenConnectionsThresholds
 import com.twitter.finagle.http.Http
 import com.twitter.finagle.http.RichHttp
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse}
@@ -30,9 +32,19 @@ import org.sisioh.trinity.domain.mvc.http.{Response, Request}
 import org.sisioh.trinity.domain.mvc.{Environment, GlobalSettings}
 import org.sisioh.trinity.util.DurationConverters._
 import org.sisioh.trinity.util.FutureConverters._
+import org.slf4j.bridge.SLF4JBridgeHandler
 import scala.concurrent._
 import com.twitter.finagle.builder.ServerConfig.Yes
 
+/**
+ * Represents the implementation class for [[Server]].
+ *
+ * @param serverConfig [[ServerConfig]]
+ * @param action wrapped [[Action]] around `scala.Option`
+ * @param filter wrapped [[Filter]] around `scala.Option`
+ * @param globalSettings [[GlobalSettings]]
+ * @param executor `ExecutionContext`
+ */
 private[mvc]
 class ServerImpl
 (val serverConfig: ServerConfig,
@@ -44,6 +56,10 @@ class ServerImpl
 
   private var finagleServer: Option[FinagleServer] = None
 
+  /**
+   * 
+   * @return
+   */
   protected def createTracer: Tracer = NullTracer
 
   protected def createRuntimeEnviroment: RuntimeEnvironment = new RuntimeEnvironment(this)
@@ -53,10 +69,10 @@ class ServerImpl
   filter.foreach(registerFilter)
 
   /**
-   * [[com.twitter.ostrich.admin.AdminHttpService]] を生成する。
+   * Creates a `com.twitter.ostrich.admin.AdminHttpService`.
    *
-   * @param runtimeEnv [[com.twitter.ostrich.admin.RuntimeEnvironment]]
-   * @return [[com.twitter.ostrich.admin.AdminHttpService]]
+   * @param runtimeEnv `com.twitter.ostrich.admin.RuntimeEnvironment`
+   * @return `com.twitter.ostrich.admin.AdminHttpService`
    */
   protected def createAdminHttpService(runtimeEnv: RuntimeEnvironment): AdminHttpService = withDebugScope("createAdminService") {
     val httpPort = serverConfig.statsPort.getOrElse(defaultAdminHttpServicePort)
@@ -72,9 +88,9 @@ class ServerImpl
 
 
   /**
-   * コーデックを生成する。
+   * Creates a `com.twitter.finagle.CodecFactory`.
    *
-   * @return [[com.twitter.finagle.CodecFactory]]
+   * @return `com.twitter.finagle.CodecFactory`
    */
   protected def createCodec: CodecFactory[FinagleRequest, FinagleResponse] = {
     import com.twitter.conversions.storage._
@@ -92,134 +108,155 @@ class ServerImpl
 
   private def configNewSSLEngine[Req, Rep, HasCodec, HasBindTo, HasName]
   (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
-    serverConfig.newSSLEngine.map {
-      f =>
-        sb.newFinagleSslEngine({
-          () =>
-            val r = f()
-            com.twitter.finagle.ssl.Engine(r.self, r.handlesRenegotiation, r.certId)
-        })
-    }.getOrElse(sb)
+    serverConfig.newSSLEngine.fold(sb)(f =>
+      sb.newFinagleSslEngine({
+        () =>
+          val r = f()
+          com.twitter.finagle.ssl.Engine(r.self, r.handlesRenegotiation, r.certId)
+      }))
   }
 
   private def configTls[Req, Rep, HasCodec, HasBindTo, HasName]
   (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
-    serverConfig.tlsConfig.map {
-      tc =>
-        sb.tls(
-          tc.certificatePath,
-          tc.keyPath,
-          tc.caCertificatePath.orNull,
-          tc.ciphers.orNull,
-          tc.nextProtos.orNull
-        )
-    }.getOrElse(sb)
+    serverConfig.tlsConfig.fold(sb)(tc =>
+      sb.tls(
+        tc.certificatePath,
+        tc.keyPath,
+        tc.caCertificatePath.orNull,
+        tc.ciphers.orNull,
+        tc.nextProtos.orNull
+      ))
   }
 
   private def configMaxConcurrentRequests[Req, Rep, HasCodec, HasBindTo, HasName]
   (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
-    serverConfig.maxConcurrentRequests.map {
-      v =>
-        sb.maxConcurrentRequests(v)
-    }.getOrElse(sb)
+    serverConfig.maxConcurrentRequests.fold(sb)(v =>
+      sb.maxConcurrentRequests(v))
   }
 
 
   private def configHostConnectionMaxIdleTime[Req, Rep, HasCodec, HasBindTo, HasName]
   (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
-    serverConfig.hostConnectionMaxIdleTime.map {
-      v =>
-        sb.hostConnectionMaxIdleTime(v.toTwitter)
-    }.getOrElse(sb)
+    serverConfig.hostConnectionMaxIdleTime.fold(sb)(v =>
+      sb.hostConnectionMaxIdleTime(v.toTwitter))
   }
 
   private def configHostConnectionMaxLifeTime[Req, Rep, HasCodec, HasBindTo, HasName]
   (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
-    serverConfig.hostConnectionMaxLifeTime.map {
-      v =>
-        sb.hostConnectionMaxLifeTime(v.toTwitter)
-    }.getOrElse(sb)
+    serverConfig.hostConnectionMaxLifeTime.fold(sb)(v =>
+      sb.hostConnectionMaxLifeTime(v.toTwitter))
   }
 
 
   private def configRequestTimeout[Req, Rep, HasCodec, HasBindTo, HasName]
   (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
-    serverConfig.requestTimeout.map {
-      v =>
-        sb.requestTimeout(v.toTwitter)
-    }.getOrElse(sb)
+    serverConfig.requestTimeout.fold(sb)(v =>
+      sb.requestTimeout(v.toTwitter))
   }
 
   private def configReadTimeout[Req, Rep, HasCodec, HasBindTo, HasName]
   (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
-    serverConfig.readTimeout.map {
-      v =>
-        sb.readTimeout(v.toTwitter)
-    }.getOrElse(sb)
+    serverConfig.readTimeout.fold(sb)(v =>
+      sb.readTimeout(v.toTwitter))
   }
 
   private def configWriteCompletionTimeout[Req, Rep, HasCodec, HasBindTo, HasName]
   (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
-    serverConfig.writeCompletionTimeout.map {
-      v =>
-        sb.writeCompletionTimeout(v.toTwitter)
-    }.getOrElse(sb)
+    serverConfig.writeCompletionTimeout.fold(sb)(v =>
+      sb.writeCompletionTimeout(v.toTwitter))
   }
 
   private def configSendBufferSize[Req, Rep, HasCodec, HasBindTo, HasName]
   (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
-    serverConfig.sendBufferSize.map {
-      v =>
-        sb.sendBufferSize(v)
-    }.getOrElse(sb)
+    serverConfig.sendBufferSize.fold(sb)(v =>
+      sb.sendBufferSize(v))
   }
 
   private def configReceiveBufferSize[Req, Rep, HasCodec, HasBindTo, HasName]
   (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
-    serverConfig.receiveBufferSize.map {
-      v =>
-        sb.recvBufferSize(v)
-    }.getOrElse(sb)
+    serverConfig.receiveBufferSize.fold(sb)(v =>
+      sb.recvBufferSize(v))
   }
 
+  private def configOpenConnectionsThresholdsConfig[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.openConnectionsThresholdsConfig.fold(sb)(v =>
+      sb.openConnectionsThresholds(
+        OpenConnectionsThresholds(v.lowWaterMark, v.highWaterMark, v.idleTime.toTwitter)
+      ))
+  }
 
-  def start(environment: Environment.Value = Environment.Development)
-           (implicit executor: ExecutionContext): Future[Unit] = future {
+  private def configKeepAlive[Req, Rep, HasCodec, HasBindTo, HasName]
+  (sb: ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes]): ServerBuilder[Req, Rep, HasCodec, HasBindTo, Yes] = {
+    serverConfig.keepAlive.fold(sb)(v =>
+      sb.keepAlive(v))
+  }
+
+  override def start(environment: Environment.Value = Environment.Development)
+                    (implicit executor: ExecutionContext): Future[Unit] = future {
+    SLF4JBridgeHandler.removeHandlersForRootLogger()
+    SLF4JBridgeHandler.install()
+
     withDebugScope("start") {
       require(finagleServer.isEmpty)
       info(s"aciton = $action, routingFilter = $filter")
+
       if (serverConfig.statsEnabled) {
         createAdminHttpService(createRuntimeEnviroment)
       }
+
       val service = buildService(environment, action)
       val bindAddress = serverConfig.bindAddress.getOrElse(Server.defaultBindAddress)
-      info(s"bindAddress = $bindAddress")
       val name = serverConfig.name.getOrElse(Server.defaultName)
-      info(s"name = $name")
 
       val defaultServerBuilder = ServerBuilder()
         .codec(createCodec)
         .bindTo(bindAddress)
         .tracer(createTracer)
+        .logChannelActivity(serverConfig.finagleLogging)
         .name(name)
 
-      val sb1 = configNewSSLEngine(defaultServerBuilder)
-      val sb2 = configTls(sb1)
+      val sb0 = configKeepAlive(defaultServerBuilder)
+      val sb1 = configOpenConnectionsThresholdsConfig(sb0)
 
-      val sb3 = configMaxConcurrentRequests(sb2)
-      val sb4 = configHostConnectionMaxIdleTime(sb3)
-      val sb5 = configHostConnectionMaxLifeTime(sb4)
+      val sb2 = configNewSSLEngine(sb1)
+      val sb3 = configTls(sb2)
 
-      val sb6 = configRequestTimeout(sb5)
-      val sb7 = configReadTimeout(sb6)
-      val sb8 = configWriteCompletionTimeout(sb7)
+      val sb4 = configMaxConcurrentRequests(sb3)
+      val sb5 = configHostConnectionMaxIdleTime(sb4)
+      val sb6 = configHostConnectionMaxLifeTime(sb5)
 
-      val sb9 = configSendBufferSize(sb8)
-      val sb10 = configReceiveBufferSize(sb9)
+      val sb7 = configRequestTimeout(sb6)
+      val sb8 = configReadTimeout(sb7)
+      val sb9 = configWriteCompletionTimeout(sb8)
 
-      finagleServer = Some(sb10.build(service))
+      val sb10 = configSendBufferSize(sb9)
+      val sb11 = configReceiveBufferSize(sb10)
 
+      info(s"bindAddress = ${sb11.config.bindTo}")
+      info(s"name = ${sb11.config.name}")
 
+      info(s"finagleLogging = ${sb11.config.logChannelActivity}")
+
+      debug(s"finagle.logger = ${sb11.config.logger}")
+      debug(s"finagle.backlog = ${sb11.config.backlog}")
+
+      info(s"tlsConfig = ${serverConfig.tlsConfig}")
+      info(s"newSSLEngine = ${serverConfig.newSSLEngine}")
+      debug(s"finagle.newEngine = ${sb11.config.newEngine}")
+
+      info(s"maxConcurrentRequests = ${sb11.config.maxConcurrentRequests}")
+      info(s"hostConnectionMaxIdleTime = ${sb11.config.hostConnectionMaxIdleTime}")
+      info(s"hostConnectionMaxLifeTime = ${sb11.config.hostConnectionMaxLifeTime}")
+
+      info(s"requestTimeout = ${sb11.config.requestTimeout}")
+      info(s"readTimeout = ${sb11.config.readTimeout}")
+      info(s"writeCompletionTimeout = ${sb11.config.writeCompletionTimeout}")
+
+      info(s"sendBufferSize = ${sb11.config.bufferSize.send}")
+      info(s"receiveBufferSize = ${sb11.config.bufferSize.recv}")
+
+      finagleServer = Some(sb11.build(service))
 
       globalSettings.foreach {
         _.onStart(this)
@@ -242,7 +279,7 @@ class ServerImpl
     }
   }
 
-  def stop()(implicit executor: ExecutionContext): Future[Unit] = synchronized {
+  override def stop()(implicit executor: ExecutionContext): Future[Unit] = synchronized {
     withDebugScope("stop") {
       require(finagleServer.isDefined)
       finagleServer.map {
@@ -257,5 +294,6 @@ class ServerImpl
     }
   }
 
-  def isStarted: Boolean = finagleServer.isDefined
+  override def isStarted: Boolean = finagleServer.isDefined
+
 }

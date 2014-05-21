@@ -24,7 +24,8 @@ import scala.concurrent.Future
 import scala.util.Try
 
 /**
- * INTERNAL_SERVER_ERROR(500)を返す[[org.sisioh.trinity.domain.mvc.action.Action]]。
+ * Represents the action to returns the internal server error response.
+>>>>>>> release/v1.0.7
  */
 case object InternalServerErrorAction extends Action[Request, Response] {
 
@@ -33,18 +34,24 @@ case object InternalServerErrorAction extends Action[Request, Response] {
     val sw = new StringWriter()
     val pw = new PrintWriter(sw)
     exception.printStackTrace(pw)
-    (for {
-      fh <- ResourceUtil.getResourceInputStream("/500.html")
-      bytes <- Try(IOUtils.toByteArray(fh))
-      result <- Try(fh.read(bytes))
-    } yield {
-      val html = new String(bytes).replace("$STACK_TRACE", sw.toString)
-      Future.successful(
-        Response(
-          ResponseStatus.InternalServerError
-        ).withContentType(ContentTypes.TextHtml).withContentAsString(html)
-      )
-    }).get
+    ResourceUtil.getResourceInputStream("/500.html").flatMap {
+      fh =>
+        try {
+          for {
+            bytes <- Try(IOUtils.toByteArray(fh))
+            result <- Try(fh.read(bytes))
+          } yield {
+            val html = new String(bytes).replace("$STACK_TRACE", sw.toString)
+            Future.successful(
+              Response(
+                ResponseStatus.InternalServerError
+              ).withContentType(ContentTypes.TextHtml).withContentAsString(html)
+            )
+          }
+        } finally {
+          fh.close()
+        }
+    }.get
   }
 
 }

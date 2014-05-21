@@ -2,8 +2,12 @@ package org.sisioh.trinity.example
 
 import org.sisioh.trinity._
 import scala.concurrent.Future
+import org.sisioh.trinity.domain.mvc.resource.FileResourceReadFilter
+import java.io.File
+import org.sisioh.trinity.domain.mvc.routing.RoutingFilter
 
-object ScalatraLikeControllerApplicationWithFilter extends ConsoleApplication with ScalatraLikeControllerSupport {
+object ScalatraLikeControllerApplicationWithFilter
+  extends ConsoleApplication with ScalatraLikeControllerSupport {
 
   get("/hello") {
     request =>
@@ -19,16 +23,10 @@ object ScalatraLikeControllerApplicationWithFilter extends ConsoleApplication wi
     request =>
       responseBuilder.withTextPlain("name = " + request.routeParams("name")).toFuture
   }
+  override protected lazy val routingFilter =
+    Some(RoutingFilter.createFromControllers(this))
 
-  server.registerFilter(new SimpleFilter[Request, Response] {
-    def apply(requestIn: Request, action: Action[Request, Response]): Future[Response] = {
-      if ("shared secret" == requestIn.authorization) {
-        action(requestIn)
-      } else {
-        Future.failed(new IllegalArgumentException())
-      }
-    }
-  })
+  server.registerFilter(new FileResourceReadFilter(environment, new File(".")))
 
   startWithAwait()
 

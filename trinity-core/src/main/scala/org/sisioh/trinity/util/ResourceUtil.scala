@@ -15,7 +15,7 @@
  */
 package org.sisioh.trinity.util
 
-import java.io.InputStream
+import java.io.{IOException, InputStream}
 import scala.util.{Failure, Success, Try}
 
 private[trinity]
@@ -27,7 +27,7 @@ object ResourceUtil {
         Option(stream).map {
           s =>
             Success(s)
-        }.getOrElse(Failure(new Exception))
+        }.getOrElse(Failure(new IOException(s"The file($path) not found.")))
     }
   }
 
