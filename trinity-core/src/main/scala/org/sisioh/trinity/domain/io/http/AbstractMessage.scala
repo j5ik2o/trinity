@@ -33,8 +33,8 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
     headers.foreach {
       case (key, value) =>
         value match {
-          case values: Iterable[_] => toUnderlyingAsFinagle.setHeader(key.asString, values)
-          case _ => toUnderlyingAsFinagle.setHeader(key.asString, value)
+          case values: Iterable[_] => toUnderlyingAsFinagle.headers.set(key.asString, values)
+          case _ => toUnderlyingAsFinagle.headers.set(key.asString, value)
         }
     }
   }
@@ -53,7 +53,7 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
         cookie =>
           encoder.addCookie(cookie)
       }
-      toUnderlyingAsFinagle.setHeader(cookieHeaderName, encoder.encode())
+      toUnderlyingAsFinagle.headers.set(cookieHeaderName, encoder.encode())
     }
   }
 
@@ -83,18 +83,18 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
   }
 
   override def getHeader(name: HeaderName): Option[String] =
-    Option(toUnderlyingAsFinagle.getHeader(name.asString))
+    Option(toUnderlyingAsFinagle.headers.get(name.asString))
 
   override def getHeaders(name: HeaderName): Seq[String] =
-    toUnderlyingAsFinagle.getHeaders(name.asString).toList
+    toUnderlyingAsFinagle.headers.getAll(name.asString).toList
 
-  override def headers: Seq[(HeaderName, Any)] = toUnderlyingAsFinagle.getHeaders.toList.map {
+  override def headers: Seq[(HeaderName, Any)] = toUnderlyingAsFinagle.headers.entries.toList.map {
     e => (HeaderNames.valueOf(e.getKey), e.getValue)
   }
 
-  override def containsHeader(name: HeaderName): Boolean = toUnderlyingAsFinagle.containsHeader(name.asString)
+  override def containsHeader(name: HeaderName): Boolean = toUnderlyingAsFinagle.headers.contains(name.asString)
 
-  override def headerNames: Set[HeaderName] = toUnderlyingAsFinagle.getHeaderNames.map(HeaderNames.valueOf).toSet
+  override def headerNames: Set[HeaderName] = toUnderlyingAsFinagle.headers.names.map(HeaderNames.valueOf).toSet
 
   override def protocolVersion: ProtocolVersion.Value = toUnderlyingAsFinagle.getProtocolVersion
 
@@ -109,19 +109,19 @@ abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extend
   }
 
   override def withHeader(name: HeaderName, value: Any) = mutateAsNettyMessage {
-    _.addHeader(name.asString, value)
+    _.headers.add(name.asString, value)
   }
 
   override def withHeader(name: HeaderName, values: Seq[_]) = mutateAsNettyMessage {
-    _.setHeader(name.asString, values)
+    _.headers.set(name.asString, values)
   }
 
   override def withoutHeader(name: HeaderName) = mutateAsNettyMessage {
-    _.removeHeader(name.asString)
+    _.headers.remove(name.asString)
   }
 
   override def withoutAllHeaders = mutateAsNettyMessage {
-    _.clearHeaders()
+    _.headers.clear()
   }
 
   override def isChunked: Boolean = toUnderlyingAsFinagle.isChunked

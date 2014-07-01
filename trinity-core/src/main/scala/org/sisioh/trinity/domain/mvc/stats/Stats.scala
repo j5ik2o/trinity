@@ -31,6 +31,6 @@ object Stats {
 
   def timeFutureMilliso[A](name: String)(f: => Future[A])
                           (implicit executor: ExecutionContext): Future[A] =
-    SStats.timeFutureMillis(name)(f)
+    SStats.timeFutureMillisLazy(name)(f)
 
 }
