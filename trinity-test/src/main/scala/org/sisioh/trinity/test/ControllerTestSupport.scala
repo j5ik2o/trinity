@@ -78,7 +78,7 @@ trait ControllerTestSupport {
       }
       headers.foreach {
         header =>
-          request.httpRequest.setHeader(header._1.asString, header._2)
+          request.httpRequest.headers.set(header._1.asString, header._2)
       }
       request
     }
