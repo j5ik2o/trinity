@@ -2,21 +2,21 @@ package org.sisioh.trinity.test
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.http.{Response => FinagleResponse, Http}
+import com.twitter.finagle.http.{Http, Response => FinagleResponse}
 import com.twitter.util.{Await => TAwait}
-import java.net.{SocketAddress, InetSocketAddress}
+import java.net.{InetSocketAddress, SocketAddress}
 import java.util.concurrent.TimeUnit
-import org.jboss.netty.handler.codec.http.{HttpResponse, HttpRequest, HttpMethod}
-import org.sisioh.trinity.domain.io.http.{Response => IOResponse, HeaderName}
+import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest, HttpResponse}
+import org.sisioh.trinity.domain.io.http.{HeaderName, Response => IOResponse}
 import org.sisioh.trinity.domain.mvc.Environment
 import org.sisioh.trinity.domain.mvc.http.Response
 import org.sisioh.trinity.domain.mvc.server.Server
 import org.sisioh.trinity.util.DurationConverters._
-import org.specs2.execute.{Result, AsResult}
+import org.specs2.execute.{AsResult, Result}
 import org.specs2.mutable.Around
 import org.specs2.specification.Scope
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await => SAwait, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Await => SAwait}
 import scala.util.Try
 
 /**
@@ -24,8 +24,8 @@ import scala.util.Try
  */
 trait ControllerIntegrationTestSupport extends ControllerTestSupport {
 
-  case class IntegrationTestContext(implicit val executor: ExecutionContext)
-    extends TestContext
+  case class IntegrationTestContext(server: TestServer = TestServer())
+                                   (implicit val executor: ExecutionContext) extends TestContext
 
   private val httpClients = scala.collection.mutable.Map.empty[SocketAddress, Service[HttpRequest, HttpResponse]]
 
@@ -38,8 +38,8 @@ trait ControllerIntegrationTestSupport extends ControllerTestSupport {
   (implicit testContext: TestContext): Try[Response] = {
     implicit val executor = testContext.executor
     val request = newRequest(method, path, content, headers)
-    val host = serverHost.getOrElse(defaultHost)
-    val port = serverPort.getOrElse(defaultPort)
+    val host = testContext.server.host.getOrElse(defaultHost)
+    val port = testContext.server.port.getOrElse(defaultPort)
     val address: SocketAddress = new InetSocketAddress(host, port)
     val client = httpClients.getOrElseUpdate(
       address,
