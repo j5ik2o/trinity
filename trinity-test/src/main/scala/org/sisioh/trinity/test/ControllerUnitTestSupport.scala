@@ -25,7 +25,8 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
   self =>
 
   case class UnitTestContext(routingFilter: RoutingFilter,
-                             filters: Seq[Filter[Request, Response, Request, Response]] = Seq.empty)
+                             filters: Seq[Filter[Request, Response, Request, Response]] = Seq.empty,
+                             server: TestServer = TestServer())
                             (implicit val executor: ExecutionContext)
     extends TestContext
 
@@ -36,7 +37,7 @@ trait ControllerUnitTestSupport extends ControllerTestSupport {
    headers: Map[HeaderName, String], timeout: Duration)
   (implicit testContext: TestContext): Try[Response] = {
     implicit val executor = testContext.executor
-    val UnitTestContext(routingFilter, filters) = testContext
+    val UnitTestContext(routingFilter, filters, _) = testContext
     val request = newRequest(method, path, content, headers)
     val serviceBuilder = new ServiceBuilder {
       val globalSettings: Option[GlobalSettings[Request, Response]] = self.globalSettings
