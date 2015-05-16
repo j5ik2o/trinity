@@ -47,30 +47,22 @@ Since May 2013
 
 Please add the following configuration to Build.scala.
 
+#### Release Version
+
 ```scala
-object AppBuild extends Build {
-  val root = Project(
-    id = "app",
-    base = file("."),
-    settings = Project.defaultSettings ++ Seq(
-      resolvers ++= Seq(
-        // ...
-        "Sonatype Snapshot Repository" at "http://oss.sonatype.org/content/repositories/snapshots/",
-        "Sonatype Release Repository" at "http://oss.sonatype.org/content/repositories/releases/",
-       // ...
-      ),
-      libraryDependencies ++= Seq(
-        // ...
-        "org.sisioh" %% "trinity-core" % "1.0.0-SNAPSHOT",
-        "org.sisioh" %% "trinity-view-scalate" % "1.0.0-SNAPSHOT", // optional
-        
-        // ...
-      )
-    )
-  )
-}
+resolvers += "Sonatype Release Repository" at "http://oss.sonatype.org/content/repositories/releases/"
+
+libraryDependencies +=  "org.sisioh" %% "trinity-core" % "1.0.11"
 ```
 
+#### Snapshot Version
+
+```scala
+resolvers += "Sonatype Snapshot Repository" at "http://oss.sonatype.org/content/repositories/snapshots/"
+
+libraryDependencies +=  "org.sisioh" %% "trinity-core" % "1.0.12-SNAPSHOT"
+```
+  
 ### Controller code
 
 #### Scalatra like controller
