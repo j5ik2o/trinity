@@ -16,11 +16,17 @@ import org.sisioh.trinity.domain.io.http.ProtocolVersion.toNetty
  */
 private[trinity]
 case class RequestImpl(override val toUnderlyingAsFinagle: FinagleRequest,
-                       attributes: Map[String, Any] = Map.empty[String, Any],
-                       isMutable: Boolean = false)
+                       attributes: Map[String, Any],
+                       isMutable: Boolean)
   extends AbstractMessage(toUnderlyingAsFinagle) with Request {
 
   override def isRequest: Boolean = true
+
+  def this(toUnderlyingAsFinagle: FinagleRequest) =
+    this(toUnderlyingAsFinagle, Map.empty[String, Any], false)
+
+  def this(toUnderlyingAsFinagle: FinagleRequest, attributes: Map[String, Any]) =
+    this(toUnderlyingAsFinagle, attributes, false)
 
   /**
    * Auxiliary constructor.

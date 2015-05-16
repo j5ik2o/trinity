@@ -35,7 +35,7 @@ class ControllerIntegrationTestSupportSpec extends Specification with Controller
       )
   }
 
-  implicit val testContext = IntegrationTestContext()
+  implicit val testContext:TestContext = IntegrationTestContext()
 
   "integration-test" should {
     "test get method" in new WithServer(Server(filter = Some(routingFilter))) {
@@ -97,7 +97,7 @@ class ControllerIntegrationTestSupportSpec extends Specification with Controller
                 case response =>
                   response.contentAsString() must_== "Hello World!"
               }
-          }
+          }(testContext)
       }.flatMap {
         result =>
           server.stop.map(_ => result)

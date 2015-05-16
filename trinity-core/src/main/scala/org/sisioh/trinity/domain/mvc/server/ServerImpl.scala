@@ -193,7 +193,7 @@ class ServerImpl
   }
 
   override def start(environment: Environment.Value = Environment.Development)
-                    (implicit executor: ExecutionContext): Future[Unit] = future {
+                    (implicit executor: ExecutionContext): Future[Unit] = Future {
     SLF4JBridgeHandler.removeHandlersForRootLogger()
     SLF4JBridgeHandler.install()
 
@@ -232,29 +232,6 @@ class ServerImpl
 
       val sb10 = configSendBufferSize(sb9)
       val sb11 = configReceiveBufferSize(sb10)
-
-      info(s"bindAddress = ${sb11.config.bindTo}")
-      info(s"name = ${sb11.config.name}")
-
-      info(s"finagleLogging = ${sb11.config.logChannelActivity}")
-
-      debug(s"finagle.logger = ${sb11.config.logger}")
-      debug(s"finagle.backlog = ${sb11.config.backlog}")
-
-      info(s"tlsConfig = ${serverConfig.tlsConfig}")
-      info(s"newSSLEngine = ${serverConfig.newSSLEngine}")
-      debug(s"finagle.newEngine = ${sb11.config.newEngine}")
-
-      info(s"maxConcurrentRequests = ${sb11.config.maxConcurrentRequests}")
-      info(s"hostConnectionMaxIdleTime = ${sb11.config.hostConnectionMaxIdleTime}")
-      info(s"hostConnectionMaxLifeTime = ${sb11.config.hostConnectionMaxLifeTime}")
-
-      info(s"requestTimeout = ${sb11.config.requestTimeout}")
-      info(s"readTimeout = ${sb11.config.readTimeout}")
-      info(s"writeCompletionTimeout = ${sb11.config.writeCompletionTimeout}")
-
-      info(s"sendBufferSize = ${sb11.config.bufferSize.send}")
-      info(s"receiveBufferSize = ${sb11.config.bufferSize.recv}")
 
       finagleServer = Some(sb11.build(service))
 

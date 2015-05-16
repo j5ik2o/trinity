@@ -51,7 +51,7 @@ trait Response extends Message {
 object Response {
 
   private[trinity] def apply(underlying: FinagleResponse): Response =
-    ResponseImpl(underlying)
+    new ResponseImpl(underlying)
 
   /**
    * Creates a [[Response]]'s instance.

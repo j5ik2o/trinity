@@ -15,10 +15,10 @@
  */
 package org.sisioh.trinity.util
 
-import TryConverters._
 import com.twitter.util.{Future => TFuture, Promise => TPromise, Try => TTry}
-import scala.concurrent.ExecutionContext
-import scala.concurrent.{Future => SFuture, promise => SPromise}
+import org.sisioh.trinity.util.TryConverters._
+
+import scala.concurrent.{ExecutionContext, Future => SFuture, _}
 import scala.util.{Try => STry}
 
 /**
@@ -27,6 +27,7 @@ import scala.util.{Try => STry}
 object FutureConverters {
 
   /**
+   *
    * `com.twitter.util.Future` を `scala.concurrent.Future` に変換するための暗黙的値クラス。
    *
    * @param future [[com.twitter.util.Future]]
@@ -40,7 +41,7 @@ object FutureConverters {
      * @return `scala.concurrent.Future`
      */
     def toScala: SFuture[T] = {
-      val prom = SPromise[T]
+      val prom = Promise[T]()
       future.respond {
         t: TTry[T] =>
           prom.complete(t.toScala)

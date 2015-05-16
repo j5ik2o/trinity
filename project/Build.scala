@@ -1,9 +1,13 @@
 import sbt.Keys._
 import sbt._
+import sbtassembly.Plugin.AssemblyKeys._
 import sbtassembly.Plugin._
-import AssemblyKeys._
+import xerial.sbt.Sonatype.SonatypeKeys._
 
 object TrinityBuild extends Build {
+
+  val scala211Version = "2.11.6"
+  val scala210Version = "2.10.5"
 
   val myAssemblySettings = mergeStrategy in assembly <<= (mergeStrategy in assembly) {
     (old) => {
@@ -20,24 +24,36 @@ object TrinityBuild extends Build {
   }
 
   val commonSettings = Project.defaultSettings ++ net.virtualvoid.sbt.graph.Plugin.graphSettings ++ Seq(
+    sonatypeProfileName := "org.sisioh",
     organization := "org.sisioh",
-    version := "1.0.10",
-    scalaVersion := "2.10.3",
+    scalaVersion := scala210Version,
+    crossScalaVersions := Seq(scala210Version, scala211Version),
     scalacOptions ++= Seq("-encoding", "UTF-8", "-feature", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-encoding", "UTF-8", "-deprecation"),
     resolvers ++= Seq(
       "Sonatype Snapshot Repository" at "https://oss.sonatype.org/content/repositories/snapshots/",
       "Sonatype Release Repository" at "https://oss.sonatype.org/content/repositories/releases/",
+      "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
       "Twitter Repository" at "http://maven.twttr.com/",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
       "Seasar Repository" at "http://maven.seasar.org/maven2/"
     ),
-    libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % "2.10.3",
+    libraryDependencies ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+          libraryDependencies.value ++ Seq(
+            "org.scala-lang" % "scala-reflect" % scala211Version
+          )
+        case _ =>
+          libraryDependencies.value ++ Seq(
+            "org.scala-lang" % "scala-reflect" % scala210Version
+          )
+      }
+    } ++ Seq(
       "junit" % "junit" % "4.8.1" % "test",
       "org.hamcrest" % "hamcrest-all" % "1.3" % "test",
       "org.mockito" % "mockito-core" % "1.9.5" % "test",
-      "org.specs2" %% "specs2" % "2.0" % "test",
+      "org.specs2" %% "specs2-core" % "3.6" % "test",
       "org.seasar.util" % "s2util" % "0.0.1"
     ),
     fork in Test := true,
@@ -45,14 +61,6 @@ object TrinityBuild extends Build {
     publishArtifact in Test := false,
     pomIncludeRepository := {
       _ => false
-    },
-    publishTo <<= version {
-      (v: String) =>
-        val nexus = "https://oss.sonatype.org/"
-        if (v.trim.endsWith("SNAPSHOT"))
-          Some("snapshots" at nexus + "content/repositories/snapshots")
-        else
-          Some("releases" at nexus + "service/local/staging/deploy/maven2")
     },
     pomExtra := (
       <url>https://github.com/sisioh/trinity</url>
@@ -77,34 +85,36 @@ object TrinityBuild extends Build {
       )
   )
 
+  val finagleVersion = "6.25.0"
+
   lazy val core = Project(
     id = "trinity-core",
     base = file("trinity-core"),
     settings = commonSettings ++ Seq(
       name := "trinity-core",
       libraryDependencies ++= Seq(
-        "org.json4s" %% "json4s-jackson" % "3.2.2",
-        "org.sisioh" %% "scala-toolbox" % "0.0.8",
-        "org.sisioh" %% "sisioh-config" % "0.0.3",
+        "org.json4s" %% "json4s-jackson" % "3.2.11",
+        "org.sisioh" %% "scala-toolbox" % "0.0.10",
+        "org.sisioh" %% "sisioh-config" % "0.0.7",
         "org.slf4j" % "slf4j-api" % "1.6.6",
         "org.slf4j" % "log4j-over-slf4j" % "1.6.6",
         "org.slf4j" % "jul-to-slf4j" % "1.6.6",
         "ch.qos.logback" % "logback-core" % "1.0.7" exclude("org.slf4j", "slf4j-api"),
         "ch.qos.logback" % "logback-classic" % "1.0.7",
         "commons-io" % "commons-io" % "1.3.2",
-        "com.twitter" %% "finagle-core" % "6.12.2" excludeAll(
+        "com.twitter" %% "finagle-core" % finagleVersion excludeAll(
           ExclusionRule(organization = "log4j", name = "log4j"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-jdk14"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
           ),
-        "com.twitter" %% "finagle-http" % "6.12.2" excludeAll(
+        "com.twitter" %% "finagle-http" % finagleVersion excludeAll(
           ExclusionRule(organization = "log4j", name = "log4j"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-jdk14"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-log4j12")
           ),
-        "com.twitter" %% "finagle-ostrich4" % "6.12.2" excludeAll(
+        "com.twitter" %% "finagle-ostrich4" % finagleVersion excludeAll(
           ExclusionRule(organization = "log4j", name = "log4j"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-api"),
           ExclusionRule(organization = "org.slf4j", name = "slf4j-jdk14"),
@@ -162,9 +172,19 @@ object TrinityBuild extends Build {
     base = file("trinity-view-scalate"),
     settings = commonSettings ++ Seq(
       name := "trinity-view-scalate",
-      libraryDependencies ++= Seq(
-        "org.scala-lang" % "scala-compiler" % "2.10.2",
-        "org.fusesource.scalate" %% "scalate-core" % "1.6.1"
+      libraryDependencies := {
+        CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+            libraryDependencies.value ++ Seq(
+              "org.scala-lang" % "scala-compiler" % scala211Version
+            )
+          case _ =>
+            libraryDependencies.value ++ Seq(
+              "org.scala-lang" % "scala-compiler" % scala210Version
+            )
+        }
+      } ++ Seq(
+        "org.scalatra.scalate" %% "scalate-core" % "1.7.1"
       )
     )
   ) dependsOn (view)
@@ -174,11 +194,12 @@ object TrinityBuild extends Build {
     base = file("trinity-test"),
     settings = commonSettings ++ Seq(
       name := "trinity-test",
-      libraryDependencies ++= Seq(
+      libraryDependencies := Seq(
         "org.hamcrest" % "hamcrest-all" % "1.3",
         "org.mockito" % "mockito-core" % "1.9.5",
-        "org.specs2" %% "specs2" % "2.0"
+        "org.specs2" %% "specs2-core" % "3.6"
       )
+
     )
   ) dependsOn(core, viewScalate % "test") // , viewThymeleaf % "test", viewVelocity % "test", viewFreeMarker % "test")
 

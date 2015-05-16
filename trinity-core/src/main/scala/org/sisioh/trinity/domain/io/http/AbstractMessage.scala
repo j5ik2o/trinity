@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
  * @param toUnderlyingAsFinagle [[FinagleMessage]]
  */
 private[trinity]
-abstract class AbstractMessage(val toUnderlyingAsFinagle: FinagleMessage) extends Message {
+abstract class AbstractMessage protected(val toUnderlyingAsFinagle: FinagleMessage) extends Message {
 
   override def withAttributes(_attributes: Map[String, Any]): this.type = {
     createInstance(this, this.attributes ++ _attributes)

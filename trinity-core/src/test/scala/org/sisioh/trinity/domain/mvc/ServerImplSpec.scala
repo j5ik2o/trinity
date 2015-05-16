@@ -1,24 +1,23 @@
 package org.sisioh.trinity.domain.mvc
 
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.http.{Request => FinagleRequest, Http, RichHttp}
-import com.twitter.util.{Await => TAwait}
 import java.net.InetSocketAddress
 import java.util.concurrent.TimeUnit
-import org.junit.runner.RunWith
+
+import com.twitter.finagle.builder.ClientBuilder
+import com.twitter.finagle.http.{Http, Request => FinagleRequest, RichHttp}
+import com.twitter.util.{Await => TAwait}
 import org.sisioh.trinity.domain.io.http.Charsets
 import org.sisioh.trinity.domain.mvc.action.Action
-import org.sisioh.trinity.domain.mvc.http.{Response, Request}
-import org.sisioh.trinity.domain.mvc.server.{ServerConfig, Server}
-import org.specs2.execute.{Result, AsResult}
+import org.sisioh.trinity.domain.mvc.http.{Request, Response}
+import org.sisioh.trinity.domain.mvc.server.{Server, ServerConfig}
+import org.specs2.execute.{AsResult, Result}
 import org.specs2.mutable.{Around, Specification}
-import org.specs2.runner.JUnitRunner
 import org.specs2.specification.Scope
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await => SAwait, Future}
 
-@RunWith(classOf[JUnitRunner])
 class ServerImplSpec extends Specification {
 
   sequential
@@ -28,7 +27,7 @@ class ServerImplSpec extends Specification {
 
     val client = ClientBuilder()
       .codec(RichHttp[FinagleRequest](Http()))
-      .hosts(new InetSocketAddress(8080))
+      .hosts(new InetSocketAddress(18080))
       .hostConnectionLimit(1)
       .build()
 
@@ -45,7 +44,7 @@ class ServerImplSpec extends Specification {
     }
 
     def around[T: AsResult](t: => T): Result = {
-      val server = Server(ServerConfig(), action = action, filter = None, globalSettings = None)
+      val server = Server(ServerConfig(bindAddress = Some(new InetSocketAddress(18080))), action = action, filter = None, globalSettings = None)
       running(server)(AsResult(t))
     }
 
@@ -57,7 +56,7 @@ class ServerImplSpec extends Specification {
     "404 NOT FOUND" in new Setup(None) {
       val responseFuture = client(FinagleRequest())
       TAwait.result(responseFuture).getStatusCode() must_== 404
-      TAwait.result(responseFuture).getContent().toString(Charsets.UTF_8.toObject) must_== ""
+      TAwait.result(responseFuture).getContent().toString(Charsets.UTF_8.toObject) contains("Not Found")
     }
     "200 OK" in new Setup(
       Some(

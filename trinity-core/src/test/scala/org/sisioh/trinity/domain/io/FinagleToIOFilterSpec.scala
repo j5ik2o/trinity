@@ -1,15 +1,13 @@
 package org.sisioh.trinity.domain.io
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.builder.{ ClientBuilder, ServerBuilder, Server }
-import com.twitter.finagle.http.{ Request, RichHttp, Http }
-import com.twitter.util.{ Await, Future }
 import java.net.InetSocketAddress
-import org.junit.runner.RunWith
-import org.sisioh.trinity.domain.io.http.{ Request => IORequest, Response => IOResponse }
-import org.specs2.runner.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
+import com.twitter.finagle.Service
+import com.twitter.finagle.builder.{ClientBuilder, Server, ServerBuilder}
+import com.twitter.finagle.http.{Http, Request, RichHttp}
+import com.twitter.util.{Await, Future}
+import org.sisioh.trinity.domain.io.http.{Request => IORequest, Response => IOResponse}
+
 object FinagleToIOFilterSpec extends App {
 
   case class Respond(response: IOResponse) extends Service[IORequest, IOResponse] {

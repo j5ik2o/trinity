@@ -15,9 +15,10 @@
  */
 package org.sisioh.trinity.util
 
-import TryConversation._
 import com.twitter.util.{Future => TFuture, Promise => TPromise, Try => TTry}
-import scala.concurrent.{Future => SFuture, promise => SPromise, ExecutionContext}
+import org.sisioh.trinity.util.TryConversation._
+
+import scala.concurrent.{Future => SFuture, _}
 import scala.language.implicitConversions
 import scala.util.{Try => STry}
 
@@ -30,7 +31,7 @@ object FutureConversation {
    * @tparam T 値の型
    */
   implicit def TFutureToSFuture[T](future: TFuture[T]): SFuture[T] = {
-    val prom = SPromise[T]()
+    val prom = Promise[T]()
     future.respond {
       t: TTry[T] =>
         prom.complete(t)

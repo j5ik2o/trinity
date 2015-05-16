@@ -12,9 +12,15 @@ import org.sisioh.trinity.domain.io.http.ResponseStatus.{toNetty, toTrinity}
  */
 private[trinity]
 case class ResponseImpl(override val toUnderlyingAsFinagle: FinagleResponse,
-                        attributes: Map[String, Any] = Map.empty[String, Any],
-                        isMutable: Boolean = false)
+                        attributes: Map[String, Any],
+                        isMutable: Boolean)
   extends AbstractMessage(toUnderlyingAsFinagle) with Response {
+
+  def this(toUnderlyingAsFinagle: FinagleResponse) =
+    this(toUnderlyingAsFinagle, Map.empty[String, Any], false)
+
+  def this(toUnderlyingAsFinagle: FinagleResponse, attributes: Map[String, Any]) =
+    this(toUnderlyingAsFinagle, attributes, false)
 
   /**
    * Auxiliary constructor.

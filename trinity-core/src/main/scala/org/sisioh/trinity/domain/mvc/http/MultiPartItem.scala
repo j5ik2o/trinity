@@ -60,7 +60,7 @@ case class MultiPartItem(mixedFileUpload: MixedFileUpload, ioChunkSize: Int = 10
    * @return future
    */
   def writeToFile(path: String)
-                 (implicit executor: ExecutionContext): Future[Unit] = future {
+                 (implicit executor: ExecutionContext): Future[Unit] = Future {
     using(new FileOutputStream(path)) {
       fis =>
         val netty: NettyChannelBuffer = data

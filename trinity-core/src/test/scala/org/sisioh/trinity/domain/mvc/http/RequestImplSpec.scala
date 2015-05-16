@@ -1,14 +1,12 @@
 package org.sisioh.trinity.domain.mvc.http
 
-import org.junit.runner.RunWith
-import org.sisioh.trinity.domain.io.http.{HeaderName, Cookie, ProtocolVersion, Methods}
+import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
+import org.sisioh.trinity.domain.io.http.{Cookie, HeaderName, Methods, ProtocolVersion}
 import org.sisioh.trinity.domain.mvc.action.SimpleAction
 import org.specs2.mutable.Specification
-import org.specs2.runner.JUnitRunner
-import scala.concurrent.Future
-import org.sisioh.trinity.domain.io.buffer.ChannelBuffer
 
-@RunWith(classOf[JUnitRunner])
+import scala.concurrent.Future
+
 class RequestImplSpec extends Specification {
 
   "request" should {
