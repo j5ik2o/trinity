@@ -1,5 +1,7 @@
 # Trinity
 
+[![Join the chat at https://gitter.im/sisioh/trinity](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sisioh/trinity?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sisioh/trinity_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.sisioh/trinity_2.11)
 [![Scaladoc](http://javadoc-badge.appspot.com/org.sisioh/trinity.svg?label=scaladoc)](http://javadoc-badge.appspot.com/org.sisioh/trinity_2.11)
