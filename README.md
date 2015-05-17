@@ -45,7 +45,7 @@ Since May 2013
 
 ### Build Configuration
 
-Please add the following configuration to Build.scala.
+Add the following to your sbt build (Scala 2.10.x, and Scala 2.11.x):
 
 #### Release Version
 
