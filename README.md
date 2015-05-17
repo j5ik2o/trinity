@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/sisioh/trinity.png?branch=develop)](https://travis-ci.org/sisioh/trinity)
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sisioh/trinity_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.sisioh/trinity_2.11)
+[![Scaladoc](http://javadoc-badge.appspot.com/org.sisioh/trinity.svg?label=scaladoc)](http://javadoc-badge.appspot.com/org.sisioh/trinity_2.11)
+[![Reference Status](https://www.versioneye.com/java/org.sisioh:trinity_2.11/reference_badge.svg?style=flat)](https://www.versioneye.com/java/org.sisioh:trinity_2.11/references)
+
 Trinity is a lightweight MVC framework based on Finagle, written in Scala.  
 Since May 2013
 
