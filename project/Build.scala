@@ -83,10 +83,9 @@ object TrinityBuild extends Build {
           </developer>
         </developers>
       ),
-    credentials ++= {
-      val ivyCredentials = rootProject.getOrElse(thisProject.value).base / ".credentials"
-      val ivy = ivyCredentials.asFile
-      Credentials(ivy) :: Nil
+    credentials := {
+      val ivyCredentials = (baseDirectory in LocalRootProject).value / ".credentials"
+      Credentials(ivyCredentials) :: Nil
     }
   )
 
@@ -236,7 +235,7 @@ object TrinityBuild extends Build {
     )
   ) dependsOn(daemon, test % "test")
 
-  val root = Project(
+  lazy val root: Project = Project(
     id = "trinity",
     base = file("."),
     settings = commonSettings ++ Seq(
