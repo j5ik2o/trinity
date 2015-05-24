@@ -82,7 +82,12 @@ object TrinityBuild extends Build {
             <url>http://j5ik2o.me</url>
           </developer>
         </developers>
-      )
+      ),
+    credentials ++= {
+      val ivyCredentials = rootProject.getOrElse(thisProject.value).base / ".credentials"
+      val ivy = ivyCredentials.asFile
+      Credentials(ivy) :: Nil
+    }
   )
 
   val finagleVersion = "6.25.0"
