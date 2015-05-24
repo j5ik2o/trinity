@@ -65,7 +65,7 @@ libraryDependencies += "org.sisioh" %% "trinity" % "1.0.12"
 ```scala
 resolvers += "Sonatype Snapshot Repository" at "http://oss.sonatype.org/content/repositories/snapshots/"
 
-libraryDependencies +=  "org.sisioh" %% "trinity-core" % "1.0.12-SNAPSHOT"
+libraryDependencies += "org.sisioh" %% "trinity" % "1.0.13-SNAPSHOT"
 ```
   
 ### Controller code
