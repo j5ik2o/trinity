@@ -57,7 +57,7 @@ Add the following to your sbt build (Scala 2.10.x, and Scala 2.11.x):
 ```scala
 resolvers += "Sonatype Release Repository" at "http://oss.sonatype.org/content/repositories/releases/"
 
-libraryDependencies +=  "org.sisioh" %% "trinity-core" % "1.0.11"
+libraryDependencies += "org.sisioh" %% "trinity" % "1.0.12"
 ```
 
 #### Snapshot Version
